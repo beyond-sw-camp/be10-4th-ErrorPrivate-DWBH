@@ -18,7 +18,38 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
+
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Entity 값을 getter로 꺼내어 DTO 객체를 생성해 setter 하는 과정을 쉽게할 수 있도록 도와준다.
+	implementation 'org.modelmapper:modelmapper:3.1.1' // ModelMapper
+
+	// mariaDB
+	implementation 'mysql:mysql-connector-java:8.0.33'
+	// mongodb
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// field validation check
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+	// log4jdbc
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16' // 추가
+	// HikariCP
+	implementation 'com.zaxxer:HikariCP:4.0.3'
+
+	// web Socket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
