@@ -19,8 +19,8 @@ services:
     container_name: phpmyadmin_dwbh
     restart: always
     environment:
-      PMA_HOST: mysqldb_sansam
-      PMA_PORT: 3306
+      PMA_HOST: mysqldb_dwbh
+      PMA_PORT: 3309
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
