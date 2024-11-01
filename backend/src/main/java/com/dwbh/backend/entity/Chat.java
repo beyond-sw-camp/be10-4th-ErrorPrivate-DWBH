@@ -1,5 +1,6 @@
 package com.dwbh.backend.entity;
 
+import com.dwbh.backend.common.entity.BaseDateEntity;
 import com.dwbh.backend.common.entity.YnType;
 import com.dwbh.backend.common.util.DateTimeUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,9 +12,13 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity @Getter
+@AttributeOverrides({
+        @AttributeOverride(name = "regDate", column = @Column(name = "notification_reg_date")),
+        @AttributeOverride(name = "modDate", column = @Column(name = "notification_mod_date"))
+})
 @Table(name = "tb_chat")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Chat {
+public class Chat extends BaseDateEntity {
 
     @Id @Column(name = "chat_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +39,7 @@ public class Chat {
 
     @Column(name = "chat_read_yn")
     @Enumerated(EnumType.STRING)
-    private YnType readYn;
+    private YnType readYn = YnType.N;
 
     public void parseDate(String delDate) {
         this.delDate = DateTimeUtil.parse(delDate, "yyyy-MM-dd HH:mm:ss");
