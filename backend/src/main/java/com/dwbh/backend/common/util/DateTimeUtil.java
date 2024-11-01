@@ -14,10 +14,10 @@ public class DateTimeUtil {
     }
 
     public static boolean isAfterDate(String nowDate, String targetDate) {
-        LocalDateTime nowDate = parse(orgDate, "yyyy-MM-dd HH:mm:ss");
-        LocalDateTime targetDate = parse(distDate, "yyyy-MM-dd HH:mm:ss");
+        LocalDateTime orgDate = parse(nowDate, "yyyy-MM-dd HH:mm:ss");
+        LocalDateTime distDate = parse(targetDate, "yyyy-MM-dd HH:mm:ss");
 
-        return nowDate.isAfter(targetDate);
+        return orgDate.isAfter(distDate);
     }
 
     public static boolean isBetweenDate(String startDate, String endDate) {

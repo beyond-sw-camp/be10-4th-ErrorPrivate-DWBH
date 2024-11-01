@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum LoginType {
+public enum YnType {
     Y("Y"),
     N("N");
 

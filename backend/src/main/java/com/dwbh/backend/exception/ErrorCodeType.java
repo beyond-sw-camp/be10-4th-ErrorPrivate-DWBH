@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCodeType {
 
     // 게이트웨이 관련 오류
-    GATE_WAY_ERROR(HttpHttpStatus.BAD_GATEWAY, "GATEWAY_ERROR_001", "서버가 응답하지 않습니다."),
-    GATE_WAY_ERROR(HttpHttpStatus.GATEWAY_TIMEOUT, "GATEWAY_ERROR_002", "게이트웨이 시간 초과"),
+    GATE_WAY_BAD_GATEWAY_ERROR(HttpStatus.BAD_GATEWAY, "GATEWAY_ERROR_001", "서버가 응답하지 않습니다."),
+    GATE_WAY_GATEWAY_TIMEOUT_ERROR(HttpStatus.GATEWAY_TIMEOUT, "GATEWAY_ERROR_002", "게이트웨이 시간 초과"),
 
     // 스프링 시큐리티 관련 오류
     SECURITY_ACCESS_ERROR(HttpStatus.FORBIDDEN, "SECURITY_ERROR_001", "접근 권한이 없습니다."),
