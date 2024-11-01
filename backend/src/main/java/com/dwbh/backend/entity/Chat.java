@@ -1,6 +1,6 @@
 package com.dwbh.backend.entity;
 
-import com.dwbh.backend.common.aggregate.YnType;
+import com.dwbh.backend.common.entity.YnType;
 import com.dwbh.backend.common.util.DateTimeUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
