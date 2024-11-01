@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const chats = ref([
   { id: 1, title: '채팅방 1', lastMessage: '마지막 메시지 1', unreadCount: 2 },
@@ -8,11 +7,6 @@ const chats = ref([
   { id: 3, title: '채팅방 3', lastMessage: '마지막 메시지 3', unreadCount: 1 },
 ]);
 
-const router = useRouter();
-
-function openChat(chat) {
-  router.push({ name: 'ChatRoom', params: { chatId: chat.id } });
-}
 </script>
 
 <template>
@@ -22,16 +16,13 @@ function openChat(chat) {
       <li
           v-for="chat in chats"
           :key="chat.id"
-          @click="openChat(chat)"
-          class="chat-item"
+          @click="$emit('selectChat', chat)"
+          :class="['chat-item', chat.unreadCount > 0 ? 'unread' : 'read']"
       >
         <div class="chat-info">
           <span class="chat-title">{{ chat.title }}</span>
           <span class="last-message">{{ chat.lastMessage }}</span>
         </div>
-        <span class="unread-count" v-if="chat.unreadCount > 0">
-          {{ chat.unreadCount }}
-        </span>
       </li>
     </ul>
   </div>
@@ -45,7 +36,6 @@ function openChat(chat) {
   padding: 1rem;
 }
 .chat-item {
-  display: flex;
   justify-content: space-between;
   padding: 0.8rem;
   cursor: pointer;
@@ -58,11 +48,13 @@ function openChat(chat) {
 .chat-title {
   font-weight: bold;
 }
-.unread-count {
-  background-color: #ff6b6b;
-  color: white;
-  border-radius: 50%;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.8rem;
+
+.chat-item.unread::marker {
+  color: darkgreen; /* 읽지 않은 메시지가 있는 경우 */
 }
+
+.chat-item.read::marker {
+  color: darkgray; /* 읽은 메시지일 경우 */
+}
+
 </style>
