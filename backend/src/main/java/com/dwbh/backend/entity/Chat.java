@@ -1,5 +1,6 @@
 package com.dwbh.backend.entity;
 
+import com.dwbh.backend.common.aggregate.YnType;
 import com.dwbh.backend.common.util.DateTimeUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -30,7 +31,8 @@ public class Chat {
     private LocalDateTime delDate;
 
     @Column(name = "chat_read_yn")
-    private LocalDateTime readYn;
+    @Enumerated(EnumType.STRING)
+    private YnType readYn;
 
     public void parseDate(String delDate) {
         this.delDate = DateTimeUtil.parse(delDate, "yyyy-MM-dd HH:mm:ss");
