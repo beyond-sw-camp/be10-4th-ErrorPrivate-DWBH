@@ -1,11 +1,20 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-const chats = ref([
-  { id: 1, title: '채팅방 1', lastMessage: '마지막 메시지 1', unreadCount: 2 },
-  { id: 2, title: '채팅방 2', lastMessage: '마지막 메시지 2', unreadCount: 0 },
-  { id: 3, title: '채팅방 3', lastMessage: '마지막 메시지 3', unreadCount: 1 },
-]);
+const chats = ref([]);
+
+const fetchChats = async () => {
+  try {
+    const response = await axios.get('http://localhost:8089/api/v1/user/chat');
+    chats.value = response.data;
+    console.log(chats.value);
+  } catch (error) {
+    console.error('채팅 목록을 가져오는 중 오류 발생:', error);
+  }
+};
+
+onMounted(fetchChats);
 
 </script>
 
@@ -17,11 +26,12 @@ const chats = ref([
           v-for="chat in chats"
           :key="chat.id"
           @click="$emit('selectChat', chat)"
-          :class="['chat-item', chat.unreadCount > 0 ? 'unread' : 'read']"
+          :class="['chat-item', chat.readYn === 'N' ? 'unread' : 'read']"
       >
         <div class="chat-info">
-          <span class="chat-title">{{ chat.title }}</span>
+          <span class="chat-title">{{ chat.sendUserName }}</span>
           <span class="last-message">{{ chat.lastMessage }}</span>
+          <button v-if="chat.showEvaluation" @click="" value="평가"></button>
         </div>
       </li>
     </ul>
