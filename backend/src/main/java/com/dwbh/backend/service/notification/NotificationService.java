@@ -2,6 +2,7 @@ package com.dwbh.backend.service.notification;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
+import com.dwbh.backend.dto.notification.response.NotificationResponse;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Notification;
 import com.dwbh.backend.exception.CustomException;
@@ -14,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +53,21 @@ public class NotificationService {
         notification.updateNotificationCheckYn();
 
         ChatDTO.ChatResponseDTO chatResponseDTO = modelMapper.map(chat, ChatDTO.ChatResponseDTO.class);
+
         log.info("chatResponseDTO : {}", chatResponseDTO);
         return chatResponseDTO;
+    }
+
+    public List<NotificationResponse> readNotificationList() {
+        // 토큰에서 가져올 임시 userSeq 값
+        Long userSeq = 1L;
+        List<Notification> notificationList = notificationRepository.findByUserSeq(userSeq);
+
+        List<NotificationResponse> notificationResponseList = notificationList.stream()
+                .map(m -> modelMapper.map(m, NotificationResponse.class))
+                .toList();
+
+        log.info("notificationResponseList : {}", notificationResponseList);
+        return notificationResponseList;
     }
 }
