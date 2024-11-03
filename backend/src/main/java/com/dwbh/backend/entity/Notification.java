@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
         @AttributeOverride(name = "regDate", column = @Column(name = "notification_reg_date")),
         @AttributeOverride(name = "modDate", column = @Column(name = "notification_mod_date"))
 })
-@Table(name = "tb_notification")
 @Getter
+@Table(name = "tb_notification")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification extends BaseDateEntity {
     @Id
@@ -24,4 +24,7 @@ public class Notification extends BaseDateEntity {
     private Long userSeq;
     private YnType notificationCheckYn = YnType.N;
 
+    public void updateNotificationCheckYn() {
+        this.notificationCheckYn = YnType.Y;
+    }
 }
