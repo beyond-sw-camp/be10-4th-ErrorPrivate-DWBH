@@ -14,6 +14,10 @@ const fetchChats = async () => {
   }
 };
 
+const evaluateChat = (chatSeq) => {
+  console.log(`Evaluating chat with seq: ${chatSeq}`);
+};
+
 onMounted(fetchChats);
 
 </script>
@@ -24,14 +28,17 @@ onMounted(fetchChats);
     <ul>
       <li
           v-for="chat in chats"
-          :key="chat.id"
+          :key="chat.chatSeq"
           @click="$emit('selectChat', chat)"
           :class="['chat-item', chat.readYn === 'N' ? 'unread' : 'read']"
       >
         <div class="chat-info">
-          <span class="chat-title">{{ chat.sendUserName }}</span>
-          <span class="last-message">{{ chat.lastMessage }}</span>
-          <button v-if="chat.showEvaluation" @click="" value="평가"></button>
+          <div class="chat-details">
+            <span class="chat-title">{{ chat.chatSeq }}</span>
+  <!--          <span class="chat-title">{{ chat.sendUserName }}</span>-->
+            <span class="last-message">{{ chat.lastMessage }}</span>
+            </div>
+          <button class="evaluation-button" v-if="chat.showEvaluation" @click="evaluateChat(chat.chatSeq)">평가</button>
         </div>
       </li>
     </ul>
@@ -53,10 +60,26 @@ onMounted(fetchChats);
 }
 .chat-info {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
 }
 .chat-title {
   font-weight: bold;
+}
+
+.chat-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.last-message {
+  font-size: 0.9em;
+  color: rgb(128, 128, 128);
+}
+
+.evaluation-button {
+  margin-left: 150px;
+  white-space: nowrap;
 }
 
 .chat-item.unread::marker {

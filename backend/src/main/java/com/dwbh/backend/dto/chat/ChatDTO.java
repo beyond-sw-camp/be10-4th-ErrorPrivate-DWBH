@@ -23,6 +23,7 @@ public class ChatDTO {
 
     }
 
+    @Getter
     public static class ChatResponseDTO {
 
         private Long chatSeq;

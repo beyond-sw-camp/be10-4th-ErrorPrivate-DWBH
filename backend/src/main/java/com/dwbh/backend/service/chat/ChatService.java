@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -60,6 +61,10 @@ public class ChatService {
              List<Chat> chatList = chatRepository.findAll();
 
              //TODO 아영 - 이제 어떻게 해서 조인해서 가져올건지?
+
+            chatResponseDTOList = chatList.stream()
+                    .map(chat -> modelMapper.map(chat, ChatDTO.ChatResponseDTO.class))
+                    .collect(Collectors.toList()); //정렬은 최신순으로 바꾸기
 
         } catch (Exception e) {
             if(((CustomException) e).getErrorCode() != null) {
