@@ -21,7 +21,9 @@ public class ChatMessageService {
         boolean result = false;
         try {
             chatMessageDTO.setMessageType(ChatMessageDTO.MessageType.TALK);
-            Set<WebSocketSession> chatRoomSession = null;
+
+            //채팅 메세지 몽고디비 연동
+            result = true;
 
         } catch (Exception e) {
             log.error("createChat Error : {}", e.getMessage());

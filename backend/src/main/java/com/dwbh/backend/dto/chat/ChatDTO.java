@@ -16,6 +16,7 @@ public class ChatDTO {
 
     @Getter
     public static class ChatRequestDTO {
+
         private Long chatSeq;
         private Long counselOfferSeq;
         private Long sendSeq;
