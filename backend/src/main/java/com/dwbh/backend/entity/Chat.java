@@ -16,34 +16,42 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Chat {
 
-    @Id @Column(name = "chat_seq")
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatSeq;
 
-    @Column(name = "counsel_offer_seq")
-    private Long counselOfferSeq;
+    @OneToOne
+    @JoinColumn(name = "counselOfferSeq")
+    private CounselOffer counselOffer;
 
-    @Column(name = "chat_send_seq")
-    private Long sendSeq;
+    @ManyToOne
+    @JoinColumn(name = "chatSendSeq", referencedColumnName = "userSeq")
+    private User sendUser;
 
-    @Column(name = "chat_receive_seq")
-    private Long receiveSeq;
+    @ManyToOne
+    @JoinColumn(name = "chatReceiveSeq", referencedColumnName = "userSeq")
+    private User receiveUser;
 
     @CreationTimestamp
     @Column(name = "chat_reg_date", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime regDate;
+    private LocalDateTime chatRegDate;
 
     @Column(name = "chat_del_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime delDate;
+    private LocalDateTime chatDelDate;
 
     @Column(name = "chat_read_yn")
     @Enumerated(EnumType.STRING)
     private YnType readYn = YnType.N;
 
     public void parseDate(String delDate) {
-        this.delDate = DateTimeUtil.parse(delDate, "yyyy-MM-dd HH:mm:ss");
+        this.chatDelDate = DateTimeUtil.parse(delDate, "yyyy-MM-dd HH:mm:ss");
     }
 
+    public void builder(CounselOffer counselOffer, User sendUser, User receiveUser) {
+        this.counselOffer = counselOffer;
+        this.sendUser = sendUser;
+        this.receiveUser = receiveUser;
+    }
 }
