@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import static com.dwbh.backend.entity.QChat.chat;
-import static com.dwbh.backend.entity.evaluation.QEvaluation.evaluation;
+import static com.dwbh.backend.entity.QEvaluation.evaluation;
 
 @Repository
 @RequiredArgsConstructor
