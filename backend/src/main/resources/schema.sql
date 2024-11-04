@@ -19,8 +19,8 @@ CREATE TABLE tb_chat (
                          counsel_offer_seq bigint NOT NULL COMMENT '상담 제안 번호',
                          chat_send_seq bigint NOT NULL COMMENT '댓글 작성자 번호',
                          chat_receive_seq bigint NOT NULL COMMENT '게시판 작성자 번호',
-                         chat_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '채팅방 생성일',
-                         chat_del_date timestamp NULL COMMENT '채팅방 종료일',
+                         chat_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '채팅방 생성일',
+                         chat_del_date datetime NULL COMMENT '채팅방 종료일',
                          chat_read_yn	enum('Y ', 'N')	NOT NULL	DEFAULT 'N'	COMMENT '읽음 여부',
                          PRIMARY KEY (chat_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='채팅방';
@@ -32,9 +32,9 @@ CREATE TABLE tb_counsel_offer (
                                   user_seq bigint NOT NULL COMMENT '상담 제안 댓글 작성자',
                                   counsel_offer_content varchar(1500) NOT NULL COMMENT '상담 제안 내용',
                                   counsel_offer_private_yn enum('Y', 'N') NOT NULL DEFAULT 'N' COMMENT '상담 제안 비밀댓글 여부',
-                                  counsel_offer_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '상담 제안 작성일',
-                                  counsel_offer_mod_date timestamp NULL COMMENT '상담 제안 수정일',
-                                  counsel_offer_del_date timestamp NULL COMMENT '상담 제안 삭제일',
+                                  counsel_offer_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '상담 제안 작성일',
+                                  counsel_offer_mod_date datetime NULL COMMENT '상담 제안 수정일',
+                                  counsel_offer_del_date datetime NULL COMMENT '상담 제안 삭제일',
                                   PRIMARY KEY (counsel_offer_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='상담 제안 댓글';
 
@@ -49,8 +49,8 @@ CREATE TABLE tb_user (
                          user_mbti varchar(10) NULL COMMENT '회원 MBTI',
                          user_status varchar(10) NOT NULL DEFAULT 'activate' COMMENT '회원 상태',
                          user_temperature DECIMAL(5,2) NOT NULL DEFAULT 36.5 COMMENT '회원 온도',
-                         user_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '회원 가입 날짜',
-                         user_del_date timestamp NULL COMMENT '회원 탈퇴 날짜',
+                         user_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '회원 가입 날짜',
+                         user_del_date datetime NULL COMMENT '회원 탈퇴 날짜',
                          PRIMARY KEY (user_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='회원';
 
@@ -61,9 +61,9 @@ CREATE TABLE tb_counselor_hire (
                                    counselor_hire_title varchar(100) NOT NULL COMMENT '상담사 구인 제목',
                                    counselor_hire_content varchar(4500) NOT NULL COMMENT '상담사 구인 내용',
                                    counselor_hire_counselor_gender varchar(10) NULL COMMENT '상담사 구인 작성자가 원하는 상담사 성별 (male, female)',
-                                   counselor_hire_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '상담사 구인 작성일',
-                                   counselor_hire_mod_date timestamp NULL COMMENT '상담사 구인 수정일',
-                                   counselor_hire_del_date timestamp NULL COMMENT '상담사 구인 삭제일',
+                                   counselor_hire_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '상담사 구인 작성일',
+                                   counselor_hire_mod_date datetime NULL COMMENT '상담사 구인 수정일',
+                                   counselor_hire_del_date datetime NULL COMMENT '상담사 구인 삭제일',
                                    PRIMARY KEY (counselor_hire_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='상담사 구인 정보';
 
@@ -75,8 +75,8 @@ CREATE TABLE tb_evaluation (
                                evaluation_communication int NOT NULL COMMENT '소통 평가',
                                evaluation_kindness int NOT NULL COMMENT '친절도 평가',
                                evaluation_score DECIMAL(5,2) NOT NULL COMMENT '평가 점수',
-                               evaluation_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '평가 등록일',
-                               evaluation_mod_date timestamp NULL COMMENT '평가 수정일',
+                               evaluation_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '평가 등록일',
+                               evaluation_mod_date datetime NULL COMMENT '평가 수정일',
                                PRIMARY KEY (evaluation_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='평가';
 
@@ -87,9 +87,9 @@ CREATE TABLE tb_file (
                          file_type varchar(10) NOT NULL COMMENT '파일 타입(image/video)',
                          file_path varchar(2000) NOT NULL COMMENT '파일 주소',
                          file_content_type varchar(50) NOT NULL COMMENT '(image/jpg)',
-                         file_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '파일 등록일',
-                         file_mod_date timestamp NULL COMMENT '파일 수정일',
-                         file_del_date timestamp NULL COMMENT '파일 삭제일',
+                         file_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '파일 등록일',
+                         file_mod_date datetime NULL COMMENT '파일 수정일',
+                         file_del_date datetime NULL COMMENT '파일 삭제일',
                          PRIMARY KEY (file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='파일';
 
@@ -123,7 +123,7 @@ CREATE TABLE tb_notification (
                                  chat_seq bigint NOT NULL COMMENT '채팅방 번호',
                                  user_seq bigint NOT NULL COMMENT '상담 제안 댓글 작성자',
                                  notification_check_yn enum('Y', 'N') NOT NULL DEFAULT 'N' COMMENT '알림 확인 여부',
-                                 notification_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '알림 작성일',
+                                 notification_reg_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '알림 작성일',
                                  PRIMARY KEY (notification_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='알림';
 
