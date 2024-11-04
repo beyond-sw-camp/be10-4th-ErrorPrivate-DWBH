@@ -40,10 +40,18 @@ public class Evaluation {
     private Double evaluationScore;
 
     @CreatedDate
-    @Column(name = "evaluation_reg_date")
+    @Column(name = "evaluation_reg_date", nullable = false)
     private LocalDateTime evaluationRegDate;
 
     @LastModifiedDate
     @Column(name = "evaluation_mod_date", insertable = false)
     private LocalDateTime evaluationModDate;
+
+    public void updateEvaluation(Chat chat, Integer evaluationSatisfaction, Integer evaluationCommunication, Integer evaluationKindness, Double evaluationScore) {
+        if (chat != null) this.chat = chat;
+        if (evaluationSatisfaction != null) this.evaluationSatisfaction = evaluationSatisfaction;
+        if (evaluationCommunication != null) this.evaluationCommunication = evaluationCommunication;
+        if (evaluationKindness != null) this.evaluationKindness = evaluationKindness;
+        if (evaluationScore != null) this.evaluationScore = evaluationScore;
+    }
 }
