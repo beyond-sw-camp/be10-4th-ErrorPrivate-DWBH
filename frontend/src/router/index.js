@@ -8,12 +8,12 @@ const routes = [
     {
         path: '/chat-list',
         name: 'ChatList',
-        component: () => import("@/views/chat/ChatListView.vue")
+        component: () => import("@/views/chat/ChatView.vue")
     },
     {
         path: '/chat/:chatId',
         name: 'ChatRoom',
-        component: () => import("@/views/chat/ChatDetailView.vue")
+        component: () => import("@/views/chat/ChatView.vue")
     },
 ];
 
