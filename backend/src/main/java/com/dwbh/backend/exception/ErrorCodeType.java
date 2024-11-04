@@ -31,6 +31,7 @@ public enum ErrorCodeType {
     // 공통 오류
     COMMON_ERROR(HttpStatus.BAD_REQUEST, "COMMON_ERROR", "오류가 발생하였습니다. 관리자에게 문의 바랍니다."),
 
+    COUNSEL_OFFER_NOT_FOUND(HttpStatus.NOT_FOUND, "COUNSEL_OFFER_ERROR_001", "댓글을 찾을 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
