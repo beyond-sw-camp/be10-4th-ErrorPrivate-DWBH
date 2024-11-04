@@ -13,20 +13,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.stream.Stream;
 
 @SpringBootTest
-@TestPropertySource(properties = {
-        "MYSQL_ROOT_PASSWORD=root",
-        "MYSQL_HOST=localhost",
-        "MYSQL_DATABASE=dwbh",
-        "MYSQL_USER=dwbh",
-        "MYSQL_PASSWORD=dwbh",
-        "MYSQL_PORT=3309",
-        "MONGO_HOST=localhost",
-        "MONGO_PORT=27017",
-        "MONGO_AUTHENTICATION_DATABASE=admin",
-        "MONGO_INITDB_ROOT_USERNAME=dwbh",
-        "MONGO_INITDB_ROOT_PASSWORD=dwbh",
-        "MONGO_DATABASE=dwbh",
-})
 class EvaluationServiceTest {
 
     @Autowired
