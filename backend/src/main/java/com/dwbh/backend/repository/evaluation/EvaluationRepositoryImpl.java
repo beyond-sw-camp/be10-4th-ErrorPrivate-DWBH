@@ -1,12 +1,12 @@
 package com.dwbh.backend.repository.evaluation;
 
-import com.dwbh.backend.entity.evaluation.Evaluation;
+import com.dwbh.backend.entity.Evaluation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import static com.dwbh.backend.entity.QChat.chat;
-import static com.dwbh.backend.entity.evaluation.QEvaluation.evaluation;
+import static com.dwbh.backend.entity.QEvaluation.evaluation;
 
 @Repository
 @RequiredArgsConstructor
