@@ -1,4 +1,4 @@
-package com.dwbh.backend.aggregate;
+package com.dwbh.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

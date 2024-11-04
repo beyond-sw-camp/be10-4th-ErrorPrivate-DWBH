@@ -1,6 +1,6 @@
-package com.dwbh.backend.security.handler;
+package com.dwbh.backend.common.handler;
 
-import com.dwbh.backend.security.service.UserService;
+import com.dwbh.backend.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

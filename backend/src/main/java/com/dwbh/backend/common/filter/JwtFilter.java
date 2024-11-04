@@ -1,6 +1,6 @@
-package com.dwbh.backend.security.filter;
+package com.dwbh.backend.common.filter;
 
-import com.dwbh.backend.security.util.JwtUtil;
+import com.dwbh.backend.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,13 +1,13 @@
-package com.dwbh.backend.security.config;
+package com.dwbh.backend.config;
 
-import com.dwbh.backend.security.filter.CustomAuthenticationFilter;
-import com.dwbh.backend.security.filter.JwtFilter;
-import com.dwbh.backend.security.handler.JwtAccessDeniedHandler;
-import com.dwbh.backend.security.handler.JwtAuthenticationEntryPoint;
-import com.dwbh.backend.security.handler.LoginSuccessHandler;
-import com.dwbh.backend.security.handler.LoginFailureHandler;
-import com.dwbh.backend.security.service.UserService;
-import com.dwbh.backend.security.util.JwtUtil;
+import com.dwbh.backend.common.filter.CustomAuthenticationFilter;
+import com.dwbh.backend.common.filter.JwtFilter;
+import com.dwbh.backend.common.handler.JwtAccessDeniedHandler;
+import com.dwbh.backend.common.handler.JwtAuthenticationEntryPoint;
+import com.dwbh.backend.common.handler.LoginSuccessHandler;
+import com.dwbh.backend.common.handler.LoginFailureHandler;
+import com.dwbh.backend.service.UserService;
+import com.dwbh.backend.common.util.JwtUtil;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

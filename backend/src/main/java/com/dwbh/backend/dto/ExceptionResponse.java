@@ -1,4 +1,4 @@
-package com.dwbh.backend.security.dto;
+package com.dwbh.backend.dto;
 
 import lombok.Getter;
 import lombok.Setter;

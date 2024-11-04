@@ -1,6 +1,6 @@
-package com.dwbh.backend.security.filter;
+package com.dwbh.backend.common.filter;
 
-import com.dwbh.backend.security.dto.LoginRequest;
+import com.dwbh.backend.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

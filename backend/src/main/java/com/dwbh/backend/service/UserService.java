@@ -1,8 +1,8 @@
-package com.dwbh.backend.security.service;
+package com.dwbh.backend.service;
 
-import com.dwbh.backend.aggregate.User;
+import com.dwbh.backend.entity.User;
 import com.dwbh.backend.repository.UserRepository;
-import com.dwbh.backend.security.dto.CreateUserRequest;
+import com.dwbh.backend.dto.CreateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.GrantedAuthority;

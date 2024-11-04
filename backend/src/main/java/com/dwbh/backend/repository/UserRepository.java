@@ -1,6 +1,6 @@
 package com.dwbh.backend.repository;
 
-import com.dwbh.backend.aggregate.User;
+import com.dwbh.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

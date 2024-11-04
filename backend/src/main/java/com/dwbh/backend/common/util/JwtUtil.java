@@ -1,6 +1,6 @@
-package com.dwbh.backend.security.util;
+package com.dwbh.backend.common.util;
 
-import com.dwbh.backend.security.service.UserService;
+import com.dwbh.backend.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

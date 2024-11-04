@@ -1,6 +1,6 @@
-package com.dwbh.backend.security.handler;
+package com.dwbh.backend.common.handler;
 
-import com.dwbh.backend.security.dto.ExceptionResponse;
+import com.dwbh.backend.dto.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

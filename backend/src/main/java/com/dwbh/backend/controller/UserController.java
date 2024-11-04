@@ -1,7 +1,7 @@
 package com.dwbh.backend.controller;
 
-import com.dwbh.backend.security.dto.CreateUserRequest;
-import com.dwbh.backend.security.service.UserService;
+import com.dwbh.backend.dto.CreateUserRequest;
+import com.dwbh.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
