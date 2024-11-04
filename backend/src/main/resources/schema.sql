@@ -45,7 +45,7 @@ CREATE TABLE tb_user (
                          user_password varchar(100) NOT NULL COMMENT '회원 비밀번호',
                          user_nickname varchar(30) NOT NULL COMMENT '회원 닉네임',
                          user_gender varchar(10) NULL COMMENT '회원 성별 (male, female)',
-                         user_birthday timestamp NULL COMMENT '회원 생일',
+                         user_birthday date NULL COMMENT '회원 생일',
                          user_mbti varchar(10) NULL COMMENT '회원 MBTI',
                          user_status varchar(10) NOT NULL DEFAULT 'activate' COMMENT '회원 상태',
                          user_temperature DECIMAL(5,2) NOT NULL DEFAULT 36.5 COMMENT '회원 온도',
