@@ -156,3 +156,136 @@ CREATE TABLE tb_counselor_type (
                                    counselor_type varchar(10) NOT NULL COMMENT '상담 조언 유형',
                                    PRIMARY KEY (counselor_type_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='상담 조언 유형';
+
+ALTER TABLE `tb_chat` ADD CONSTRAINT `FK_tb_counsel_offer_TO_tb_chat_1` FOREIGN KEY (
+                                                                                     `counsel_offer_seq`
+    )
+    REFERENCES `tb_counsel_offer` (
+                                   `counsel_offer_seq`
+        );
+
+ALTER TABLE `tb_chat` ADD CONSTRAINT `FK_tb_user_TO_tb_chat_1` FOREIGN KEY (
+                                                                            `chat_send_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_chat` ADD CONSTRAINT `FK_tb_user_TO_tb_chat_2` FOREIGN KEY (
+                                                                            `chat_receive_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counsel_offer_1` FOREIGN KEY (
+                                                                                                        `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer` ADD CONSTRAINT `FK_tb_user_TO_tb_counsel_offer_1` FOREIGN KEY (
+                                                                                              `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire` ADD CONSTRAINT `FK_tb_user_TO_tb_counselor_hire_1` FOREIGN KEY (
+                                                                                                `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_evaluation` ADD CONSTRAINT `FK_tb_chat_TO_tb_evaluation_1` FOREIGN KEY (
+                                                                                        `chat_seq`
+    )
+    REFERENCES `tb_chat` (
+                          `chat_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_file` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counselor_hire_file_1` FOREIGN KEY (
+                                                                                                                    `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_file` ADD CONSTRAINT `FK_tb_file_TO_tb_counselor_hire_file_1` FOREIGN KEY (
+                                                                                                          `file_seq2`
+    )
+    REFERENCES `tb_file` (
+                          `file_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer_file` ADD CONSTRAINT `FK_tb_file_TO_tb_counsel_offer_file_1` FOREIGN KEY (
+                                                                                                        `file_seq2`
+    )
+    REFERENCES `tb_file` (
+                          `file_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer_file` ADD CONSTRAINT `FK_tb_counsel_offer_TO_tb_counsel_offer_file_1` FOREIGN KEY (
+                                                                                                                 `counsel_offer_seq`
+    )
+    REFERENCES `tb_counsel_offer` (
+                                   `counsel_offer_seq`
+        );
+
+ALTER TABLE `tb_user_profile_file` ADD CONSTRAINT `FK_tb_file_TO_tb_user_profile_file_1` FOREIGN KEY (
+                                                                                                      `file_seq2`
+    )
+    REFERENCES `tb_file` (
+                          `file_seq`
+        );
+
+ALTER TABLE `tb_user_profile_file` ADD CONSTRAINT `FK_tb_user_TO_tb_user_profile_file_1` FOREIGN KEY (
+                                                                                                      `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_notification` ADD CONSTRAINT `FK_tb_chat_TO_tb_notification_1` FOREIGN KEY (
+                                                                                            `chat_seq`
+    )
+    REFERENCES `tb_chat` (
+                          `chat_seq`
+        );
+
+ALTER TABLE `tb_notification` ADD CONSTRAINT `FK_tb_user_TO_tb_notification_1` FOREIGN KEY (
+                                                                                            `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_age` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counselor_hire_age_1` FOREIGN KEY (
+                                                                                                                  `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_age` ADD CONSTRAINT `FK_tb_counselor_age_TO_tb_counselor_hire_age_1` FOREIGN KEY (
+                                                                                                                 `counselor_age_range_seq`
+    )
+    REFERENCES `tb_counselor_age` (
+                                   `counselor_age_range_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_type` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counselor_hire_type_1` FOREIGN KEY (
+                                                                                                                    `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_type` ADD CONSTRAINT `FK_tb_counselor_type_TO_tb_counselor_hire_type_1` FOREIGN KEY (
+                                                                                                                    `counselor_type_seq`
+    )
+    REFERENCES `tb_counselor_type` (
+                                    `counselor_type_seq`
+        );
