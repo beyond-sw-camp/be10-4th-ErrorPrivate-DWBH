@@ -43,7 +43,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers(new AntPathRequestMatcher("/swagger"),
                                         new AntPathRequestMatcher("/swagger**/**"),
-                                        new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
+                                        new AntPathRequestMatcher("/v3/api-docs/**"),
+                                        new AntPathRequestMatcher("/api/v1/login"),
+                                        new AntPathRequestMatcher("/api/v1/user")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/**"))
                                 .authenticated()
                 ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

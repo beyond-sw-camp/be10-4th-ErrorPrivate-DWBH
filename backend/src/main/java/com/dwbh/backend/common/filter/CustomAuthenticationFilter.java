@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class CustomAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public CustomAuthenticationFilter() {
-        super(new AntPathRequestMatcher("/login", "POST"));
+        super(new AntPathRequestMatcher("/api/v1/login", "POST"));
     }
 
     @Override
