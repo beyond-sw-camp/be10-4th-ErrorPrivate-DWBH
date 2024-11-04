@@ -1,6 +1,5 @@
 package com.dwbh.backend.controller.evaluation;
 
-import com.dwbh.backend.dto.evaluation.EvaluationDTO;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.service.evaluation.EvaluationService;
@@ -29,7 +28,7 @@ public class EvaluationController {
 
     // 평가 작성
     @PostMapping("/evaluation")
-    public ResponseEntity<String> readEvaluation(
+    public ResponseEntity<String> createEvaluation(
             @RequestBody EvaluationRequest evaluationRequest
     ) {
         evaluationService.createEvaluation(evaluationRequest);

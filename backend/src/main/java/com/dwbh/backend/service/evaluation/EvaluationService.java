@@ -4,7 +4,7 @@ import com.dwbh.backend.dto.evaluation.EvaluationDTO;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.entity.Chat;
-import com.dwbh.backend.entity.evaluation.Evaluation;
+import com.dwbh.backend.entity.Evaluation;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.repository.ChatRepository;

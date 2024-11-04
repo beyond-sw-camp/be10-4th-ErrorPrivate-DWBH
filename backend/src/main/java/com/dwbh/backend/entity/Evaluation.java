@@ -1,6 +1,5 @@
-package com.dwbh.backend.entity.evaluation;
+package com.dwbh.backend.entity;
 
-import com.dwbh.backend.entity.Chat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
