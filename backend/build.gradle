@@ -49,6 +49,10 @@ dependencies {
 	// web Socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	//stomp
+	// https://mvnrepository.com/artifact/org.webjars/stomp-websocket
+	implementation group: 'org.webjars', name: 'stomp-websocket', version: '2.3.3-1'
+
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
