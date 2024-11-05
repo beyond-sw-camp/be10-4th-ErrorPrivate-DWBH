@@ -21,8 +21,8 @@ public class NotificationController {
 
     @GetMapping("/{notificationSeq}")
     @Operation(summary = "알림 상세 조회 (채팅방 입장)")
-    public ResponseEntity<ChatDTO.ChatResponseDTO> readNotification(@PathVariable Long notificationSeq) {
-        ChatDTO.ChatResponseDTO chatResponseDTO = notificationService.readNotification(notificationSeq);
+    public ResponseEntity<ChatDTO.Response> readNotification(@PathVariable Long notificationSeq) {
+        ChatDTO.Response chatResponseDTO = notificationService.readNotification(notificationSeq);
 
         return ResponseEntity.ok(chatResponseDTO);
     }
