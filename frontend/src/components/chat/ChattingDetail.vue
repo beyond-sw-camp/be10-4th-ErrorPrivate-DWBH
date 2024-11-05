@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick  } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const chatTitle = ref('');
 const messages = ref([]);
 const newMessage = ref('');
+const messagesContainer = ref(null);
 
 onMounted(() => {
   const chatId = route.params.chatId;
@@ -14,6 +15,7 @@ onMounted(() => {
     { id: 1, sender: 'me', text: '안녕하세요!' },
     { id: 2, sender: 'other', text: '안녕하세요, 반가워요!' },
   ];
+  scrollToBottom();
 });
 
 function sendMessage() {
@@ -24,12 +26,24 @@ function sendMessage() {
       text: newMessage.value,
     });
     newMessage.value = '';
+    scrollToBottom();
   }
 }
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+  });
+}
+
 </script>
 
 <template>
   <div class="chat-room">
+    <button class="back-button" @click="$emit('goBack')"> < </button>
+
     <h2>{{ chatTitle }}</h2>
     <div class="messages">
       <div
