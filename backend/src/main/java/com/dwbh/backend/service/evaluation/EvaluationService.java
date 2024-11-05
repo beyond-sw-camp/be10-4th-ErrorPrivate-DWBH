@@ -26,6 +26,10 @@ public class EvaluationService {
     @Transactional
     public EvaluationResponse readEvaluation(Long chatSeq) {
         Evaluation evaluation = evaluationRepository.findByChatSeq(chatSeq);
+        // 채팅방에 해당하는 평가가 있는지 체크
+        if (evaluation == null) {
+            throw new CustomException(ErrorCodeType.EVALUATION_NOT_FOUND);
+        }
 
         // 엔티티를 DTO 로 변환
         EvaluationResponse evaluationResponse = evaluationMapper.toDTO(evaluation);
@@ -39,7 +43,7 @@ public class EvaluationService {
 
         // 이미 채팅방에 해당하는 평가가 생성되어있는지 체크
         if (evaluationRepository.findByChatSeq(evaluationRequest.getChatSeq()) != null) {
-            throw new CustomException(ErrorCodeType.COMMON_ERROR);
+            throw new CustomException(ErrorCodeType.EVALUATION_EXIST_ERROR);
         }
 
         // 평가 점수 연산
@@ -50,7 +54,7 @@ public class EvaluationService {
 
         // chat 엔티티 받아옴
         Chat chat = chatRepository.findById(evaluationRequest.getChatSeq())
-                .orElseThrow(() -> new EntityNotFoundException("채팅방이 없습니다.."));
+                .orElseThrow(() -> new CustomException(ErrorCodeType.CHAT_NOT_FOUND));
 
         // Dto to Entity
         Evaluation evaluation = evaluationMapper.toEntity(evaluationRequest, chat, evaluationScore);
@@ -64,7 +68,7 @@ public class EvaluationService {
     public void updateEvaluation(Long evaluationSeq, EvaluationRequest evaluationRequest) {
         // 평가가 없는지 체크
         Evaluation evaluation = evaluationRepository.findById(evaluationSeq)
-                .orElseThrow(() -> new EntityNotFoundException("평가가 없습니다.."));
+                .orElseThrow(() -> new CustomException(ErrorCodeType.EVALUATION_NOT_FOUND));
 
         // 평가 점수 연산
         Double evaluationScore = (double) (
@@ -74,7 +78,7 @@ public class EvaluationService {
 
         // chat 엔티티 받아옴
         Chat chat = chatRepository.findById(evaluationRequest.getChatSeq())
-                .orElseThrow(() -> new EntityNotFoundException("채팅방이 없습니다.."));
+                .orElseThrow(() -> new CustomException(ErrorCodeType.CHAT_NOT_FOUND));
 
         evaluation.updateEvaluation(
                 chat,
@@ -90,7 +94,7 @@ public class EvaluationService {
     public void deleteEvaluation(Long evaluationSeq) {
         // 평가가 없는지 체크
         Evaluation evaluation = evaluationRepository.findById(evaluationSeq)
-                .orElseThrow(() -> new EntityNotFoundException("평가가 없습니다.."));
+                .orElseThrow(() -> new CustomException(ErrorCodeType.EVALUATION_NOT_FOUND));
 
         evaluationRepository.delete(evaluation);
     }
