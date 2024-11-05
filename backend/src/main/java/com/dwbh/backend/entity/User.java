@@ -8,13 +8,17 @@ import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity @Getter
-@DynamicInsert
 @Table(name = "tb_user")
-@EntityListeners(AuditingEntityListener.class)
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AttributeOverrides({
+        @AttributeOverride(name = "regDate", column = @Column(name = "user_reg_date")),
+        @AttributeOverride(name = "modDate", column = @Column(name = "user_mod_date"))
+})
 public class User {
 
     @Id
@@ -28,8 +32,6 @@ public class User {
     private String userMbti;
     private String userStatus;
     private BigDecimal userTemperature;
-    @CreatedDate
-    private LocalDateTime userRegDate;
     private LocalDateTime userDelDate;
 
     // 패스워드 암호화

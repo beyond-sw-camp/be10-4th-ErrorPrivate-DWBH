@@ -8,12 +8,12 @@ import java.time.LocalDate;
 @Getter
 public class CreateUserRequest {
     @NotBlank
-    private String email;
+    private String userEmail;
     @NotBlank
-    private String password;
+    private String userPassword;
     @NotBlank
-    private String nickname;
-    private String gender;
-    private LocalDate birthday;
-    private String mbti;
+    private String userNickname;
+    private String userGender;
+    private LocalDate userBirthday;
+    private String userMbti;
 }

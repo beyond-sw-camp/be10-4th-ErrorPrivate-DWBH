@@ -28,7 +28,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void createUser(CreateUserRequest newUser) {
         User user = modelMapper.map(newUser, User.class);
-        user.encryptPassword(passwordEncoder.encode(newUser.getPassword()));
+        user.encryptPassword(passwordEncoder.encode(newUser.getUserPassword()));
         userRepository.save(user);
     }
 
