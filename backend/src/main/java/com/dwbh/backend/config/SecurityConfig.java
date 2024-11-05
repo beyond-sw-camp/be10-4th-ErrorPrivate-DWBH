@@ -64,6 +64,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // 인증 필터 설정
     private Filter getAuthenticationFilter() {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
         customAuthenticationFilter.setAuthenticationManager(getAuthenticationManager());
@@ -84,6 +85,7 @@ public class SecurityConfig {
         return new CorsFilter(corsConfigurationSource());
     }
 
+    // CORS 설정
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

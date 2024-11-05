@@ -24,6 +24,7 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    // 회원 등록
     @Transactional
     public void createUser(CreateUserRequest newUser) {
         User user = modelMapper.map(newUser, User.class);
@@ -31,6 +32,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    // user_seq 등록 여부 확인
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User loginUser = userRepository.findByUserEmail(userId)
@@ -41,6 +43,7 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(loginUser.getUserEmail(), loginUser.getUserPassword(), grantedAuthorities);
     }
 
+    // user_email 로 user_seq 검색
     public Long getUserSeq(String Email) {
         User user = userRepository.findByUserEmail(Email).orElseThrow();
         return user.getUserSeq();

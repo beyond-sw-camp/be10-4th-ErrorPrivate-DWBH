@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class CustomAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
+    // 필더 단에서 납치 할 로그인 주소
     public CustomAuthenticationFilter() {
         super(new AntPathRequestMatcher("/api/v1/login", "POST"));
     }

@@ -32,6 +32,7 @@ public class User {
     private LocalDateTime userRegDate;
     private LocalDateTime userDelDate;
 
+    // 패스워드 암호화
     public void encryptPassword(String encodedPwd) {
         this.userPassword = encodedPwd;
     }

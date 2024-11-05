@@ -34,6 +34,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
+        // 토큰에 담을 Claims 설정
         Claims claims = Jwts.claims().setSubject(authentication.getName());
         claims.put("seq", userService.getUserSeq(authentication.getName()));
         claims.put("auth", authorities);
