@@ -5,10 +5,7 @@ import com.dwbh.backend.dto.offer.CreateOfferRequest;
 import com.dwbh.backend.dto.offer.OfferDTO;
 import com.dwbh.backend.entity.CounselOffer;
 import com.dwbh.backend.entity.CounselOfferFile;
-import com.dwbh.backend.entity.CounselorHire;
 import com.dwbh.backend.entity.File;
-import com.dwbh.backend.exception.CustomException;
-import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.repository.FileRepository;
 import com.dwbh.backend.repository.offer.OfferRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +29,7 @@ public class OfferService {
     private static final String UPLOAD_DIR = "/uploads"; // 파일 저장 디렉토리
 
     @Transactional
-//    public void createOffer(Long postSeq, CreateOfferRequest createOfferRequest, MultipartFile file) {
-    public OfferDTO  createOffer(Long postSeq, CreateOfferRequest createOfferRequest, MultipartFile file) {
+    public OfferDTO  createOffer(Long hireSeq, CreateOfferRequest createOfferRequest, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
 
         // 1. 필요한 연관 관계 데이터 가져오기(추후 연관관계 기능 구현시 수정예정)
@@ -60,7 +55,6 @@ public class OfferService {
             String mimeType = FileUploadUtils.getMimeType(file);
 
             // 파일 엔티티 생성 및 설정
-//            File fileEntity = new File(savedFileName, file.getContentType(), UPLOAD_DIR + "/" + savedFileName, file.getContentType());
             File fileEntity = new File(savedFileName, mimeType, UPLOAD_DIR + "/" + savedFileName, file.getContentType());
             fileEntity = fileRepository.save(fileEntity);
 

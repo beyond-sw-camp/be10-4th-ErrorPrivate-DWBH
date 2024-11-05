@@ -25,16 +25,12 @@ public class OfferController {
     // 댓글 등록
     @PostMapping("/{postSeq}/comment")
     @Operation(summary = "게시글 댓글 등록", description = "게시글에 댓글을 등록한다.")
-//    public ResponseEntity<String> createOffer(
     public ResponseEntity<OfferDTO> createOffer(
             @PathVariable Long postSeq,
             @Valid @RequestPart CreateOfferRequest createOfferRequest,
             @RequestPart(required = false) MultipartFile file) {
         log.info("POST /api/v1/hire-post/{postSeq}/comment 댓글 등록 요청 - {}, {}, {}", postSeq, createOfferRequest, file);
 
-//        offerService.createOffer(postSeq, createOfferRequest, file);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body("댓글 작성 완료");
         OfferDTO response = offerService.createOffer(postSeq, createOfferRequest, file);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
