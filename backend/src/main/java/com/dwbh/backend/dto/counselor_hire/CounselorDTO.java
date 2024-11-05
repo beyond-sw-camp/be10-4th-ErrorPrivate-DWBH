@@ -6,10 +6,10 @@ import lombok.*;
 @Getter
 @Setter
 public class CounselorDTO {
-    @Getter
+    @NotBlank
     private String counselorHireTitle;
-    @Getter
+    @NotBlank
     private String counselorHireContent;
-    @Getter
+    @NotBlank
     private String counselorHireCounselorGender;
 }
