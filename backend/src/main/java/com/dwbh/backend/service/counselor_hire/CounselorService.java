@@ -4,7 +4,7 @@ import com.dwbh.backend.dto.counselor_hire.CounselorDTO;
 import com.dwbh.backend.entity.CounselorHire;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.repository.counselor_hire.CounselorRepository;
-import com.dwbh.backend.repository.user.UserRepository;
+import com.dwbh.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
