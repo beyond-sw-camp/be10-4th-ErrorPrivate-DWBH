@@ -20,7 +20,7 @@ public class ChatMessageService {
     public boolean createChatMessage(ChatMessageDTO chatMessageDTO) {
         boolean result = false;
         try {
-            chatMessageDTO.setMessageType(ChatMessageDTO.MessageType.TALK);
+            //chatMessageDTO.setMessageType(ChatMessageDTO.MessageType.TALK);
 
             //채팅 메세지 몽고디비 연동
             result = true;

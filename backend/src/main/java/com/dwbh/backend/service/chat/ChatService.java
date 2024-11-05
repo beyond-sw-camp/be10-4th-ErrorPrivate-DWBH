@@ -12,6 +12,7 @@ import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -28,6 +29,7 @@ public class ChatService {
     private final NotificationRepository notificationRepository;
     private final ChatMapper chatMapper;
     private final NotificationMapper notificationMapper;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public boolean createChat(ChatDTO.ChatRequestDTO chatRequestDTO) {
@@ -67,7 +69,7 @@ public class ChatService {
 
              List<Chat> chatList = chatRepository.findAll();
 
-             //TODO 아영 - 이제 어떻게 해서 조인해서 가져올건지?
+             //TODO 아영 - mongodb에서 last message 가져오기
 
             chatResponseDTOList = chatList.stream()
                     .map(chat -> modelMapper.map(chat, ChatDTO.ChatResponseDTO.class))

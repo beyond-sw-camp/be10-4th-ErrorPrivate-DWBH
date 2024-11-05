@@ -34,9 +34,9 @@ onMounted(fetchChats);
       >
         <div class="chat-info">
           <div class="chat-details">
-            <span class="chat-title">{{ chat.chatSeq }}</span>
-  <!--          <span class="chat-title">{{ chat.sendUserName }}</span>-->
-            <span class="last-message">{{ chat.lastMessage }}</span>
+            <span class="chat-title">{{ chat.receiveUser.userNickname }}</span>
+            <span class="last-message">안녕하세요.</span>
+<!--            <span class="last-message">{{ chat.lastMessage }}</span>-->
             </div>
           <button class="evaluation-button" v-if="chat.showEvaluation" @click="evaluateChat(chat.chatSeq)">평가</button>
         </div>

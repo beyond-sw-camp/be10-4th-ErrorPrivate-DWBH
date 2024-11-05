@@ -1,18 +1,20 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
+const props = defineProps({
+  chat: Object
+});
 const chatTitle = ref('');
 const messages = ref([]);
 const newMessage = ref('');
 const messagesContainer = ref(null);
 const websocket = ref(null);
-const username = ref('me'); // 사용자 이름 가져와야 함
+const sendUsername = ref(props.chat.sendUser.userNickname);
+const receiveUsername = ref(props.chat.receiveUser.userNickname);
 const isConnected = ref(false);
 
 onMounted(() => {
-  const chatId = route.params.chatId;
+  const chatId = props.chat.chatSeq;
   chatTitle.value = `채팅방 ${chatId}`;
   connectWebSocket();
 });
@@ -26,7 +28,7 @@ function connectWebSocket() {
 
   websocket.value.onopen = () => {
     isConnected.value = true;
-    const entryMsg = `${username.value}: 님이 입장하셨습니다.`;
+    const entryMsg = `${sendUsername.value}: 님이 입장하셨습니다.`;
     websocket.value.send(entryMsg);
   };
 
@@ -34,13 +36,15 @@ function connectWebSocket() {
     const data = event.data;
     const [sessionId, message] = data.split(":");
 
-    const msgClass = sessionId === username.value ? "sent" : "received";
-    messages.value.push({
-      id: Date.now(),
-      sender: sessionId,
-      text: message,
-      class: msgClass
-    });
+    const msgClass = sessionId === sendUsername.value ? "sent" : "received";
+    if(msgClass == "received") {
+      messages.value.push({
+        id: Date.now(),
+        sender: sessionId,
+        text: message,
+        class: msgClass
+      });
+    }
 
     if (message && message.includes("나가셨습니다.")) {
       disconnect();
@@ -53,7 +57,7 @@ function connectWebSocket() {
     isConnected.value = false;
     messages.value.push({
       id: Date.now(),
-      sender: username.value,
+      sender: receiveUsername.value,
       text: " 님과의 대화가 종료되었습니다.",
       class: "received"
     });
@@ -63,11 +67,11 @@ function connectWebSocket() {
 
 function sendMessage() {
   if (newMessage.value.trim() && websocket.value && websocket.value.readyState === WebSocket.OPEN) {
-    const msg = `${username.value}: ${newMessage.value}`;
+    const msg = `${sendUsername.value}: ${newMessage.value}`;
     websocket.value.send(msg);
     messages.value.push({
       id: Date.now(),
-      sender: username.value,
+      sender: sendUsername.value,
       text: newMessage.value,
       class: "sent"
     });
@@ -79,7 +83,7 @@ function sendMessage() {
 function disconnect() {
   isConnected.value = false;
   if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
-    const exitMsg = `${username.value}: 님이 방을 나가셨습니다.`;
+    const exitMsg = `${sendUsername.value}: 님이 방을 나가셨습니다.`;
     websocket.value.send(exitMsg);
     websocket.value.close();
   }
