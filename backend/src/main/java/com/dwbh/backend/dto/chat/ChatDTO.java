@@ -1,6 +1,7 @@
 package com.dwbh.backend.dto.chat;
 
 import com.dwbh.backend.common.entity.YnType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public class ChatDTO {
     private String delDate;
     private YnType readYn;
 
+    @AllArgsConstructor
     @Getter
     public static class ChatRequestDTO {
         private Long counselOfferSeq;
@@ -21,6 +23,7 @@ public class ChatDTO {
         private Long receiveSeq;
     }
 
+    @Getter
     public static class ChatResponseDTO {
 
         private Long chatSeq;
