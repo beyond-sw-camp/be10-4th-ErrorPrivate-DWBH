@@ -27,7 +27,7 @@ public class User {
     private LocalDateTime userBirthday;
     private String userMbti;
     private String userStatus;
-    private String userTemperature;
+    private BigDecimal userTemperature;
     @CreatedDate
     private LocalDateTime userRegDate;
     private LocalDateTime userDelDate;

@@ -1,4 +1,4 @@
-package com.dwbh.backend.common.aggregate;
+package com.dwbh.backend.common.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

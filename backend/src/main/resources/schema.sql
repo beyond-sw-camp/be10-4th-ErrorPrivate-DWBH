@@ -1,16 +1,16 @@
-DROP TABLE IF EXISTS tb_chat;
-DROP TABLE IF EXISTS tb_counsel_offer;
-DROP TABLE IF EXISTS tb_user;
-DROP TABLE IF EXISTS tb_counselor_hire;
-DROP TABLE IF EXISTS tb_evaluation;
-DROP TABLE IF EXISTS tb_file;
-DROP TABLE IF EXISTS tb_counselor_hire_file;
-DROP TABLE IF EXISTS tb_counsel_offer_file;
-DROP TABLE IF EXISTS tb_user_profile_file;
 DROP TABLE IF EXISTS tb_notification;
-DROP TABLE IF EXISTS tb_counselor_age;
+DROP TABLE IF EXISTS tb_evaluation;
+DROP TABLE IF EXISTS tb_chat;
+DROP TABLE IF EXISTS tb_counsel_offer_file;
+DROP TABLE IF EXISTS tb_counsel_offer;
+DROP TABLE IF EXISTS tb_counselor_hire_file;
 DROP TABLE IF EXISTS tb_counselor_hire_age;
 DROP TABLE IF EXISTS tb_counselor_hire_type;
+DROP TABLE IF EXISTS tb_counselor_hire;
+DROP TABLE IF EXISTS tb_user_profile_file;
+DROP TABLE IF EXISTS tb_user;
+DROP TABLE IF EXISTS tb_file;
+DROP TABLE IF EXISTS tb_counselor_age;
 DROP TABLE IF EXISTS tb_counselor_type;
 
 -- 채팅방 테이블
@@ -50,6 +50,7 @@ CREATE TABLE tb_user (
                          user_status varchar(10) NOT NULL DEFAULT 'activate' COMMENT '회원 상태',
                          user_temperature DECIMAL(5,2) NOT NULL DEFAULT 36.5 COMMENT '회원 온도',
                          user_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '회원 가입 날짜',
+                         user_mod_date timestamp NULL COMMENT '회원 수정 날짜',
                          user_del_date timestamp NULL COMMENT '회원 탈퇴 날짜',
                          PRIMARY KEY (user_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='회원';
@@ -97,14 +98,14 @@ CREATE TABLE tb_file (
 CREATE TABLE tb_counselor_hire_file (
                                         counselor_hire_file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '상담사 구인 파일 번호',
                                         counselor_hire_seq bigint NOT NULL COMMENT '상담사 구인 번호',
-                                        file_seq2 bigint NOT NULL COMMENT '파일 번호',
+                                        file_seq bigint NOT NULL COMMENT '파일 번호',
                                         PRIMARY KEY (counselor_hire_file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='상담사 구인 파일';
 
 -- 상담 제안 파일
 CREATE TABLE tb_counsel_offer_file (
                                        counsel_offer_file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '상담 제안 파일 번호',
-                                       file_seq2 bigint NOT NULL COMMENT '파일 번호',
+                                       file_seq bigint NOT NULL COMMENT '파일 번호',
                                        counsel_offer_seq bigint NOT NULL COMMENT '상담 제안 번호',
                                        PRIMARY KEY (counsel_offer_file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='상담 제안 파일';
@@ -112,7 +113,7 @@ CREATE TABLE tb_counsel_offer_file (
 -- 회원 프로필 사진 파일
 CREATE TABLE tb_user_profile_file (
                                       user_profile_file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '회원 프로필 사진 번호',
-                                      file_seq2 bigint NOT NULL COMMENT '파일 번호',
+                                      file_seq bigint NOT NULL COMMENT '파일 번호',
                                       user_seq bigint NOT NULL COMMENT '회원 번호',
                                       PRIMARY KEY (user_profile_file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='회원 프로필 사진 파일';
@@ -124,6 +125,7 @@ CREATE TABLE tb_notification (
                                  user_seq bigint NOT NULL COMMENT '상담 제안 댓글 작성자',
                                  notification_check_yn enum('Y', 'N') NOT NULL DEFAULT 'N' COMMENT '알림 확인 여부',
                                  notification_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '알림 작성일',
+                                 notification_mod_date timestamp NULL COMMENT '알림 수정일',
                                  PRIMARY KEY (notification_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='알림';
 
@@ -214,14 +216,14 @@ ALTER TABLE `tb_counselor_hire_file` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_
         );
 
 ALTER TABLE `tb_counselor_hire_file` ADD CONSTRAINT `FK_tb_file_TO_tb_counselor_hire_file_1` FOREIGN KEY (
-                                                                                                          `file_seq2`
+                                                                                                          `file_seq`
     )
     REFERENCES `tb_file` (
                           `file_seq`
         );
 
 ALTER TABLE `tb_counsel_offer_file` ADD CONSTRAINT `FK_tb_file_TO_tb_counsel_offer_file_1` FOREIGN KEY (
-                                                                                                        `file_seq2`
+                                                                                                        `file_seq`
     )
     REFERENCES `tb_file` (
                           `file_seq`
@@ -235,7 +237,7 @@ ALTER TABLE `tb_counsel_offer_file` ADD CONSTRAINT `FK_tb_counsel_offer_TO_tb_co
         );
 
 ALTER TABLE `tb_user_profile_file` ADD CONSTRAINT `FK_tb_file_TO_tb_user_profile_file_1` FOREIGN KEY (
-                                                                                                      `file_seq2`
+                                                                                                      `file_seq`
     )
     REFERENCES `tb_file` (
                           `file_seq`
