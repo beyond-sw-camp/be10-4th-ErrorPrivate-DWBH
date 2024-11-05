@@ -20,7 +20,8 @@ CREATE TABLE tb_chat (
                          chat_send_seq bigint NOT NULL COMMENT '댓글 작성자 번호',
                          chat_receive_seq bigint NOT NULL COMMENT '게시판 작성자 번호',
                          chat_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '채팅방 생성일',
-                         chat_del_date timestamp NULL COMMENT '채팅방 종료일',
+                         chat_mod_date timestamp NULL COMMENT '채팅방 수정일',
+                         chat_end_date timestamp NULL COMMENT '채팅방 종료일',
                          chat_read_yn	enum('Y ', 'N')	NOT NULL	DEFAULT 'N'	COMMENT '읽음 여부',
                          PRIMARY KEY (chat_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='채팅방';

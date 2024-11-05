@@ -45,7 +45,7 @@ function goBackToList() {
         </template>
         <template v-else>
           <!-- 대화 상세 화면 -->
-          <ChatDetail :chat="selectedChat" @goBack="goBackToList" />
+          <ChatDetail v-if="selectedChat" :chat="selectedChat" @goBack="goBackToList" />
         </template>
       </div>
     </div>
