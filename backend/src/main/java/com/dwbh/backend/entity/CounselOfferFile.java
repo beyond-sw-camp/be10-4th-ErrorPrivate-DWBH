@@ -1,0 +1,33 @@
+package com.dwbh.backend.entity;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Table(name = "tb_counsel_offer_file")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public class CounselOfferFile {
+
+    @Id
+    @Column(name = "counsel_offer_file_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long OfferFileSeq;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_seq", nullable = false)
+    private File file;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counsel_offer_seq", nullable = false)
+    private CounselOffer offer;
+
+    public CounselOfferFile(File file, CounselOffer offer) {
+        this.file = file;
+        this.offer = offer;
+    }
+
+}
