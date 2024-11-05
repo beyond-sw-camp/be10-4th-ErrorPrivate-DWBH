@@ -46,6 +46,8 @@ springdoc:
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
     path: /swagger
+    operations-sorter: method
+    doc-expansion: none
 
 logging:
   file:
@@ -58,3 +60,7 @@ logging:
     jdbc.sqlonly: info
     jdbc.resultsettable: info
     jdbc.connection: info
+
+token:
+  secret: KPNYWGkEcXk9j4VJs6YlatJN0R7HT8QNJKbv61SkoDSCfLegTcNZy4S0Vkzt5YfBDU4b8UJtaJIMg3kSVzahow==
+  expiration_time : 43200000

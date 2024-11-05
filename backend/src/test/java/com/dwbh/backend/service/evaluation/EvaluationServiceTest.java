@@ -32,7 +32,7 @@ class EvaluationServiceTest {
     private static Stream<Arguments> updateEvaluationArguments() {
         return Stream.of(
                 Arguments.of(
-                        6L,
+                        4L,
                         3L,
                         5,
                         5,
@@ -92,7 +92,7 @@ class EvaluationServiceTest {
     @Test
     void testDeleteEvaluation() {
         Assertions.assertDoesNotThrow(
-                () -> evaluationService.deleteEvaluation(6L)
+                () -> evaluationService.deleteEvaluation(4L)
         );
     }
 }
