@@ -1,4 +1,4 @@
-package com.dwbh.backend.common.aggregate;
+package com.dwbh.backend.common.entity;
 
 public enum Gender {
     MALE,

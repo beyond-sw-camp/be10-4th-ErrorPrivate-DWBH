@@ -1,6 +1,6 @@
 package com.dwbh.backend.dto.offer;
 
-import com.dwbh.backend.common.aggregate.Gender;
+import com.dwbh.backend.common.entity.Gender;
 import lombok.Getter;
 import lombok.Setter;
 

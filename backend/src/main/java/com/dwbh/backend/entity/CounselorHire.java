@@ -1,6 +1,6 @@
 package com.dwbh.backend.entity;
 
-import com.dwbh.backend.common.aggregate.Gender;
+import com.dwbh.backend.common.entity.Gender;
 import com.dwbh.backend.common.entity.BaseDateEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -31,7 +31,7 @@ public class CounselorHire extends BaseDateEntity {
     private Long hireSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_seq", nullable = false)
+    @JoinColumn(name = "user_seq", nullable = false)
     private User userSeq;
 
     @Column(name = "counselor_hire_title", nullable = false)

@@ -1,6 +1,6 @@
 package com.dwbh.backend.dto.offer;
 
-import com.dwbh.backend.common.aggregate.YnType;
+import com.dwbh.backend.common.entity.YnType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

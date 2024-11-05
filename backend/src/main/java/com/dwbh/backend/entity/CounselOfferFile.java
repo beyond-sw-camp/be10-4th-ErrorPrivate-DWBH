@@ -17,17 +17,17 @@ public class CounselOfferFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long OfferFileSeq;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "file_seq", nullable = false)
     private File file;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counsel_offer_seq", nullable = false)
-    private CounselOffer offer;
+    private CounselOffer counselOffer;
 
     public CounselOfferFile(File file, CounselOffer offer) {
         this.file = file;
-        this.offer = offer;
+        this.counselOffer = offer;
     }
 
 }

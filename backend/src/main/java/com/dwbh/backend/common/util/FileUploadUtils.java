@@ -51,5 +51,34 @@ public class FileUploadUtils {
 
     }
 
+    /*
+     * 파일의 실제 MIME 타입을 가져오는 메서드
+     */
+    public static String getMimeType(MultipartFile multipartFile) {
+        String mimeType = multipartFile.getContentType();
+
+        // MIME 타입이 multipart/form-data로 반환될 경우 기본 MIME 타입 설정
+        if (mimeType == null || mimeType.equals("multipart/form-data")) {
+            String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename()).toLowerCase();
+
+            switch (extension) {
+                case "jpg":
+                case "jpeg":
+                case "png":
+                case "gif":
+                    mimeType = "image/" + extension;
+                    break;
+                case "mp4":
+                case "avi":
+                case "mov":
+                    mimeType = "video/" + extension;
+                    break;
+                default:
+                    mimeType = "application/octet-stream"; // 기본 타입
+            }
+        }
+
+        return mimeType;
+    }
 
 }

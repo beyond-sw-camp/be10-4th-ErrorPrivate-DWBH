@@ -9,11 +9,13 @@ import com.dwbh.backend.entity.CounselorHire;
 import com.dwbh.backend.entity.File;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.repository.FileRepository;
 import com.dwbh.backend.repository.offer.OfferRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -24,11 +26,13 @@ import java.time.LocalDateTime;
 public class OfferService {
 
     private final OfferRepository offerRepository;
+    private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
 //    private final UserRepository userRepository;
 //    private final HireRepository hireRepository;
     private static final String UPLOAD_DIR = "/uploads"; // 파일 저장 디렉토리
 
+    @Transactional
 //    public void createOffer(Long postSeq, CreateOfferRequest createOfferRequest, MultipartFile file) {
     public OfferDTO  createOffer(Long postSeq, CreateOfferRequest createOfferRequest, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
@@ -42,16 +46,25 @@ public class OfferService {
 
         // 2. DTO를 Entity로 매핑
         CounselOffer offer = modelMapper.map(createOfferRequest, CounselOffer.class);
+        offer.putHireSeq(2L); // 임의로 설정
+        offer.putUserSeq(createOfferRequest.getUserSeq()); // 임의 설정
 //        offer.putUserSeq(user);
 //        offer.putHireSeq(hire);
 
-        // 2. 파일이 포함된 경우 파일 처리
+        // 2. 파일이 포함된 경우 파일 먼저 저장
         if (file != null) {
-            // FileUploadUtils를 사용하여 파일 저장
+            // 파일 저장
             String savedFileName = FileUploadUtils.saveFile(UPLOAD_DIR, file);
 
-            // File 엔티티 생성 및 설정
-            File fileEntity = new File(savedFileName, file.getContentType(), UPLOAD_DIR + "/" + savedFileName, file.getContentType());
+            // MIME 타입 추출
+            String mimeType = FileUploadUtils.getMimeType(file);
+
+            // 파일 엔티티 생성 및 설정
+//            File fileEntity = new File(savedFileName, file.getContentType(), UPLOAD_DIR + "/" + savedFileName, file.getContentType());
+            File fileEntity = new File(savedFileName, mimeType, UPLOAD_DIR + "/" + savedFileName, file.getContentType());
+            fileEntity = fileRepository.save(fileEntity);
+
+            // CounselOfferFile 엔티티 생성 및 설정
             CounselOfferFile offerFile = new CounselOfferFile(fileEntity, offer);
             offer.inputOfferFile(offerFile);
         }
