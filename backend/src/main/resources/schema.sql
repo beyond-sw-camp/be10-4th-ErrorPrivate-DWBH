@@ -1,16 +1,16 @@
-DROP TABLE IF EXISTS tb_evaluation;
 DROP TABLE IF EXISTS tb_notification;
+DROP TABLE IF EXISTS tb_evaluation;
 DROP TABLE IF EXISTS tb_chat;
 DROP TABLE IF EXISTS tb_counsel_offer_file;
 DROP TABLE IF EXISTS tb_counsel_offer;
 DROP TABLE IF EXISTS tb_counselor_hire_file;
-DROP TABLE IF EXISTS tb_counselor_hire;
-DROP TABLE IF EXISTS tb_user_profile_file;
-DROP TABLE IF EXISTS tb_file;
-DROP TABLE IF EXISTS tb_user;
-DROP TABLE IF EXISTS tb_counselor_age;
 DROP TABLE IF EXISTS tb_counselor_hire_age;
 DROP TABLE IF EXISTS tb_counselor_hire_type;
+DROP TABLE IF EXISTS tb_counselor_hire;
+DROP TABLE IF EXISTS tb_user_profile_file;
+DROP TABLE IF EXISTS tb_user;
+DROP TABLE IF EXISTS tb_file;
+DROP TABLE IF EXISTS tb_counselor_age;
 DROP TABLE IF EXISTS tb_counselor_type;
 
 -- 채팅방 테이블
@@ -45,11 +45,12 @@ CREATE TABLE tb_user (
                          user_password varchar(100) NOT NULL COMMENT '회원 비밀번호',
                          user_nickname varchar(30) NOT NULL COMMENT '회원 닉네임',
                          user_gender varchar(10) NULL COMMENT '회원 성별 (male, female)',
-                         user_birthday timestamp NULL COMMENT '회원 생일',
+                         user_birthday date NULL COMMENT '회원 생일',
                          user_mbti varchar(10) NULL COMMENT '회원 MBTI',
                          user_status varchar(10) NOT NULL DEFAULT 'activate' COMMENT '회원 상태',
                          user_temperature DECIMAL(5,2) NOT NULL DEFAULT 36.5 COMMENT '회원 온도',
                          user_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '회원 가입 날짜',
+                         user_mod_date timestamp NULL COMMENT '회원 수정 날짜',
                          user_del_date timestamp NULL COMMENT '회원 탈퇴 날짜',
                          PRIMARY KEY (user_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='회원';
@@ -97,14 +98,14 @@ CREATE TABLE tb_file (
 CREATE TABLE tb_counselor_hire_file (
                                         counselor_hire_file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '상담사 구인 파일 번호',
                                         counselor_hire_seq bigint NOT NULL COMMENT '상담사 구인 번호',
-                                        file_seq2 bigint NOT NULL COMMENT '파일 번호',
+                                        file_seq bigint NOT NULL COMMENT '파일 번호',
                                         PRIMARY KEY (counselor_hire_file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='상담사 구인 파일';
 
 -- 상담 제안 파일
 CREATE TABLE tb_counsel_offer_file (
                                        counsel_offer_file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '상담 제안 파일 번호',
-                                       file_seq2 bigint NOT NULL COMMENT '파일 번호',
+                                       file_seq bigint NOT NULL COMMENT '파일 번호',
                                        counsel_offer_seq bigint NOT NULL COMMENT '상담 제안 번호',
                                        PRIMARY KEY (counsel_offer_file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='상담 제안 파일';
@@ -112,7 +113,7 @@ CREATE TABLE tb_counsel_offer_file (
 -- 회원 프로필 사진 파일
 CREATE TABLE tb_user_profile_file (
                                       user_profile_file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '회원 프로필 사진 번호',
-                                      file_seq2 bigint NOT NULL COMMENT '파일 번호',
+                                      file_seq bigint NOT NULL COMMENT '파일 번호',
                                       user_seq bigint NOT NULL COMMENT '회원 번호',
                                       PRIMARY KEY (user_profile_file_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='회원 프로필 사진 파일';
@@ -124,6 +125,7 @@ CREATE TABLE tb_notification (
                                  user_seq bigint NOT NULL COMMENT '상담 제안 댓글 작성자',
                                  notification_check_yn enum('Y', 'N') NOT NULL DEFAULT 'N' COMMENT '알림 확인 여부',
                                  notification_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '알림 작성일',
+                                 notification_mod_date timestamp NULL COMMENT '알림 수정일',
                                  PRIMARY KEY (notification_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='알림';
 
@@ -156,3 +158,136 @@ CREATE TABLE tb_counselor_type (
                                    counselor_type varchar(10) NOT NULL COMMENT '상담 조언 유형',
                                    PRIMARY KEY (counselor_type_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='상담 조언 유형';
+
+ALTER TABLE `tb_chat` ADD CONSTRAINT `FK_tb_counsel_offer_TO_tb_chat_1` FOREIGN KEY (
+                                                                                     `counsel_offer_seq`
+    )
+    REFERENCES `tb_counsel_offer` (
+                                   `counsel_offer_seq`
+        );
+
+ALTER TABLE `tb_chat` ADD CONSTRAINT `FK_tb_user_TO_tb_chat_1` FOREIGN KEY (
+                                                                            `chat_send_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_chat` ADD CONSTRAINT `FK_tb_user_TO_tb_chat_2` FOREIGN KEY (
+                                                                            `chat_receive_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counsel_offer_1` FOREIGN KEY (
+                                                                                                        `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer` ADD CONSTRAINT `FK_tb_user_TO_tb_counsel_offer_1` FOREIGN KEY (
+                                                                                              `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire` ADD CONSTRAINT `FK_tb_user_TO_tb_counselor_hire_1` FOREIGN KEY (
+                                                                                                `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_evaluation` ADD CONSTRAINT `FK_tb_chat_TO_tb_evaluation_1` FOREIGN KEY (
+                                                                                        `chat_seq`
+    )
+    REFERENCES `tb_chat` (
+                          `chat_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_file` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counselor_hire_file_1` FOREIGN KEY (
+                                                                                                                    `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_file` ADD CONSTRAINT `FK_tb_file_TO_tb_counselor_hire_file_1` FOREIGN KEY (
+                                                                                                          `file_seq`
+    )
+    REFERENCES `tb_file` (
+                          `file_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer_file` ADD CONSTRAINT `FK_tb_file_TO_tb_counsel_offer_file_1` FOREIGN KEY (
+                                                                                                        `file_seq`
+    )
+    REFERENCES `tb_file` (
+                          `file_seq`
+        );
+
+ALTER TABLE `tb_counsel_offer_file` ADD CONSTRAINT `FK_tb_counsel_offer_TO_tb_counsel_offer_file_1` FOREIGN KEY (
+                                                                                                                 `counsel_offer_seq`
+    )
+    REFERENCES `tb_counsel_offer` (
+                                   `counsel_offer_seq`
+        );
+
+ALTER TABLE `tb_user_profile_file` ADD CONSTRAINT `FK_tb_file_TO_tb_user_profile_file_1` FOREIGN KEY (
+                                                                                                      `file_seq`
+    )
+    REFERENCES `tb_file` (
+                          `file_seq`
+        );
+
+ALTER TABLE `tb_user_profile_file` ADD CONSTRAINT `FK_tb_user_TO_tb_user_profile_file_1` FOREIGN KEY (
+                                                                                                      `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_notification` ADD CONSTRAINT `FK_tb_chat_TO_tb_notification_1` FOREIGN KEY (
+                                                                                            `chat_seq`
+    )
+    REFERENCES `tb_chat` (
+                          `chat_seq`
+        );
+
+ALTER TABLE `tb_notification` ADD CONSTRAINT `FK_tb_user_TO_tb_notification_1` FOREIGN KEY (
+                                                                                            `user_seq`
+    )
+    REFERENCES `tb_user` (
+                          `user_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_age` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counselor_hire_age_1` FOREIGN KEY (
+                                                                                                                  `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_age` ADD CONSTRAINT `FK_tb_counselor_age_TO_tb_counselor_hire_age_1` FOREIGN KEY (
+                                                                                                                 `counselor_age_range_seq`
+    )
+    REFERENCES `tb_counselor_age` (
+                                   `counselor_age_range_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_type` ADD CONSTRAINT `FK_tb_counselor_hire_TO_tb_counselor_hire_type_1` FOREIGN KEY (
+                                                                                                                    `counselor_hire_seq`
+    )
+    REFERENCES `tb_counselor_hire` (
+                                    `counselor_hire_seq`
+        );
+
+ALTER TABLE `tb_counselor_hire_type` ADD CONSTRAINT `FK_tb_counselor_type_TO_tb_counselor_hire_type_1` FOREIGN KEY (
+                                                                                                                    `counselor_type_seq`
+    )
+    REFERENCES `tb_counselor_type` (
+                                    `counselor_type_seq`
+        );

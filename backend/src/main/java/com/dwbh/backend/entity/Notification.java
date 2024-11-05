@@ -20,11 +20,23 @@ public class Notification extends BaseDateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationSeq;
 
-    private Long chatSeq;
-    private Long userSeq;
+    @OneToOne
+    @JoinColumn(name = "chatSeq")
+    private Chat chat;
+
+    @ManyToOne
+    @JoinColumn(name = "userSeq")
+    private User user;
+
+    @Enumerated(EnumType.STRING)
     private YnType notificationCheckYn = YnType.N;
 
     public void updateNotificationCheckYn() {
         this.notificationCheckYn = YnType.Y;
+    }
+
+    public void builder(Chat chat, User user) {
+        this.chat = chat;
+        this.user = user;
     }
 }

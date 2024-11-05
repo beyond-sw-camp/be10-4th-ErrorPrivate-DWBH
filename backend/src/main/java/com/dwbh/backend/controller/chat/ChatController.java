@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,10 +22,10 @@ public class ChatController  {
 
     @PostMapping
     @Operation(summary = "채팅 추가")
-    public String createChat (@RequestBody ChatDTO.ChatRequestDTO chatRequestDTO) {
+    public ResponseEntity<Boolean> createChat (@RequestBody ChatDTO.ChatRequestDTO chatRequestDTO) {
         boolean result = chatService.createChat(chatRequestDTO);
 
-        return result ? "채팅 추가 성공~" : "createChat 실패";
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Schema(description = "평가 DTO")
 public class EvaluationDTO {
     private Long evaluationSeq;
-    private Chat chatSeq;
+    private Chat chat;
     private Integer evaluationSatisfaction;
     private Integer evaluationCommunication;
     private Integer evaluationKindness;
