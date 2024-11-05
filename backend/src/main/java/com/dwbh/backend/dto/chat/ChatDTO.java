@@ -1,6 +1,7 @@
 package com.dwbh.backend.dto.chat;
 
 import com.dwbh.backend.common.entity.YnType;
+import com.dwbh.backend.dto.user.UserDTO;
 import lombok.Data;
 import lombok.Getter;
 
@@ -21,14 +22,15 @@ public class ChatDTO {
         private Long receiveSeq;
     }
 
+    @Getter
     public static class ChatResponseDTO {
 
         private Long chatSeq;
-        private Long sendSeq;
-        private Long receiveSeq;
-        private String delDate;
+        private String endDate;
+        private String modDate;
         private YnType readYn;
-        private String sendUserName;
+        private UserDTO sendUser;
+        private UserDTO receiveUser;
         private String lastMessage;
         private boolean showEvaluation;
 
