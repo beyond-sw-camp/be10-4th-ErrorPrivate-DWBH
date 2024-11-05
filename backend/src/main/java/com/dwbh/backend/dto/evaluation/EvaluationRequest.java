@@ -1,7 +1,6 @@
 package com.dwbh.backend.dto.evaluation;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +20,4 @@ public class EvaluationRequest {
 
     @NotNull
     private final Integer evaluationKindness;
-
 }

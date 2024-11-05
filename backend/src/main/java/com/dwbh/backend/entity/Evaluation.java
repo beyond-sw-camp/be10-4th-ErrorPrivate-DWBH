@@ -53,4 +53,9 @@ public class Evaluation {
         if (evaluationKindness != null) this.evaluationKindness = evaluationKindness;
         if (evaluationScore != null) this.evaluationScore = evaluationScore;
     }
+
+    public void builder(Chat chat, Double evaluationScore) {
+        this.chat = chat;
+        this.evaluationScore = evaluationScore;
+    }
 }

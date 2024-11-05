@@ -1,17 +1,16 @@
 package com.dwbh.backend.service.evaluation;
 
-import com.dwbh.backend.dto.evaluation.EvaluationDTO;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Evaluation;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
-import com.dwbh.backend.repository.ChatRepository;
+import com.dwbh.backend.mapper.EvaluationMapper;
+import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.evaluation.EvaluationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class EvaluationService {
 
     private final EvaluationRepository evaluationRepository;
-    private final ModelMapper modelMapper;
     private final ChatRepository chatRepository;
+    private final EvaluationMapper evaluationMapper;
 
     // 채팅방번호에 해당하는 평가 조회
     @Transactional
@@ -29,11 +28,9 @@ public class EvaluationService {
         Evaluation evaluation = evaluationRepository.findByChatSeq(chatSeq);
 
         // 엔티티를 DTO 로 변환
-        EvaluationDTO evaluationDTO = modelMapper.map(evaluation, EvaluationDTO.class);
+        EvaluationResponse evaluationResponse = evaluationMapper.toDTO(evaluation);
 
-        return EvaluationResponse.builder() // 이 클래스가 가지고 있는 필드값들이 메서드에 자동완성, 세팅을 여기서 함
-                .evaluation(evaluationDTO)
-                .build();
+        return evaluationResponse;
     }
 
     // 평가 생성
@@ -45,23 +42,18 @@ public class EvaluationService {
             throw new CustomException(ErrorCodeType.COMMON_ERROR);
         }
 
-        // EvaluationRequest를 EvaluationDTO로 매핑하고 추가 연산 수행
-        EvaluationDTO evaluationDTO = modelMapper.map(evaluationRequest, EvaluationDTO.class);
-
-        // 평가 점수 연산 후 DTO 에 추가
+        // 평가 점수 연산
         Double evaluationScore = (double) (
                 (evaluationRequest.getEvaluationCommunication()
                         + evaluationRequest.getEvaluationKindness()
                         + evaluationRequest.getEvaluationSatisfaction()) / 3);
-        evaluationDTO.setEvaluationScore(evaluationScore);
 
-        // chat 엔티티 받아오고 DTO 에 추가
+        // chat 엔티티 받아옴
         Chat chat = chatRepository.findById(evaluationRequest.getChatSeq())
                 .orElseThrow(() -> new EntityNotFoundException("채팅방이 없습니다.."));
-        evaluationDTO.setChat(chat);
 
         // Dto to Entity
-        Evaluation evaluation = modelMapper.map(evaluationDTO, Evaluation.class);
+        Evaluation evaluation = evaluationMapper.toEntity(evaluationRequest, chat, evaluationScore);
 
         // entity 저장
         evaluationRepository.save(evaluation);
