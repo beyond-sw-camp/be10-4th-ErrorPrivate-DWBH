@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.dwbh.backend.entity.QNotification.notification;
@@ -21,7 +22,8 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
         return jpaQueryFactory
                 .selectFrom(notification)
                 .join(notification.user, user)
-                .where(user.userSeq.eq(userSeq))
+                .where(user.userSeq.eq(userSeq)
+                        .and(notification.regDate.after(LocalDateTime.now().minusDays(14))))
                 .fetch();
     }
 }
