@@ -10,7 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Slf4j
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         log.info("::::::::::: Registering stomp endpoints :::::::::::");
 
         registry.addEndpoint("/stomp/chat")
-                .setAllowedOrigins("*");
+                .setAllowedOrigins("http://localhost:8089");
     }
 
     @Override

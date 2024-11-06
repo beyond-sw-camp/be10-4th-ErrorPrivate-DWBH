@@ -29,7 +29,7 @@ public class ChatMessageRepository {
     }
 
     public ChatRoomDTO createChatRoomDTO(String name){
-        // TODO 아영 - 몽고 db 연동
+        // TODO 아영 - 몽고 db 연동해야함
         ChatRoomDTO room = ChatRoomDTO.create(name);
         chatRoomDTOMap.put(room.getRoomId(), room);
 
