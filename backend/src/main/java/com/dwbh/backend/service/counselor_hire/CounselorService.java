@@ -46,9 +46,7 @@ public class CounselorService {
             CounselorHire counselorHire = counselorRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
-            counselorHire.setCounselorHireTitle(updatePostReqDTO.getCounselorHireTitle());
-            counselorHire.setCounselorHireContent(updatePostReqDTO.getCounselorHireContent());
-            counselorHire.setCounselorHireCounselorGender(updatePostReqDTO.getCounselorHireCounselorGender());
+            counselorHire.updateCounselor(updatePostReqDTO.getHireTitle(), updatePostReqDTO.getHireContent(), updatePostReqDTO.getHireGender());
 
             counselorRepository.save(counselorHire);
         }
