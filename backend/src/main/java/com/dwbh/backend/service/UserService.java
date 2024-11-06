@@ -1,6 +1,7 @@
 package com.dwbh.backend.service;
 
 import com.dwbh.backend.dto.UserDetailResponse;
+import com.dwbh.backend.dto.user.UserModifyResponse;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.repository.user.UserRepository;
 import com.dwbh.backend.dto.CreateUserRequest;
@@ -56,5 +57,10 @@ public class UserService implements UserDetailsService {
     public UserDetailResponse getUserDetail(Long userSeq) {
 
         return userRepositoryImp.findUserDetailResponse(userSeq);
+    }
+
+    public UserModifyResponse getUserModify(Long userSeq) {
+
+        return modelMapper.map(userRepository.findByUserSeq(userSeq), UserModifyResponse.class);
     }
 }

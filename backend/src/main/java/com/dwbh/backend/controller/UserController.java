@@ -1,7 +1,11 @@
 package com.dwbh.backend.controller;
 
+import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.dto.CreateUserRequest;
 import com.dwbh.backend.dto.UserDetailResponse;
+import com.dwbh.backend.dto.user.UserModifyResponse;
+import com.dwbh.backend.exception.CustomException;
+import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +25,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // 회원가입
     @PostMapping("/user")
     @Operation(summary = "회원 등록")
     public ResponseEntity<Void> createUser(
@@ -32,7 +35,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    // 회원 상세 조회
     @GetMapping("/user/{userSeq}")
     @Operation(summary = "회원 상세 조회")
     public ResponseEntity<UserDetailResponse> getUser(
@@ -40,5 +42,14 @@ public class UserController {
         UserDetailResponse response = userService.getUserDetail(userSeq);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user/{userSeq}/modify")
+    @Operation(summary = "회원 정보 수정 조회")
+    public ResponseEntity<UserModifyResponse> getUserModify(
+            @PathVariable Long userSeq) {
+        if (userService.getUserSeq(AuthUtil.getAuthUser()).equals(userSeq)) {
+            return ResponseEntity.ok(userService.getUserModify(userSeq));
+        } else { throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR); }
     }
 }

@@ -10,6 +10,7 @@ public class AuthUtil {
 
     public static String getAuthUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((UserDetails) authentication.getPrincipal()).getUsername();
+        if (authentication == null) { return null;}
+        else { return ((UserDetails) authentication.getPrincipal()).getUsername(); }
     }
 }

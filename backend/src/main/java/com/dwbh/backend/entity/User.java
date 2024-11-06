@@ -34,10 +34,6 @@ public class User {
     private BigDecimal userTemperature;
     private LocalDateTime userDelDate;
 
-    @OneToOne
-    @JoinColumn(name = "userSeq")
-    private UserProfileFile userProfileFile;
-
     // 패스워드 암호화
     public void encryptPassword(String encodedPwd) {
         this.userPassword = encodedPwd;
