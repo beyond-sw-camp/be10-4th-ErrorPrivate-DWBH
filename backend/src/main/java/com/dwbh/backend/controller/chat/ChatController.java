@@ -1,6 +1,7 @@
 package com.dwbh.backend.controller.chat;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
+import com.dwbh.backend.dto.chat.ChatRoomDTO;
 import com.dwbh.backend.service.chat.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +33,12 @@ public class ChatController  {
     @Operation(summary = "채팅 목록 조회")
     public List<ChatDTO.Response> readChatList () {
         return chatService.readChatList();
+    }
+
+    @GetMapping("/room")
+    @Operation(summary = "채팅방 조회")
+    public ChatRoomDTO readChatRoom (String roomId) {
+        return chatService.readChatRoom(roomId);
     }
 
 

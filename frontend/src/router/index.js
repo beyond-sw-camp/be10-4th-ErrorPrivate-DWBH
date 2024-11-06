@@ -6,17 +6,6 @@ const routes = [
         component: () => import("@/views/main/MainView.vue")
     },
     {
-        path: '/chat-list',
-        name: 'ChatList',
-        component: () => import("@/views/chat/ChatView.vue")
-    },
-    {
-        path: '/chat/:chatId',
-        name: 'ChatRoom',
-        component: () => import("@/views/chat/ChatView.vue")
-    },
-
-    {
         path: '/signup',
         name: 'Signup',
         component: () => import("@/views/user/SignupView.vue")

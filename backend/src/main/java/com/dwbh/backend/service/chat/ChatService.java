@@ -1,6 +1,7 @@
 package com.dwbh.backend.service.chat;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
+import com.dwbh.backend.dto.chat.ChatRoomDTO;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Notification;
@@ -8,6 +9,7 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.ChatMapper;
 import com.dwbh.backend.mapper.NotificationMapper;
+import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final ChatRepository chatRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final NotificationRepository notificationRepository;
     private final ChatMapper chatMapper;
     private final NotificationMapper notificationMapper;
@@ -82,4 +85,20 @@ public class ChatService {
 
         return chatResponseList;
     }
+
+    public ChatRoomDTO readChatRoom(String roomId) {
+        ChatRoomDTO chatResponse = null;
+        try {
+
+            //TODO 아영 - mongodb에서 채팅 내용 가져오기
+            chatResponse = chatMessageRepository.findRoomById(roomId);
+
+        } catch (Exception e) {
+            log.error("readChatRoom Error : {}", e.getMessage());
+            throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
+        }
+
+        return chatResponse;
+    }
+
 }

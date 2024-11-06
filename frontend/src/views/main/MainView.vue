@@ -1,18 +1,11 @@
 <script setup>
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
-
-function goToChatList() {
-  router.push({ name: 'ChatList' });
-}
 </script>
 
 
 <template>
   <div class="main">
     <h1>메인 페이지</h1>
-    <button @click="goToChatList">채팅 목록으로 이동</button>
   </div>
 </template>
 

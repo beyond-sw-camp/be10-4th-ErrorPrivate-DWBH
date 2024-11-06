@@ -18,6 +18,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,11 +40,14 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers(new AntPathRequestMatcher("/swagger"),
                                         new AntPathRequestMatcher("/swagger**/**"),
                                         new AntPathRequestMatcher("/v3/api-docs/**"),
+                                        new AntPathRequestMatcher("/stomp/chat"),
                                         new AntPathRequestMatcher("/api/v1/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/**"))
                                 .authenticated()
@@ -90,7 +94,7 @@ public class SecurityConfig {
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:8089"); // 허용할 도메인
+        config.addAllowedOrigin("http://localhost:5173"); // 허용할 도메인
         config.addAllowedHeader("*"); // 모든 헤더 허용
         config.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
         config.addExposedHeader("token"); // 서버측에서 보내는 헤더에 대한 허용 설정
