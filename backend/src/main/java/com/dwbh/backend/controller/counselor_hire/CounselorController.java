@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/counselor/")
+@RequestMapping("/api/v1/counselor")
 @Tag(name = "게시판", description = "게시판 API")
 public class CounselorController {
 
