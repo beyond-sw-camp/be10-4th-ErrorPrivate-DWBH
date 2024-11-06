@@ -86,7 +86,7 @@ CREATE TABLE tb_evaluation (
 CREATE TABLE tb_file (
                          file_seq bigint NOT NULL AUTO_INCREMENT COMMENT '파일 번호',
                          file_name varchar(100) NOT NULL COMMENT '파일 이름',
-                         file_type varchar(10) NOT NULL COMMENT '파일 타입(image/video)',
+                         file_type varchar(30) NOT NULL COMMENT '파일 타입(image/video)',
                          file_path varchar(2000) NOT NULL COMMENT '파일 주소',
                          file_content_type varchar(50) NOT NULL COMMENT '(image/jpg)',
                          file_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '파일 등록일',
