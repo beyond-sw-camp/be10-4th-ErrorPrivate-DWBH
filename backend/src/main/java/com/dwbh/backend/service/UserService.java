@@ -1,8 +1,10 @@
 package com.dwbh.backend.service;
 
+import com.dwbh.backend.dto.UserDetailResponse;
 import com.dwbh.backend.entity.User;
-import com.dwbh.backend.repository.UserRepository;
+import com.dwbh.backend.repository.user.UserRepository;
 import com.dwbh.backend.dto.CreateUserRequest;
+import com.dwbh.backend.repository.user.CustomUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +24,7 @@ public class UserService implements UserDetailsService {
 
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final CustomUserRepository userRepositoryImp;
     private final UserRepository userRepository;
 
     // 회원 등록
@@ -47,5 +50,11 @@ public class UserService implements UserDetailsService {
     public Long getUserSeq(String Email) {
         User user = userRepository.findByUserEmail(Email).orElseThrow();
         return user.getUserSeq();
+    }
+
+    // 회원 상세 조회
+    public UserDetailResponse getUserDetail(Long userSeq) {
+
+        return userRepositoryImp.findUserDetailResponse(userSeq);
     }
 }
