@@ -2,7 +2,8 @@
 INSERT INTO tb_user (user_email, user_password, user_nickname, user_gender, user_birthday, user_mbti, user_status, user_temperature)
 VALUES
     ('test1@example.com', 'password1', 'user1', 'male', '1990-01-01', 'INTJ', 'activate', 36.5),
-    ('test2@example.com', 'password2', 'user2', 'female', '1992-02-02', 'ENFP', 'activate', 36.8);
+    ('test2@example.com', 'password2', 'user2', 'female', '1992-02-02', 'ENFP', 'activate', 36.8),
+    ('test3@example.com', 'password3', 'user3', 'male', '1999-09-09', 'ENTP', 'activate', 36.50);
 
 -- tb_counselor_hire 테이블 더미 데이터
 INSERT INTO tb_counselor_hire (user_seq, counselor_hire_title, counselor_hire_content, counselor_hire_counselor_gender)

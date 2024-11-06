@@ -33,7 +33,7 @@ public class CounselorHire extends BaseDateEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_seq", nullable = false)
-    private User userSeq;
+    private User user;
 
     @Column(name = "counselor_hire_title", nullable = false)
     private String hireTitle;
@@ -49,11 +49,11 @@ public class CounselorHire extends BaseDateEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime delDate;
 
-    @OneToMany(mappedBy = "hireSeq", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "hire", cascade = CascadeType.REMOVE)
     private List<CounselOffer> offers = new ArrayList<>();
 
     public void updateUser(User foundUser){
-        this.userSeq = foundUser;
+        this.user = foundUser;
     }
 
     public void updateCounselor(String counselorHireTitle, String counselorHireContent, String counselorHireCounselorGender) {

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
         @AttributeOverride(name = "modDate", column = @Column(name = "counsel_offer_mod_date"))
 })
 @SQLDelete(sql = "UPDATE tb_counsel_offer SET counsel_offer_del_date = NOW() WHERE counsel_offer_seq = ?")
+@Setter
 public class CounselOffer extends BaseDateEntity {
 
     @Id
@@ -27,17 +28,13 @@ public class CounselOffer extends BaseDateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long offerSeq;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "counselor_hire_seq", nullable = false)
-//    private CounselorHire hireSeq;
-    @Column(name = "counselor_hire_seq", nullable = false)
-    private Long hireSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_hire_seq", nullable = false)
+    private CounselorHire hire;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_seq", nullable = false)
-//    private User userSeq;
-    @Column(name = "user_seq", nullable = false)
-    private Long userSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_seq", nullable = false)
+    private User user;
 
     @Column(name = "counsel_offer_content", nullable = false)
     private String offerContent;
@@ -50,7 +47,7 @@ public class CounselOffer extends BaseDateEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime delDate;
 
-    @OneToOne(mappedBy = "counselOffer", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = true)   // 파일 선택, 작성,수정시
+    @OneToOne(mappedBy = "counselOffer", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true, optional = true)   // 파일 선택, 작성,수정시
     private CounselOfferFile offerFile;
 
     // 파일 첨부를 위한 메서드
@@ -58,20 +55,21 @@ public class CounselOffer extends BaseDateEntity {
         this.offerFile = offerFile;
     }
 
-    // 게시글 작성 시 userSeq를 Entity 에 담는 메서드
-//    public void putUserSeq(User userSeq) {
-//        this.userSeq = userSeq;
-//    }
-    public void putUserSeq(long userSeq) {
-        this.userSeq = userSeq;
+    // 댓글 작성 시 userSeq를 Entity 에 담는 메서드
+    public void putUserSeq(User userSeq) {
+        this.user = userSeq;
     }
 
-    // 게시글 작성 시 hireSeq Entity 에 담는 메서드
-//    public void putHireSeq(CounselorHire hireSeq) {
-//        this.hireSeq = hireSeq;
-//    }
-    public void putHireSeq(long hireSeq) {
-        this.hireSeq = hireSeq;
+    // 댓글 작성 시 hireSeq Entity 에 담는 메서드
+    public void putHireSeq(CounselorHire hireSeq) {
+        this.hire = hireSeq;
+    }
+
+    // 댓글 수정을 위한 메서드
+    public void updateContent(String content, YnType privateYn) {
+        this.offerContent = content;
+        this.offerPrivateYn = privateYn;
+        // 수정일 자동 등록(댓글 내용이나 비밀글 변경시)
     }
 
 
