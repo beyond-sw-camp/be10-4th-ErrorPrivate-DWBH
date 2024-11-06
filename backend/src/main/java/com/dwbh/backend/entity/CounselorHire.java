@@ -2,6 +2,7 @@ package com.dwbh.backend.entity;
 
 import com.dwbh.backend.common.entity.Gender;
 import com.dwbh.backend.common.entity.BaseDateEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -45,10 +46,21 @@ public class CounselorHire extends BaseDateEntity {
     private Gender hireGender;
 
     @Column(name = "counselor_hire_del_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime delDate;
 
     @OneToMany(mappedBy = "hireSeq", cascade = CascadeType.REMOVE)
     private List<CounselOffer> offers = new ArrayList<>();
 
+    public void updateUser(User foundUser){
+        this.userSeq = foundUser;
+    }
+
+    public void updateCounselor(String counselorHireTitle, String counselorHireContent, String counselorHireCounselorGender) {
+        this.hireTitle = counselorHireTitle;
+        this.hireContent = counselorHireContent;
+        this.hireGender = Gender.valueOf(counselorHireCounselorGender);
+    }
 
 }
+
