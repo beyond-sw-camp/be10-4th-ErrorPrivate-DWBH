@@ -36,7 +36,7 @@ class ChatServiceTest {
             Long counselOfferSeq, Long sendSeq, Long receiveSeq
     ) {
 
-        ChatDTO.ChatRequestDTO chatRequestDTO = new ChatDTO.ChatRequestDTO(
+        ChatDTO.Create chatRequestDTO = new ChatDTO.Create(
                 counselOfferSeq,
                 sendSeq,
                 receiveSeq
