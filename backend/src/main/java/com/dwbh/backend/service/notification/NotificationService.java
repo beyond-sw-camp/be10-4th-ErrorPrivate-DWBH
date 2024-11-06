@@ -46,7 +46,7 @@ public class NotificationService {
     public List<NotificationDTO> readNotificationList() {
         // 토큰에서 가져올 임시 userSeq 값
         Long userSeq = 1L;
-        List<Notification> notificationList = notificationRepository.findByUserSeq(userSeq);
+         List<Notification> notificationList = notificationRepository.findByUserSeq(userSeq);
 
         List<NotificationDTO> notificationDTOList = notificationList.stream()
                 .map(notificationMapper::toDTO)
