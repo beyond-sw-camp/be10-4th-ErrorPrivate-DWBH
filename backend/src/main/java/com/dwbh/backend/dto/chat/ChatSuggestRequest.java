@@ -2,10 +2,15 @@ package com.dwbh.backend.dto.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
+@ToString
 public class ChatSuggestRequest {
 
     private List<Content> contents;
@@ -65,24 +70,28 @@ public class ChatSuggestRequest {
 
     @Getter
     @AllArgsConstructor
+    @ToString
     private static class Content {
         private List<Part> parts;
     }
 
     @Getter
     @AllArgsConstructor
+    @ToString
     private static class TextPart implements Part {
         public String text;
     }
 
     @Getter
     @AllArgsConstructor
+    @ToString
     private static class InlineDataPart implements Part {
         public InlineData inlineData;
     }
 
     @Getter
     @AllArgsConstructor
+    @ToString
     public static class InlineData {
         private String mimeType;
         private String data;
