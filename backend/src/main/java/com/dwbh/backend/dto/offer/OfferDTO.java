@@ -15,10 +15,13 @@ public class OfferDTO {
     private long offerSeq;  // 댓글 번호
     private long hireSeq;   // 게시글 번호
     private long userSeq;   // 댓글 작성자
+
     private String offerContent;    // 댓글 내용
     private YnType offerPrivateYn;  // 비밀 댓글 여부
+
     private LocalDateTime offerRegDate;     // 댓글 작성일
     private LocalDateTime offerModDate;     // 댓글 수정일
+    private LocalDateTime offerDelDate;     // 댓글 삭제일
 
     private UserSummaryDTO userSummary; // 회원정보(닉네임, 성별, 나이대, 사진)
 
