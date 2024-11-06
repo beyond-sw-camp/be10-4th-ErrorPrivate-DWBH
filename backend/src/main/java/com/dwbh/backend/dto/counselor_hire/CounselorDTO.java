@@ -4,12 +4,11 @@
     import lombok.*;
 
     @Getter
-    @Setter
     public class CounselorDTO {
-        @Getter
-        private String counselorHireTitle;
-        @Getter
-        private String counselorHireContent;
-        @Getter
-        private String counselorHireCounselorGender;
+
+        private String hireTitle;
+
+        private String hireContent;
+
+        private String hireGender;
     }
