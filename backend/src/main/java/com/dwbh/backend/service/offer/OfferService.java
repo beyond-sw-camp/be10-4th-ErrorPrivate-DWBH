@@ -33,6 +33,7 @@ public class OfferService {
     private final CounselorRepository hireRepository;
     private static final String UPLOAD_DIR = "uploads"; // 파일 저장 디렉토리
 
+    // 댓글 작성
     @Transactional
     public OfferDTO  createOffer(Long hireSeq, CreateOrUpdateOfferRequest request, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
@@ -82,6 +83,7 @@ public class OfferService {
         return response;
     }
 
+    // 댓글 수정
     @Transactional
     public OfferDTO updateOffer(Long hireSeq, Long offerSeq, CreateOrUpdateOfferRequest request, MultipartFile newFile) {
         log.info("--------------댓글수정 서비스 진입----------------");
@@ -147,5 +149,32 @@ public class OfferService {
 
         // 4. 엔티티를 DTO로 변환하여 반환
         return modelMapper.map(offer, OfferDTO.class);
+    }
+
+    /* 댓글 삭제 */
+    @Transactional
+    public void deleteOffer(Long offerSeq) {
+
+
+
+        // 1. 삭제할 댓글 조회
+        CounselOffer offer = offerRepository.findById(offerSeq)
+                .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
+
+        // 2. 댓글과 연결된 파일이 있는 경우 처리
+        if (offer.getOfferFile() != null) {
+            // 2-1. 파일 소프트 삭제
+//            File file = offer.getOfferFile().getFile();
+//            fileRepository.delete(file);  // @SQLDelete로 소프트 삭제 처리됨
+            fileRepository.softDeleteById(offer.getOfferFile().getFile().getFileSeq(),  LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
+            // 2-2. `CounselOfferFile` 실제 삭제
+            offer.setOfferFile(null);  // 연관 관계를 끊어주기
+            fileRepository.delete(offer.getOfferFile().getFile());  // 실제 삭제
+        }
+
+        // 3. 댓글 소프트 삭제 처리 (혹은 실제 삭제, 비즈니스 규칙에 맞춰 선택)
+        offerRepository.delete(offer);  // @SQLDelete로 소프트 삭제 처리됨
+
     }
 }

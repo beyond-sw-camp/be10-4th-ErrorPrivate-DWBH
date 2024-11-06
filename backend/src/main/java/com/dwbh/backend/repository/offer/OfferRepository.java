@@ -8,4 +8,6 @@ public interface OfferRepository {
     CounselOffer save(CounselOffer offer);
 
     Optional<CounselOffer> findById(Long offerSeq);
+
+    void delete(CounselOffer offer);
 }
