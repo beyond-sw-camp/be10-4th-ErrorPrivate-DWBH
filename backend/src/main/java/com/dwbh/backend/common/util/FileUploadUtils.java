@@ -69,6 +69,14 @@ public class FileUploadUtils {
                 case "jpeg":
                 case "png":
                 case "gif":
+                case "ai":
+                case "psd":
+                case "tiff":
+                case "tif":
+                case "svg":
+                case "bmp":
+                case "eps":
+                case "raw":
                     mimeType = "image/" + extension;
                     break;
                 case "mp4":
@@ -82,6 +90,14 @@ public class FileUploadUtils {
         }
 
         return mimeType;
+    }
+
+    /*
+     * 파일이 이미지인지 확인
+     */
+    public static boolean isImageFile(MultipartFile file) {
+        String mimeType = file.getContentType();
+        return mimeType != null && (mimeType.startsWith("image/"));
     }
 
 }

@@ -52,8 +52,13 @@ public class OfferService {
         offer.putHireSeq(hire);
 
         // 3. 파일이 포함된 경우 파일 먼저 저장
+        // 3-1. 이미지 파일 여부 확인
+        if (file != null && !FileUploadUtils.isImageFile(file)) {
+            throw new CustomException(ErrorCodeType.INVALID_FILE_TYPE);
+        }
+
+        // 3-2. 파일 저장
         if (file != null) {
-            // 파일 저장
             String savedFileName = FileUploadUtils.saveFile(UPLOAD_DIR, file);
 
             // MIME 타입 추출
@@ -114,7 +119,12 @@ public class OfferService {
         // 2. 댓글 내용 및 비밀 여부 수정
         offer.updateContent(request.getOfferContent(), request.getOfferPrivateYn());
 
-        // 3. 기존 파일 삭제 및 새 파일 추가
+        // 3-1. 이미지 파일 여부 확인
+        if (newFile != null && !FileUploadUtils.isImageFile(newFile)) {
+            throw new CustomException(ErrorCodeType.INVALID_FILE_TYPE);
+        }
+
+        // 3-2. 기존 파일 삭제 및 새 파일 추가
         if (newFile != null) {
             // 기존 파일이 있는 경우 소프트 딜리트 처리
             if (offer.getOfferFile() != null) {

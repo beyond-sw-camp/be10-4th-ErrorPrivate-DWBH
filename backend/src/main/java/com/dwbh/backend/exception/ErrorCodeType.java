@@ -28,6 +28,7 @@ public enum ErrorCodeType {
     // 파일 관련 오류
     FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_ERROR_001", "파일 업로드에 실패했습니다"),
     FILE_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_ERROR_002", "파일 삭제에 실패했습니다"),
+    INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE_ERROR_003", "첨부할 수 없는 파일형식입니다."),
 
     // 게시글 관련 오류
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "OFFER_ERROR_001", "댓글을 찾을 수 없습니다."),
