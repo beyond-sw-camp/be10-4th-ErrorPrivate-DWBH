@@ -22,15 +22,15 @@ public class ChatController  {
 
     @PostMapping
     @Operation(summary = "채팅 추가")
-    public ResponseEntity<Boolean> createChat (@RequestBody ChatDTO.ChatRequestDTO chatRequestDTO) {
-        boolean result = chatService.createChat(chatRequestDTO);
+    public ResponseEntity<Boolean> createChat (@RequestBody ChatDTO.Create chatCreateDTO) {
+        boolean result = chatService.createChat(chatCreateDTO);
 
         return ResponseEntity.ok(result);
     }
 
     @GetMapping
     @Operation(summary = "채팅 목록 조회")
-    public List<ChatDTO.ChatResponseDTO> readChatList () {
+    public List<ChatDTO.Response> readChatList () {
         return chatService.readChatList();
     }
 

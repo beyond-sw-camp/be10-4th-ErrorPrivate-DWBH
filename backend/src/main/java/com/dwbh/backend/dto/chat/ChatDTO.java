@@ -12,18 +12,28 @@ public class ChatDTO {
     private Long counselOfferSeq;
     private Long sendSeq;
     private Long receiveSeq;
-    private String delDate;
+    private String endDate;
     private YnType readYn;
 
     @Getter
-    public static class ChatRequestDTO {
-        private Long counselOfferSeq;
-        private Long sendSeq;
-        private Long receiveSeq;
+    public static class Search {
+
+        private Long userSeq;
+        private YnType readYn;
+
     }
 
     @Getter
-    public static class ChatResponseDTO {
+    public static class Create {
+
+        private Long counselOfferSeq;
+        private Long sendSeq;
+        private Long receiveSeq;
+
+    }
+
+    @Getter
+    public static class Response {
 
         private Long chatSeq;
         private String endDate;
@@ -33,18 +43,6 @@ public class ChatDTO {
         private UserDTO receiveUser;
         private String lastMessage;
         private boolean showEvaluation;
-
-    }
-
-    public static class ChatEndDTO {
-
-        private String delDate;
-
-    }
-
-    public static class ChatReadDTO {
-
-        private YnType readYn;
 
     }
 
