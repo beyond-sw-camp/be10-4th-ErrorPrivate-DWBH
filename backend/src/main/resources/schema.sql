@@ -32,7 +32,7 @@ CREATE TABLE tb_counsel_offer (
                                   counselor_hire_seq bigint NOT NULL COMMENT '상담사 구인 번호',
                                   user_seq bigint NOT NULL COMMENT '상담 제안 댓글 작성자',
                                   counsel_offer_content varchar(1500) NOT NULL COMMENT '상담 제안 내용',
-                                  counsel_offer_private_yn enum('Y', 'N') NOT NULL DEFAULT 'N' COMMENT '상담 제안 비밀댓글 여부',
+                                  counsel_offer_private_yn enum('Y', 'N') NOT NULL COMMENT '상담 제안 비밀댓글 여부',
                                   counsel_offer_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '상담 제안 작성일',
                                   counsel_offer_mod_date timestamp NULL COMMENT '상담 제안 수정일',
                                   counsel_offer_del_date timestamp NULL COMMENT '상담 제안 삭제일',
