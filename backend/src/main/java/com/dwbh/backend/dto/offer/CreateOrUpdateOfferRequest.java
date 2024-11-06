@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-@Schema(description = "댓글 작성 DTO")
-public class CreateOfferRequest {
+@ToString
+@Schema(description = "댓글 작성 및 수정 DTO")
+public class CreateOrUpdateOfferRequest {
 
     private long userSeq;   // 댓글 작성자
     @NotBlank(message = "댓글 내용은 필수입니다.")
