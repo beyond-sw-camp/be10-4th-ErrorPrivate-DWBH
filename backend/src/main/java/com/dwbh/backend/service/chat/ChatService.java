@@ -12,11 +12,13 @@ import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,17 +29,18 @@ public class ChatService {
     private final NotificationRepository notificationRepository;
     private final ChatMapper chatMapper;
     private final NotificationMapper notificationMapper;
+    private final ModelMapper modelMapper;
 
     @Transactional
-    public boolean createChat(ChatDTO.ChatRequestDTO chatRequestDTO) {
+    public boolean createChat(ChatDTO.Create chatCreateDTO) {
         boolean result = false;
         try {
-            if (ObjectUtils.isEmpty(chatRequestDTO)) {
-                log.error("createChat Error chatRequestDTO : {} ", chatRequestDTO);
+            if (ObjectUtils.isEmpty(chatCreateDTO)) {
+                log.error("createChat Error chatCreateDTO : {} ", chatCreateDTO);
                 throw new CustomException(ErrorCodeType.CHAT_CREATE_ERROR);
             }
 
-            Chat chat = chatMapper.toEntity(chatRequestDTO);
+            Chat chat = chatMapper.toEntity(chatCreateDTO);
 
             chatRepository.save(chat);
 
@@ -60,19 +63,23 @@ public class ChatService {
         return result;
     }
 
-    public List<ChatDTO.ChatResponseDTO> readChatList() {
-        List<ChatDTO.ChatResponseDTO> chatResponseDTOList = null;
+    public List<ChatDTO.Response> readChatList() {
+        List<ChatDTO.Response> chatResponseList = null;
         try {
 
              List<Chat> chatList = chatRepository.findAll();
 
-             //TODO 아영 - 이제 어떻게 해서 조인해서 가져올건지?
+             //TODO 아영 - mongodb에서 last message 가져오기
+
+            chatResponseList = chatList.stream()
+                    .map(chat -> modelMapper.map(chat, ChatDTO.Response.class))
+                    .collect(Collectors.toList()); //정렬은 최신순으로 바꾸기
 
         } catch (Exception e) {
             log.error("readChatList Error : {}", e.getMessage());
             throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
         }
 
-        return chatResponseDTOList;
+        return chatResponseList;
     }
 }
