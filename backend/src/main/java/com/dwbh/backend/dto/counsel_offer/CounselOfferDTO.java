@@ -15,5 +15,8 @@ public class CounselOfferDTO {
 
     private String counselOfferContent;
     private YnType counselOfferPrivateYn;
+
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
     private LocalDateTime counselOfferDelDate;
 }

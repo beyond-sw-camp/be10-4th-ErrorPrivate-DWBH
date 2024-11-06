@@ -4,6 +4,8 @@ import com.dwbh.backend.common.entity.YnType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class NotificationDTO {
@@ -12,6 +14,6 @@ public class NotificationDTO {
     private Long userSeq;
 
     private YnType notificationCheckYn;
-    private String notificationRegDate;
-    private String notificationModDate;
+    private LocalDateTime regDate;
+    private LocalDateTime modDate;
 }
