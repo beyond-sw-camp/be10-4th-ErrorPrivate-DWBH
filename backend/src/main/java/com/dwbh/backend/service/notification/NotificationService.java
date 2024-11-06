@@ -29,7 +29,7 @@ public class NotificationService {
     private final NotificationMapper notificationMapper;
 
     @Transactional
-    public ChatDTO.ChatResponseDTO readNotification(Long notificationSeq) {
+    public ChatDTO.Response readNotification(Long notificationSeq) {
         // 알림 읽음 여부 업데이트
         Notification notification = notificationRepository.findById(notificationSeq).orElseThrow(()-> new CustomException(ErrorCodeType.NOTICE_NOT_FOUND));
         notification.updateNotificationCheckYn();
@@ -37,7 +37,7 @@ public class NotificationService {
         Long chatSeq = notification.getChat().getChatSeq();
         Chat chat = chatRepository.findById(chatSeq).orElseThrow(() -> new CustomException(ErrorCodeType.CHAT_NOT_FOUND));
 
-        ChatDTO.ChatResponseDTO chatResponseDTO = modelMapper.map(chat, ChatDTO.ChatResponseDTO.class);
+        ChatDTO.Response chatResponseDTO = modelMapper.map(chat, ChatDTO.Response.class);
 
         log.info("chatResponseDTO : {}", chatResponseDTO);
         return chatResponseDTO;
