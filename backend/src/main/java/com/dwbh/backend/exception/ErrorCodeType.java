@@ -19,6 +19,7 @@ public enum ErrorCodeType {
 
     // user 관련 오류
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_ERROR_001", "사용자를 찾을 수 없습니다."),
+    INACTIVATE_USER(HttpStatus.NOT_FOUND, "USER_ERROR_002", "탈퇴된 회원입니다."),
 
     // chat 관련 오류
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_ERROR_001", "채팅방을 찾을 수 없습니다."),
@@ -28,6 +29,11 @@ public enum ErrorCodeType {
     FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_ERROR_001", "파일 업로드에 실패했습니다"),
     FILE_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_ERROR_002", "파일 삭제에 실패했습니다"),
 
+    // 게시글 관련 오류
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "OFFER_ERROR_001", "댓글을 찾을 수 없습니다."),
+
+    // 댓글 관련 오류
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "OFFER_ERROR_001", "댓글을 찾을 수 없습니다."),
 
     // 알림 관련 오류
     NOTICE_ERROR(HttpStatus.BAD_REQUEST, "NOTICE_ERROR_001", "알림 발송에 실패하였습니다."),
