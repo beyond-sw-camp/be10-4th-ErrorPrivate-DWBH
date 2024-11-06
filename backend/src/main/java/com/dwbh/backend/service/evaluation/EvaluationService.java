@@ -6,6 +6,7 @@ import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Evaluation;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.mapper.EvaluationMapper;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.evaluation.EvaluationRepository;
 import lombok.RequiredArgsConstructor;
