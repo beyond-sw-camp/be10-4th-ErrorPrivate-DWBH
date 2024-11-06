@@ -30,6 +30,8 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	// mongodb
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -49,6 +51,10 @@ dependencies {
 	// web Socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	//stomp
+	// https://mvnrepository.com/artifact/org.webjars/stomp-websocket
+	implementation group: 'org.webjars', name: 'stomp-websocket', version: '2.3.3-1'
+
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -59,9 +65,20 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+  
 	// MapStruct
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	// file
+	implementation 'commons-io:commons-io:2.16.1'
+
 }
 
 tasks.named('test') {

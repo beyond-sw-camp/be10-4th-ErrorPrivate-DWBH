@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class BeanConfig {
@@ -19,5 +20,10 @@ public class BeanConfig {
                 .setSkipNullEnabled(true); // null 값은 매핑하지 않음
 
         return modelMapper;
+    }
+
+    @Bean
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

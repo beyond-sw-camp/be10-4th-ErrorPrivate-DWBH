@@ -8,8 +8,8 @@ import com.dwbh.backend.entity.CounselOffer;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.repository.UserRepository;
 import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
-import com.dwbh.backend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.AfterMapping;
@@ -25,7 +25,7 @@ public class ChatMapper {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    public Chat toEntity(ChatDTO.ChatRequestDTO dto) {
+    public Chat toEntity(ChatDTO.Create dto) {
         Chat chat = modelMapper.map(dto, Chat.class);
 
         mapping(chat, dto);
@@ -48,7 +48,7 @@ public class ChatMapper {
     }
 
     @AfterMapping
-    protected void mapping(@MappingTarget Chat chat, ChatDTO.ChatRequestDTO dto) {
+    protected void mapping(@MappingTarget Chat chat, ChatDTO.Create dto) {
         CounselOffer counselOffer = counselOfferRepository.findById(dto.getCounselOfferSeq()).orElseThrow(()->new CustomException(ErrorCodeType.COUNSEL_OFFER_NOT_FOUND));
         User sendUser = userRepository.findById(dto.getSendSeq()).orElseThrow(()->new CustomException(ErrorCodeType.USER_NOT_FOUND));
         User receiveUser = userRepository.findById(dto.getReceiveSeq()).orElseThrow(()->new CustomException(ErrorCodeType.USER_NOT_FOUND));

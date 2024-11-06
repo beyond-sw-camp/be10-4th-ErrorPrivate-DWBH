@@ -1,5 +1,7 @@
 # 서버 포트 번호
 server:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   port: 8089
   servlet:
     encoding:
@@ -11,7 +13,7 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:log4jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
+    url: jdbc:log4jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
@@ -46,6 +48,8 @@ springdoc:
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
     path: /swagger
+    operations-sorter: method
+    doc-expansion: none
 
 logging:
   file:
@@ -58,3 +62,7 @@ logging:
     jdbc.sqlonly: info
     jdbc.resultsettable: info
     jdbc.connection: info
+
+token:
+  secret: KPNYWGkEcXk9j4VJs6YlatJN0R7HT8QNJKbv61SkoDSCfLegTcNZy4S0Vkzt5YfBDU4b8UJtaJIMg3kSVzahow==
+  expiration_time : 43200000

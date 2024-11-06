@@ -24,9 +24,18 @@ public enum ErrorCodeType {
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_ERROR_001", "채팅방을 찾을 수 없습니다."),
     CHAT_CREATE_ERROR(HttpStatus.BAD_REQUEST, "CHAT_ERROR_002", "채팅방 생성에 실패하였습니다."),
 
+    // 파일 관련 오류
+    FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_ERROR_001", "파일 업로드에 실패했습니다"),
+    FILE_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_ERROR_002", "파일 삭제에 실패했습니다"),
+
+
     // 알림 관련 오류
     NOTICE_ERROR(HttpStatus.BAD_REQUEST, "NOTICE_ERROR_001", "알림 발송에 실패하였습니다."),
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE_ERROR_002", "알림을 찾을 수 없습니다."),
+
+    // 평가 관련 오류
+    EVALUATION_NOT_FOUND(HttpStatus.NOT_FOUND, "EVALUATION_ERROR_001", "평가를 찾을 수 없습니다."),
+    EVALUATION_EXIST_ERROR(HttpStatus.BAD_REQUEST, "EVALUATION_ERROR_002", "평가가 이미 생성되어 있습니다."),
 
     // 공통 오류
     COMMON_ERROR(HttpStatus.BAD_REQUEST, "COMMON_ERROR", "오류가 발생하였습니다. 관리자에게 문의 바랍니다."),
