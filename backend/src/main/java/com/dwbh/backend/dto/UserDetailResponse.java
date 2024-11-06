@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter @Setter
 @AllArgsConstructor
 public class UserDetailResponse {
     private String filePath;
-    private LocalDateTime userBirthday;
+    private LocalDate userBirthday;
     private String userNickname;
     private String userMbti;
     private String userGender;

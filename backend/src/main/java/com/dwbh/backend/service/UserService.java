@@ -59,6 +59,7 @@ public class UserService implements UserDetailsService {
         return userRepositoryImp.findUserDetailResponse(userSeq);
     }
 
+    // 회원 정보 수정 조회
     public UserModifyResponse getUserModify(Long userSeq) {
 
         return modelMapper.map(userRepository.findByUserSeq(userSeq), UserModifyResponse.class);

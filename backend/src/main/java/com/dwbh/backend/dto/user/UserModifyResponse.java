@@ -5,14 +5,15 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter @Setter
 public class UserModifyResponse {
     private String userEmail;
     private String userNickname;
     private String userGender;
-    private String userBirthday;
+    private LocalDate userBirthday;
     private String userMbti;
     private BigDecimal userTemperature;
-    private LocalDate userRegDate;
+    private LocalDateTime userRegDate;
 }

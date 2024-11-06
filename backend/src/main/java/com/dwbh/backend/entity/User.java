@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity @Getter
@@ -28,7 +29,7 @@ public class User {
     private String userPassword;
     private String userNickname;
     private String userGender;
-    private LocalDateTime userBirthday;
+    private LocalDate userBirthday;
     private String userMbti;
     private String userStatus;
     private BigDecimal userTemperature;
