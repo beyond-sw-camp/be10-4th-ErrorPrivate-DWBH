@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "tb_counselor_hire")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EntityListeners(AuditingEntityListener.class)  // 엔티티 생성, 삭제 시점 체크를 위해 필요한 리스너
+@EntityListeners(AuditingEntityListener.class)
 @AttributeOverrides({
         @AttributeOverride(name = "regDate", column = @Column(name = "counselor_hire_reg_date")),
         @AttributeOverride(name = "modDate", column = @Column(name = "counselor_hire_mod_date"))
@@ -27,8 +27,8 @@ import java.util.List;
 public class CounselorHire extends BaseDateEntity {
 
     @Id
-    @Column(name = "counselor_hire_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "counselor_hire_seq")
     private Long hireSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +44,14 @@ public class CounselorHire extends BaseDateEntity {
     @Column(name = "counselor_hire_counselor_gender")
     @Enumerated(EnumType.STRING)
     private Gender hireGender;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_age_range_seq", nullable = false)
+    private CounselorAge counselorAge;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_type_seq", nullable = false)
+    private CounselorType counselorType;
 
     @Column(name = "counselor_hire_del_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -61,6 +69,4 @@ public class CounselorHire extends BaseDateEntity {
         this.hireContent = counselorHireContent;
         this.hireGender = Gender.valueOf(counselorHireCounselorGender);
     }
-
 }
-
