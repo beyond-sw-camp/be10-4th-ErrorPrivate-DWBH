@@ -22,7 +22,7 @@ public class ChatController  {
     public final ChatService chatService;
 
     @PostMapping
-    @Operation(summary = "채팅 추가")
+    @Operation(summary = "채팅방 추가, 알림 추가, 채팅 추천 프롬프트 생성")
     public ResponseEntity<Boolean> createChat (@RequestBody ChatDTO.Create chatCreateDTO) {
         boolean result = chatService.createChat(chatCreateDTO);
 
