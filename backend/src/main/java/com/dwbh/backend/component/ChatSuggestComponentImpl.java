@@ -2,9 +2,12 @@ package com.dwbh.backend.component;
 
 import com.dwbh.backend.dto.chat.ChatSuggestRequest;
 import com.dwbh.backend.dto.chat.ChatSuggestResponse;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 @RequiredArgsConstructor
@@ -15,13 +18,16 @@ public class ChatSuggestComponentImpl {
     private final ChatSuggestComponent chatSuggestComponent;
 
     private ChatSuggestResponse httpRequest(ChatSuggestRequest request) {
-        return chatSuggestComponent.httpRequest(GEMINI_PRO, request);
+        try {
+            return chatSuggestComponent.httpRequest(GEMINI_PRO, request);
+        } catch(Exception e) {
+            log.error("httpRequest : ", e);
+            return null;
+        }
     }
 
-    public String httpRequest(String text) {
-        log.info("text : {}", text);
-        ChatSuggestRequest request = new ChatSuggestRequest(text);
-        log.info("request : {}", request);
+    public String service(String text) {
+        ChatSuggestRequest request = new ChatSuggestRequest(text, "user", new ArrayList<>());
         ChatSuggestResponse response = httpRequest(request);
 
         return response.getCandidates()

@@ -1,6 +1,6 @@
 package com.dwbh.backend.dto.chat;
 
-import lombok.AllArgsConstructor;
+import com.dwbh.backend.dto.chat.suggest.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,10 +29,15 @@ public class ChatSuggestRequest {
     *     ]
     * }
     * */
-    public ChatSuggestRequest(String text) {
+    public ChatSuggestRequest(String text, String role, List<Content> contents) {
         Part part = new TextPart(text);
-        Content content = new Content(Collections.singletonList(part));
-        this.contents = List.of(content);
+        Content content = new Content(Collections.singletonList(part), role);
+        if(contents.isEmpty()) {
+            this.contents = List.of(content);
+        } else {
+            contents.add(content);
+            this.contents = contents;
+        }
     }
 
     /*
@@ -56,45 +61,21 @@ public class ChatSuggestRequest {
     *     ]
     * }
     * */
-    public ChatSuggestRequest(String text, InlineData inlineData) {
-
-        this.contents = List.of(
-                new Content(
-                        List.of(
-                                new TextPart(text),
-                                new InlineDataPart(inlineData)
-                        )
-                )
+    public ChatSuggestRequest(String text, InlineData inlineData, String role, List<Content> contents) {
+        Content content = new Content(
+                List.of(
+                        new TextPart(text),
+                        new InlineDataPart(inlineData)
+                ), role
         );
-    }
+        if(contents.isEmpty()) {
+            this.contents = List.of(
+                content
+            );
+        } else {
+            contents.add(content);
 
-    @Getter
-    @AllArgsConstructor
-    @ToString
-    private static class Content {
-        private List<Part> parts;
+            this.contents = contents;
+        }
     }
-
-    @Getter
-    @AllArgsConstructor
-    @ToString
-    private static class TextPart implements Part {
-        public String text;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @ToString
-    private static class InlineDataPart implements Part {
-        public InlineData inlineData;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @ToString
-    public static class InlineData {
-        private String mimeType;
-        private String data;
-    }
-    interface Part {}
 }
