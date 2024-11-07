@@ -5,9 +5,14 @@ import ButtonSmallColor from "@/components/common/ButtonSmallColor.vue";
 import router from "@/router/index.js";
 import SideNotificationBar from "@/components/common/SideNotificationBar.vue";
 import {useAuthStore} from "@/stores/auth.js";
+import ChatList from '@/components/chat/ChattingList.vue';
+import ChatDetail from '@/components/chat/ChattingDetail.vue';
 
 const authStore = useAuthStore();
 const isSideNotificationBarOn = ref(false); // 기본 off 상태
+const isModalOpen = ref(false);
+const isDetailOpen = ref(false);
+const selectedChat = ref(null);
 
 // accessToken 이 있으면 로그인한 상태
 const isLoggedIn = computed(() => !!authStore.accessToken);
@@ -40,6 +45,25 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside);
 });
 
+function openModal() {
+  isModalOpen.value = true;
+  isDetailOpen.value = false;
+}
+
+function closeModal() {
+  isModalOpen.value = false;
+  selectedChat.value = null;
+}
+
+function openChatDetail(chat) {
+  selectedChat.value = chat;
+  isDetailOpen.value = true;
+}
+
+function goBackToList() {
+  isDetailOpen.value = false;
+}
+
 </script>
 
 <template>
@@ -70,14 +94,13 @@ onBeforeUnmount(() => {
             <RouterLink to="/mypage" active-class="active" replace>
               My Page
             </RouterLink>
-            <RouterLink to="/chat-list" active-class="active" replace>
-              <!-- 채팅방 버튼-->
+            <button @click="openModal" class="side-menubar-button">
               <img
                   src="@/images/chat.png"
                   alt="side menubar icon"
                   class="side-menubar"
               />
-            </RouterLink>
+            </button>
             <!-- 사이드 알림바 토글 버튼-->
             <img
                 src="@/images/notification.png"
@@ -91,6 +114,20 @@ onBeforeUnmount(() => {
       </nav>
     </header>
 
+    <!-- ChatView 모달 -->
+    <transition>
+      <div
+          v-if="isModalOpen"
+          class="modal-overlay"
+          @click="closeModal"
+      >
+        <div class="modal-content" @click.stop>
+          <button class="close-button" @click="closeModal">X</button>
+          <ChatView />
+        </div>
+      </div>
+    </transition>
+
     <!-- 사이드 알림바 -->
     <transition name="slide">
       <div
@@ -102,6 +139,25 @@ onBeforeUnmount(() => {
       </div>
     </transition>
   </div>
+
+
+  <!-- 채팅방 모달 -->
+  <div v-if="isModalOpen" class="modal-overlay" @click="closeModal">
+    <div class="modal-content" @click.stop>
+      <button class="close-button" @click="closeModal">X</button>
+
+      <!-- 목록 또는 상세 화면 표시 -->
+      <template v-if="!isDetailOpen">
+        <!-- 채팅 목록 화면 -->
+        <ChatList @selectChat="openChatDetail" />
+      </template>
+      <template v-else>
+        <!-- 대화 상세 화면 -->
+        <ChatDetail v-if="selectedChat" :chat="selectedChat" @goBack="goBackToList" />
+      </template>
+    </div>
+  </div>
+
 </template>
 
 <style scoped>
@@ -177,6 +233,58 @@ img {
 
 .slide-leave-to {
   transform: translateX(100%); /* 오른쪽으로 사라지기 */
+}
+
+.side-menubar-button {
+  background: none;   /* 배경 제거 */
+  border: none;       /* 테두리 제거 */
+  padding: 0;         /* 기본 패딩 제거 */
+  cursor: pointer;    /* 마우스 포인터 커서 설정 */
+}
+
+.side-menubar {
+  width: 20px;
+  height: auto;
+  cursor: pointer;
+}
+
+.chat-list-view {
+  padding: 1rem;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 0;
+  border-radius: 5px; /* 모서리를 둥글게 */
+  width: 320px; /* 좁고 길쭉한 모양 */
+  height: 600px; /* 카톡처럼 길게 */
+  position: relative;
+  margin-top: 6rem;
+  margin-right: 6rem;
+  overflow-y: auto; /* 내용이 넘칠 때 스크롤 */
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 </style>
