@@ -1,8 +1,7 @@
 package com.dwbh.backend.entity;
 
-import com.dwbh.backend.common.entity.Gender;
 import com.dwbh.backend.common.entity.BaseDateEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.dwbh.backend.common.entity.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import java.util.List;
 @Table(name = "tb_counselor_hire")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EntityListeners(AuditingEntityListener.class)  // 엔티티 생성, 삭제 시점 체크를 위해 필요한 리스너
+@EntityListeners(AuditingEntityListener.class)
 @AttributeOverrides({
         @AttributeOverride(name = "regDate", column = @Column(name = "counselor_hire_reg_date")),
         @AttributeOverride(name = "modDate", column = @Column(name = "counselor_hire_mod_date"))
@@ -27,8 +26,8 @@ import java.util.List;
 public class CounselorHire extends BaseDateEntity {
 
     @Id
-    @Column(name = "counselor_hire_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "counselor_hire_seq")
     private Long hireSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,14 +44,30 @@ public class CounselorHire extends BaseDateEntity {
     @Enumerated(EnumType.STRING)
     private Gender hireGender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_age_range_seq", nullable = false)
+    private CounselorAge counselorAge;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_type_seq", nullable = false)
+    private CounselorType counselorType;
+
     @Column(name = "counselor_hire_del_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime delDate;
 
     @OneToMany(mappedBy = "hireSeq", cascade = CascadeType.REMOVE)
     private List<CounselOffer> offers = new ArrayList<>();
 
-    public void updateUser(User foundUser){
+    public CounselorHire(String hireTitle, String hireContent, String hireGender, User user, CounselorAge counselorAge, CounselorType counselorType) {
+        this.hireTitle = hireTitle;
+        this.hireContent = hireContent;
+        this.hireGender = Gender.valueOf(hireGender);
+        this.userSeq = user;
+        this.counselorAge = counselorAge;
+        this.counselorType = counselorType;
+    }
+
+    public void updateUser(User foundUser) {
         this.userSeq = foundUser;
     }
 
@@ -61,6 +76,4 @@ public class CounselorHire extends BaseDateEntity {
         this.hireContent = counselorHireContent;
         this.hireGender = Gender.valueOf(counselorHireCounselorGender);
     }
-
 }
-
