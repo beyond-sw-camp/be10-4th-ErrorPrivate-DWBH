@@ -30,5 +30,4 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/sub");
     }
 
-
 }
