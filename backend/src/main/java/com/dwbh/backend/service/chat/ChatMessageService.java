@@ -3,34 +3,32 @@ package com.dwbh.backend.service.chat;
 import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
-
-import java.util.Set;
 
 @Slf4j @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
+    private final ChatMessageRepository chatMessageRepository;
+
+    private final MongoTemplate mongoTemplate;
+
 
     @Transactional
-    public boolean createChatMessage(ChatMessageDTO chatMessageDTO) {
-        boolean result = false;
+    public void saveMessage(ChatMessageDTO.Request request) {
         try {
-            //chatMessageDTO.setMessageType(ChatMessageDTO.MessageType.TALK);
 
-            //채팅 메세지 몽고디비 연동
-            result = true;
+             mongoTemplate.insert(request);
 
         } catch (Exception e) {
-            log.error("createChat Error : {}", e.getMessage());
+            log.error("saveMessage Error : {}", e.getMessage());
             throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
         }
-
-        return result;
     }
 
 }

@@ -1,7 +1,7 @@
 package com.dwbh.backend.service.chat;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
-import com.dwbh.backend.dto.chat.ChatRoomDTO;
+import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Notification;
@@ -86,12 +86,11 @@ public class ChatService {
         return chatResponseList;
     }
 
-    public ChatRoomDTO readChatRoom(String roomId) {
-        ChatRoomDTO chatResponse = null;
+    public ChatMessageDTO readChatRoom(String roomId) {
+        ChatMessageDTO chatResponse = null;
         try {
 
             //TODO 아영 - mongodb에서 채팅 내용 가져오기
-            chatResponse = chatMessageRepository.findRoomById(roomId);
 
         } catch (Exception e) {
             log.error("readChatRoom Error : {}", e.getMessage());
