@@ -72,7 +72,7 @@ function goBackToList() {
       <nav>
         <div class="logo">
           <RouterLink to="/" active-class="active" replace>
-            <img src="@/images/Error-pirate.jpg" alt="에러 해적단 로고"/>
+            <img src="@/images/ms-icon-310x310.png" alt="DWBH 로고"/>
           </RouterLink>
         </div>
 
