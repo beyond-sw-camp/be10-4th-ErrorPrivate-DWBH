@@ -1,12 +1,12 @@
 package com.dwbh.backend.dto.user;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
+@Getter @Setter
 public class ModifyUserRequest {
-    private String filePath;
     private String userNickname;
     private String userPassword;
     private String userGender;

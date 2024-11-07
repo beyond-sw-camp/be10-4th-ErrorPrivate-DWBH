@@ -10,6 +10,7 @@ import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,10 +56,10 @@ public class UserController {
         } else { throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR); }
     }
 
-    @PutMapping("/user", consumes = {"multipart/form-data"})
+    @PutMapping(name = "/user", consumes = {"multipart/form-data"})
     @Operation(summary = "회원 정보 수정")
     public ResponseEntity<Void> modifyUser(
-            @Validated @RequestBody ModifyUserRequest modifyUserRequest,
+            @Valid @RequestPart ModifyUserRequest modifyUserRequest,
             @RequestPart(required = false) MultipartFile userProfile) {
         userService.modifyUser(userService.getUserSeq(AuthUtil.getAuthUser()), userProfile, modifyUserRequest);
 

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
         @AttributeOverride(name = "modDate", column = @Column(name = "user_mod_date"))
 })
 @SQLDelete(sql = "UPDATE tb_user SET user_status = 'delete', user_del_date = NOW() WHERE user_seq = ?")
+@ToString
 public class User {
 
     @Id
@@ -46,7 +48,7 @@ public class User {
     // 회원 정보 수정
     public void modifyUser(ModifyUserRequest modify, boolean modifyPassword) {
         this.userNickname = modify.getUserNickname();
-        if (modifyPassword) this.encryptPassword(modify.getUserPassword());
+        if (modifyPassword) this.userPassword = modify.getUserPassword();
         this.userGender = modify.getUserGender();
         this.userBirthday = modify.getUserBirthday();
         this.userMbti = modify.getUserMbti();

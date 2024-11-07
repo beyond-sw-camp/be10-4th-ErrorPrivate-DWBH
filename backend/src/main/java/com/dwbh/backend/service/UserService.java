@@ -29,7 +29,7 @@ public class UserService implements UserDetailsService {
 
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final CustomUserRepository userRepositoryImp;
+    private final CustomUserRepository customUserRepository;
     private final UserRepository userRepository;
 
     // 회원 등록
@@ -60,7 +60,7 @@ public class UserService implements UserDetailsService {
     // 회원 상세 조회
     public UserDetailResponse getUserDetail(Long userSeq) {
 
-        return userRepositoryImp.findUserDetailResponse(userSeq);
+        return customUserRepository.findUserDetailResponse(userSeq);
     }
 
     // 회원 정보 수정 조회
@@ -75,6 +75,12 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.USER_NOT_FOUND));
 
-        user.modifyUser(modifyUserRequest, modifyUserRequest.getUserPassword() != null);
+        // 패스워드 변경 유무
+        if ( modifyUserRequest.getUserPassword() != null ) {
+            modifyUserRequest.setUserPassword(passwordEncoder.encode(modifyUserRequest.getUserPassword()));
+            user.modifyUser(modifyUserRequest, true);
+        } else { user.modifyUser(modifyUserRequest, false); }
+
+        userRepository.save(user);
     }
 }
