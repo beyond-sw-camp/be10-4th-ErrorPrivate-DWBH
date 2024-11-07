@@ -16,13 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/hire-post")
-@Tag(name = "Counsel Offer", description = "게시글 댓글")
+@Tag(name = "Counsel Offer API", description = "게시글 댓글 API")
 @Slf4j
 public class OfferController {
 
     private final OfferService offerService;
 
-    // 댓글 등록
+    /* 댓글 등록 */
     @PostMapping("/{hireSeq}/comment")
     @Operation(summary = "게시글 댓글 등록", description = "게시글에 댓글을 등록한다.")
     public ResponseEntity<OfferDTO> createOffer(
@@ -35,9 +35,9 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // 댓글 수정
+    /* 댓글 수정 */
     @PutMapping("/{hireSeq}/comment/{offerSeq}")
-    @Operation(summary = "게시글 댓글 수정", description = "자신이 작성한 게시글의 댓글을 수정한다.")
+    @Operation(summary = "게시글 댓글 수정", description = "게시글의 특정 댓글을 수정한다.")
     public ResponseEntity<OfferDTO> updateOffer(
             @PathVariable Long hireSeq,
             @PathVariable Long offerSeq,
@@ -47,6 +47,17 @@ public class OfferController {
 
         OfferDTO response = offerService.updateOffer(hireSeq, offerSeq, request, file);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /* 댓글 삭제 */
+    @DeleteMapping("/{hireSeq}/comment/{offerSeq}")
+    @Operation(summary = "게시글 댓글 삭제", description = "게시글의 특정 댓글을 삭제한다.")
+    public ResponseEntity<Void> deleteOffer( @PathVariable Long hireSeq,
+                                             @PathVariable Long offerSeq) {
+        log.info("DELETE /api/v1/hire-post/{hireSeq}/comment/{offerSeq} 댓글 삭제 요청 - {}, {}", hireSeq, offerSeq);
+
+        offerService.deleteOffer(offerSeq);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
