@@ -1,6 +1,7 @@
 package com.dwbh.backend.entity;
 
 import com.dwbh.backend.common.entity.BaseDateEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class File extends BaseDateEntity {
     @Column(name = "file_content_type", nullable = false)
     private String fileContentType;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @Column(name = "file_del_date")
     private LocalDateTime delDate;
 

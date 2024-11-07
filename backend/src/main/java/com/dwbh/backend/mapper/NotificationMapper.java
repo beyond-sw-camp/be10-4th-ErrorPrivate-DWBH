@@ -9,7 +9,7 @@ import com.dwbh.backend.entity.Notification;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
-import com.dwbh.backend.repository.UserRepository;
+import com.dwbh.backend.repository.user.UserRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

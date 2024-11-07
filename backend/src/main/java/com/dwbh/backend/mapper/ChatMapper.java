@@ -8,7 +8,7 @@ import com.dwbh.backend.entity.CounselOffer;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
-import com.dwbh.backend.repository.UserRepository;
+import com.dwbh.backend.repository.user.UserRepository;
 import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -14,7 +14,8 @@ const fetchChats = async () => {
   }
 };
 
-const evaluateChat = (chatSeq) => {
+const evaluateChat = (chatSeq, event) => {
+  event.preventDefault();
   console.log(`Evaluating chat with seq: ${chatSeq}`);
 };
 
@@ -38,7 +39,7 @@ onMounted(fetchChats);
             <span class="last-message">안녕하세요.</span>
 <!--            <span class="last-message">{{ chat.lastMessage }}</span>-->
             </div>
-          <button class="evaluation-button" v-if="chat.showEvaluation" @click="evaluateChat(chat.chatSeq)">평가</button>
+          <button class="evaluation-button" v-if="chat.showEvaluation" @click="(event) => evaluateChat(chat.chatSeq, event)">평가</button>
         </div>
       </li>
     </ul>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { Stomp } from '@stomp/stompjs';
 
 const props = defineProps({
   chat: Object
@@ -8,7 +9,7 @@ const chatTitle = ref('');
 const messages = ref([]);
 const newMessage = ref('');
 const messagesContainer = ref(null);
-const websocket = ref(null);
+const stompClient = ref(null);
 const sendUsername = ref(props.chat.sendUser.userNickname);
 const receiveUsername = ref(props.chat.receiveUser.userNickname);
 const isConnected = ref(false);
@@ -24,40 +25,45 @@ onBeforeUnmount(() => {
 });
 
 function connectWebSocket() {
-  websocket.value = new WebSocket("ws://localhost:8089/ws/chat");
+  const websocket = new WebSocket("ws://localhost:8089/stomp/chat");
+  stompClient.value = Stomp.over(websocket);
 
-  websocket.value.onopen = () => {
+  stompClient.value.connect({}, (frame) => {
     isConnected.value = true;
-    const entryMsg = `${sendUsername.value}: 님이 입장하셨습니다.`;
-    websocket.value.send(entryMsg);
-  };
+    console.log("STOMP Connection established");
 
-  websocket.value.onmessage = (event) => {
-    const data = event.data;
-    const [sessionId, message] = data.split(":");
+    // 메시지 수신
+    stompClient.value.subscribe(`/sub/chat/room/${props.chat.chatSeq}`, (message) => {
+      const content = JSON.parse(message.body);
+      const msgClass = content.writer === sendUsername.value ? "sent" : "received";
 
-    const msgClass = sessionId === sendUsername.value ? "sent" : "received";
-    if(msgClass == "received") {
       messages.value.push({
         id: Date.now(),
-        sender: sessionId,
-        text: message,
+        sender: content.writer,
+        text: content.message,
         class: msgClass
       });
-    }
 
-    if (message && message.includes("나가셨습니다.")) {
-      disconnect();
-    }
+      if (content.message.includes("나가셨습니다.")) {
+        disconnect();
+      }
 
-    scrollToBottom();
-  };
+      scrollToBottom();
+    });
 
-  websocket.value.onclose = () => {
+    // 방에 입장 메시지 전송
+    stompClient.value.send('/pub/chat/enter', {}, JSON.stringify({
+      roomId: props.chat.chatSeq,
+      writer: sendUsername.value
+    }));
+
+  });
+
+  stompClient.value.onclose = () => {
     isConnected.value = false;
     messages.value.push({
       id: Date.now(),
-      sender: receiveUsername.value,
+      sender: 'System',
       text: " 님과의 대화가 종료되었습니다.",
       class: "received"
     });
@@ -65,27 +71,36 @@ function connectWebSocket() {
   };
 }
 
+
 function sendMessage() {
-  if (newMessage.value.trim() && websocket.value && websocket.value.readyState === WebSocket.OPEN) {
-    const msg = `${sendUsername.value}: ${newMessage.value}`;
-    websocket.value.send(msg);
-    messages.value.push({
+  if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
+    stompClient.value.send('/pub/chat/message', {}, JSON.stringify({
+      roomId: props.chat.chatSeq,
+      message: newMessage.value,
+      writer: sendUsername.value
+    }));
+    /*messages.value.push({
       id: Date.now(),
       sender: sendUsername.value,
       text: newMessage.value,
       class: "sent"
-    });
+    });*/
     newMessage.value = '';
     scrollToBottom();
   }
 }
 
 function disconnect() {
-  isConnected.value = false;
-  if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
+  if (stompClient.value && stompClient.value.connected) {
     const exitMsg = `${sendUsername.value}: 님이 방을 나가셨습니다.`;
-    websocket.value.send(exitMsg);
-    websocket.value.close();
+    stompClient.value.send('/pub/chat/message', {}, JSON.stringify({
+      roomId: props.chat.chatSeq,
+      message: exitMsg,
+      writer: sendUsername.value
+    }));
+    stompClient.value.disconnect();
+    isConnected.value = false;
+    console.log("Disconnected from STOMP server");
   }
 }
 
@@ -102,7 +117,7 @@ function scrollToBottom() {
 <template>
   <div class="chat-room">
     <button class="back-button" @click="$emit('goBack')"> <</button>
-    <button id="disconn" @click="disconnect">Disconnect</button>
+    <button id="disconn" @click="disconnect">종료하기</button>
 
     <h2>{{ chatTitle }}</h2>
     <div class="messages" ref="messagesContainer">
