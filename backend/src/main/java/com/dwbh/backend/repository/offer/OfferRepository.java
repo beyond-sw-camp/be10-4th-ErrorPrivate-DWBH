@@ -9,5 +9,5 @@ public interface OfferRepository {
 
     Optional<CounselOffer> findById(Long offerSeq);
 
-    void delete(CounselOffer offer);
+    void deleteById(Long offerSeq);
 }

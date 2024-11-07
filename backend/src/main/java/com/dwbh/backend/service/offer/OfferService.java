@@ -1,5 +1,6 @@
 package com.dwbh.backend.service.offer;
 
+import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.common.util.FileUploadUtils;
 import com.dwbh.backend.dto.offer.CreateOrUpdateOfferRequest;
 import com.dwbh.backend.dto.offer.OfferDTO;
@@ -10,6 +11,7 @@ import com.dwbh.backend.repository.counselor_hire.CounselorRepository;
 import com.dwbh.backend.repository.file.FileRepository;
 import com.dwbh.backend.repository.offer.OfferRepository;
 import com.dwbh.backend.repository.user.UserRepository;
+import com.dwbh.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,12 +35,17 @@ public class OfferService {
     private final CounselorRepository hireRepository;
     private static final String UPLOAD_DIR = "uploads"; // 파일 저장 디렉토리
 
+    private final UserService userService;
+
     // 댓글 작성
     @Transactional
     public OfferDTO  createOffer(Long hireSeq, CreateOrUpdateOfferRequest request, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
 
-        // 1. 필요한 연관 관계 데이터 가져오기(추후 연관관계 기능 구현시 수정예정)
+        // 요청한 사용자가 현재 로그인한 사용자인지 검증
+        checkUserAccess(request.getUserSeq());
+
+        // 1. 필요한 연관 관계 데이터 가져오기
         User user = userRepository.findById(request.getUserSeq())
                 .orElseThrow(() ->  new CustomException(ErrorCodeType.USER_NOT_FOUND));
         CounselorHire hire = hireRepository.findById(hireSeq)
@@ -88,24 +95,25 @@ public class OfferService {
     public OfferDTO updateOffer(Long hireSeq, Long offerSeq, CreateOrUpdateOfferRequest request, MultipartFile newFile) {
         log.info("--------------댓글수정 서비스 진입----------------");
 
+        // 요청한 사용자가 현재 로그인한 사용자인지 검증
+        checkUserAccess(request.getUserSeq());
+
         // 1. 댓글 엔티티 조회(수정하려는 댓글 찾기)
         User user = userRepository.findById(request.getUserSeq())
                 .orElseThrow(() ->  new CustomException(ErrorCodeType.USER_NOT_FOUND));
-        // 탈퇴된 회원인지 확인
-        if (!"activate".equals(user.getUserStatus())) {
-            // 탈퇴된 회원일 경우 수정 불가 예외 발생
-            throw new CustomException(ErrorCodeType.INACTIVATE_USER);
-        }
-
         CounselorHire hire = hireRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
 
         CounselOffer offer = offerRepository.findById(offerSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
-        // 수정 권한 검증(시큐리티 구현 후 추가 예정)
-//        if (!CustomUserUtils.getCurrentUserSeq().equals(offer.getUserSeq())) {
-//            throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
-//        }
+
+        // 탈퇴된 회원인지 확인
+        if (!"activate".equals(user.getUserStatus())) {
+            // 탈퇴된 회원일 경우 수정 불가 예외 발생
+            log.debug("탈퇴한 회원입니다.");
+            throw new CustomException(ErrorCodeType.INACTIVATE_USER);
+        }
+
         long requestUserSeq  = request.getUserSeq();
         log.info("-----------request의 userSeq: {}", requestUserSeq);
         log.info("-----------db 저장 userSeq: {}", offer.getUser().getUserSeq());
@@ -154,14 +162,21 @@ public class OfferService {
     /* 댓글 삭제 */
     @Transactional
     public void deleteOffer(Long offerSeq) {
-
-
+        log.info("--------------댓글삭제 서비스 진입----------------");
 
         // 1. 삭제할 댓글 조회
         CounselOffer offer = offerRepository.findById(offerSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
 
-        // 2. 댓글과 연결된 파일이 있는 경우 처리
+        // 2. 댓글 작성자와 현재 로그인한 사용자가 동일한지 검증
+        checkUserAccess(offer.getUser().getUserSeq());
+
+        // 2-2. 이미 삭제된 게시글의 댓글이거나 이미 삭제된 댓글의 경우
+        if((offer.getDelDate() != null) || (offer.getHire().getDelDate() != null)) {
+            throw new CustomException(ErrorCodeType.COMMENT_NOT_FOUND);
+        }
+
+        // 3. 댓글과 연결된 파일이 있는 경우 처리
         if (offer.getOfferFile() != null) {
             // 2-1. 파일 소프트 삭제
 //            File file = offer.getOfferFile().getFile();
@@ -170,11 +185,24 @@ public class OfferService {
 
             // 2-2. `CounselOfferFile` 실제 삭제
             offer.setOfferFile(null);  // 연관 관계를 끊어주기
-            fileRepository.delete(offer.getOfferFile().getFile());  // 실제 삭제
+//            fileRepository.delete(offer.getOfferFile().getFile());  // 실제 삭제
         }
 
-        // 3. 댓글 소프트 삭제 처리 (혹은 실제 삭제, 비즈니스 규칙에 맞춰 선택)
-        offerRepository.delete(offer);  // @SQLDelete로 소프트 삭제 처리됨
-
+        // 4. 댓글 소프트 삭제 처리 (혹은 실제 삭제, 비즈니스 규칙에 맞춰 선택)
+        offerRepository.deleteById(offerSeq);  // @SQLDelete로 소프트 삭제 처리됨
     }
+
+
+
+    // 현재 로그인한 사용자와 요청한 사용자의 userSeq를 비교하여 권한 검증
+    public void checkUserAccess(Long userSeq) {
+        // 현재 로그인한 사용자의 userSeq 가져오기
+        Long currentUserSeq = userService.getUserSeq(AuthUtil.getAuthUser());
+
+        // 현재 로그인한 사용자와 요청의 사용자 검증
+        if (!currentUserSeq.equals(userSeq)) {
+            throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
+        }
+    }
+
 }

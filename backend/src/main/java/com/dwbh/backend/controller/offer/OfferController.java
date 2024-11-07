@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/hire-post")
-@Tag(name = "Counsel Offer", description = "게시글 댓글")
+@Tag(name = "Counsel Offer API", description = "게시글 댓글 API")
 @Slf4j
 public class OfferController {
 
@@ -54,7 +54,7 @@ public class OfferController {
     @Operation(summary = "게시글 댓글 삭제", description = "게시글의 특정 댓글을 삭제한다.")
     public ResponseEntity<Void> deleteOffer( @PathVariable Long hireSeq,
                                              @PathVariable Long offerSeq) {
-        log.info("DELETE /api/v1/hire-post/{hireSeq}/comment/{offerSeq} 댓글 수정 요청 - {}, {}", hireSeq, offerSeq);
+        log.info("DELETE /api/v1/hire-post/{hireSeq}/comment/{offerSeq} 댓글 삭제 요청 - {}, {}", hireSeq, offerSeq);
 
         offerService.deleteOffer(offerSeq);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
