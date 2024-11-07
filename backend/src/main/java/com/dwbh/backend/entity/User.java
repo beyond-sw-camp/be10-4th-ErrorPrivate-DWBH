@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
         @AttributeOverride(name = "modDate", column = @Column(name = "user_mod_date"))
 })
 @SQLDelete(sql = "UPDATE tb_user SET user_status = 'delete', user_del_date = NOW() WHERE user_seq = ?")
-@ToString
 public class User {
 
     @Id
