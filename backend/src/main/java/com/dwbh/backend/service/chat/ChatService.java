@@ -2,6 +2,8 @@ package com.dwbh.backend.service.chat;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
 import com.dwbh.backend.dto.chat.ChatRoomDTO;
+import com.dwbh.backend.dto.chat.ChatSuggestRequest;
+import com.dwbh.backend.dto.chat.suggest.ChatMessageSuggest;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Notification;
@@ -10,7 +12,10 @@ import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.ChatMapper;
 import com.dwbh.backend.mapper.NotificationMapper;
 import com.dwbh.backend.repository.chat.ChatMessageRepository;
+import com.dwbh.backend.repository.chat.ChatMessageSuggestRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
+import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
+import com.dwbh.backend.repository.counselor_hire.CounselorRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +39,8 @@ public class ChatService {
     private final ChatMapper chatMapper;
     private final NotificationMapper notificationMapper;
     private final ModelMapper modelMapper;
+    private final ChatMessageSuggestRepository chatMessageSuggestRepository;
+    private final CounselOfferRepository counselOfferRepository;
 
     @Transactional
     public boolean createChat(ChatDTO.Create chatCreateDTO) {
@@ -53,6 +61,8 @@ public class ChatService {
                 throw new CustomException(ErrorCodeType.CHAT_CREATE_ERROR);
             }
 
+            String counselorContent = counselOfferRepository.findCounselorContentByCounselOfferSeq(chatCreateDTO.getCounselOfferSeq()) + " 대답은 항상 30글자 이내 5줄 이내로 작성해주세요.";
+            chatMessageSuggestRepository.save(new ChatMessageSuggest(chatDTO.getChatSeq(), new ChatSuggestRequest(counselorContent, "user", new ArrayList<>()).getContents()));
             // 채팅방 생성 완료 시 알림 생성
             Notification notification = notificationMapper.toEntity(new CreateNotificationRequest(chatDTO.getChatSeq(), chatDTO.getReceiveSeq()));
 
