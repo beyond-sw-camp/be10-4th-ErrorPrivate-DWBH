@@ -61,8 +61,10 @@ public class ChatService {
                 throw new CustomException(ErrorCodeType.CHAT_CREATE_ERROR);
             }
 
+            // 채팅방 생성 완료 시 채팅 프롬프트 생성
             String counselorContent = counselOfferRepository.findCounselorContentByCounselOfferSeq(chatCreateDTO.getCounselOfferSeq()) + " 대답은 항상 30글자 이내 5줄 이내로 작성해주세요.";
             chatMessageSuggestRepository.save(new ChatMessageSuggest(chatDTO.getChatSeq(), new ChatSuggestRequest(counselorContent, "user", new ArrayList<>()).getContents()));
+
             // 채팅방 생성 완료 시 알림 생성
             Notification notification = notificationMapper.toEntity(new CreateNotificationRequest(chatDTO.getChatSeq(), chatDTO.getReceiveSeq()));
 
