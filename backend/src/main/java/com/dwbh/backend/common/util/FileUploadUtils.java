@@ -96,7 +96,7 @@ public class FileUploadUtils {
      * 파일이 이미지인지 확인
      */
     public static boolean isImageFile(MultipartFile file) {
-        String mimeType = file.getContentType();
+        String mimeType = getMimeType(file);
         return mimeType != null && (mimeType.startsWith("image/"));
     }
 
