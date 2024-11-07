@@ -24,6 +24,11 @@ const routes = [
         path: '/counsel',
         name: 'CounselList',
         component: () => import("@/views/counsel/CounselView.vue")
+    },
+    {
+        path: '/chat/:chatSeq/evaluation/',
+        name: 'Evaluation',
+        component: () => import("@/views/evaluation/EvaluationView.vue")
     }
 ];
 
