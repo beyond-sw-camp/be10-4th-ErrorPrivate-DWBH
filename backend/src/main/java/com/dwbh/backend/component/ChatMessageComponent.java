@@ -31,7 +31,7 @@ public class ChatMessageComponent {
         log.info("chatMessageSuggest : {}", chatMessageSuggest);
         ChatSuggestRequest request = new ChatSuggestRequest(text, "user", chatMessageSuggest.getContents());
 
-        chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq, request.getContents()));
+        chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq.intValue(), request.getContents()));
 
         ChatSuggestResponse response = httpRequest(request);
         if(response != null) {

@@ -1,19 +1,27 @@
 package com.dwbh.backend.dto.chat.suggest;
 
-import jakarta.persistence.Id;
+
 import lombok.*;
-import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Document(collection = "chat_message_suggest")
 public class ChatMessageSuggest {
-    private Long chatRoomSeq;
+    @Id
+    private String id;  // MongoDB의 ID 필드
+    @Field("chatRoomSeq")
+    private Integer chatRoomSeq;
     private List<Content> contents;
+
+    public ChatMessageSuggest(Integer chatRoomSeq, List<Content> contents) {
+        this.chatRoomSeq = chatRoomSeq;
+        this.contents = contents;
+    }
 }

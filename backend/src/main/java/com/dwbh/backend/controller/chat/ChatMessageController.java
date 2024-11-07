@@ -25,7 +25,7 @@ public class ChatMessageController {
         log.info("createChatMessage 진입 성공");
         //boolean result = chatMessageService.createChatMessage(chatMessageDTO);
 
-        message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
+        // message.setMessage(messagee .getWriter() + "님이 채팅방에 참여하였습니다.");
         template.convertAndSend("/sub/chat/room/" + message.getChatRoomSeq(), message);
     }
 
