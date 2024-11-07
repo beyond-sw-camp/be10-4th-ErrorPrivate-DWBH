@@ -2,10 +2,7 @@ package com.dwbh.backend.dto.chat;
 
 import com.dwbh.backend.common.entity.YnType;
 import com.dwbh.backend.dto.user.UserDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
 public class ChatDTO {
@@ -27,6 +24,7 @@ public class ChatDTO {
 
     @AllArgsConstructor
     @Getter
+    @NoArgsConstructor
     public static class Create {
 
         private Long counselOfferSeq;

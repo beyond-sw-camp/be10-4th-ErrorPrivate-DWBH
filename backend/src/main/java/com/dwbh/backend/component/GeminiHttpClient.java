@@ -8,7 +8,7 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 @HttpExchange("/v1beta/models/")
-public interface ChatSuggestComponent {
+public interface GeminiHttpClient {
     @PostExchange("{model}:generateContent")
     ChatSuggestResponse httpRequest(@PathVariable("model") String model, @RequestBody ChatSuggestRequest req);
 }

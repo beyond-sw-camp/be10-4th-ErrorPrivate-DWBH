@@ -1,6 +1,6 @@
 package com.dwbh.backend.config;
 
-import com.dwbh.backend.component.ChatSuggestComponent;
+import com.dwbh.backend.component.GeminiHttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +26,10 @@ public class ChatSuggestConfig {
     }
 
     @Bean
-    public ChatSuggestComponent chatSuggest(@Qualifier("chatSuggestRestClient") RestClient chatSuggestRestclient) {
+    public GeminiHttpClient chatSuggest(@Qualifier("chatSuggestRestClient") RestClient chatSuggestRestclient) {
         RestClientAdapter adapter = RestClientAdapter.create(chatSuggestRestclient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
 
-        return factory.createClient(ChatSuggestComponent.class);
+        return factory.createClient(GeminiHttpClient.class);
     }
 }

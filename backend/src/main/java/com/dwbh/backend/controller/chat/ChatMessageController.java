@@ -26,15 +26,16 @@ public class ChatMessageController {
         //boolean result = chatMessageService.createChatMessage(chatMessageDTO);
 
         message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
-        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        template.convertAndSend("/sub/chat/room/" + message.getChatRoomSeq(), message);
     }
 
     @MessageMapping(value = "/chat/message")
     public void sendMessage(ChatMessageDTO message){
 
-        log.info("sendMessage 진입 성공");
+        log.info("sendMessage 진입 성공 , {}", message  );
+        chatMessageService.createChatMessage(message);
 
-        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        template.convertAndSend("/sub/chat/room/" + message.getChatRoomSeq(), message);
     }
 
 }
