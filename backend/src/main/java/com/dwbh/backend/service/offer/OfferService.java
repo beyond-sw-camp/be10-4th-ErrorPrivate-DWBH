@@ -185,11 +185,10 @@ public class OfferService {
 
             // 2-2. `CounselOfferFile` 실제 삭제
             offer.setOfferFile(null);  // 연관 관계를 끊어주기
-//            fileRepository.delete(offer.getOfferFile().getFile());  // 실제 삭제
         }
 
-        // 4. 댓글 소프트 삭제 처리 (혹은 실제 삭제, 비즈니스 규칙에 맞춰 선택)
-        offerRepository.deleteById(offerSeq);  // @SQLDelete로 소프트 삭제 처리됨
+        // 4. 댓글 소프트 삭제 처리
+        offerRepository.softDeleteById(offerSeq, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 
 

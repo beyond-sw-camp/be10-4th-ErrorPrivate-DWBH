@@ -2,6 +2,7 @@ package com.dwbh.backend.repository.offer;
 
 import com.dwbh.backend.entity.CounselOffer;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface OfferRepository {
@@ -9,5 +10,5 @@ public interface OfferRepository {
 
     Optional<CounselOffer> findById(Long offerSeq);
 
-    void deleteById(Long offerSeq);
+    void softDeleteById(Long offerSeq, LocalDateTime delDate);
 }
