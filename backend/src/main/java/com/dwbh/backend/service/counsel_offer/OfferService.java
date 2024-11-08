@@ -43,7 +43,7 @@ public class OfferService {
     private static final String UPLOAD_DIR = "uploads"; // 파일 저장 디렉토리
 
     private final UserService userService;
-    private final OfferCustomRepositoryImpl offerCustomRepositoryImpl;
+    private final CounselOfferRepository counselOfferRepository;
 
     // 댓글 작성
     @Transactional
@@ -214,7 +214,7 @@ public class OfferService {
                 pageable.getPageSize()
         );
 
-        return offerCustomRepositoryImpl.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserId);
+        return counselOfferRepository.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserId);
     }
 
 
