@@ -14,8 +14,8 @@ VALUES
 -- tb_counsel_offer 테이블 더미 데이터
 INSERT INTO tb_counsel_offer (counselor_hire_seq, user_seq, counsel_offer_content, counsel_offer_private_yn)
 VALUES
-    (1, 1, '안녕하세요, 상담 요청드립니다.', 'N'),
-    (2, 2, '지금 바로 상담 가능하신가요?', 'Y');
+    (1, 2, '안녕하세요, 상담 요청드립니다.', 'N'),
+    (2, 1, '지금 바로 상담 가능하신가요?', 'Y');
 
 -- tb_chat 테이블 더미 데이터
 INSERT INTO tb_chat (counsel_offer_seq, chat_send_seq, chat_receive_seq, chat_read_yn)
