@@ -50,9 +50,9 @@ public class CounselorController {
 
     @Operation(summary = "게시글 상세조회", description = "ID로 특정 게시글을 조회합니다.")
     @GetMapping("/hire-post/{id}")
-    public ResponseEntity<CounselorDetailResponse> readPostDetail(@PathVariable Long id, @RequestParam Long currentUserSeq) {
+    public ResponseEntity<CounselorDetailResponse> readPostDetail(@PathVariable Long id) {
 
-        CounselorDetailResponse detail = counselorService.readPostDetail(id, currentUserSeq);
+        CounselorDetailResponse detail = counselorService.readPostDetail(id);
         return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 
