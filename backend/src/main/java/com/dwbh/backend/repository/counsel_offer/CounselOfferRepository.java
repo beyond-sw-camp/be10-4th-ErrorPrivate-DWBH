@@ -10,12 +10,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
-public interface CounselOfferRepository extends JpaRepository<CounselOffer, Long>, OfferCustomRepository  {
+public interface CounselOfferRepository extends JpaRepository<CounselOffer, Long>, CounselOfferCustomRepository  {
 
     @Modifying
     @Query("UPDATE CounselOffer o SET o.delDate = :delDate WHERE o.offerSeq = :offerSeq")
     void softDeleteById(@Param("offerSeq") Long offerSeq, @Param("delDate") LocalDateTime delDate);
 
     boolean existsByUserAndHireAndDelDateIsNull(User user, CounselorHire hire);
-
 }

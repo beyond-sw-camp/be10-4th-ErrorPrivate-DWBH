@@ -1,7 +1,6 @@
 package com.dwbh.backend.controller.chat;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
-import com.dwbh.backend.dto.chat.ChatRoomDTO;
 import com.dwbh.backend.service.chat.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +21,7 @@ public class ChatController  {
     public final ChatService chatService;
 
     @PostMapping
-    @Operation(summary = "채팅 추가")
+    @Operation(summary = "채팅방 추가, 알림 추가, 채팅 추천 프롬프트 생성")
     public ResponseEntity<Boolean> createChat (@RequestBody ChatDTO.Create chatCreateDTO) {
         boolean result = chatService.createChat(chatCreateDTO);
 
@@ -34,12 +33,5 @@ public class ChatController  {
     public List<ChatDTO.Response> readChatList () {
         return chatService.readChatList();
     }
-
-    @GetMapping("/room")
-    @Operation(summary = "채팅방 조회")
-    public ChatRoomDTO readChatRoom (String roomId) {
-        return chatService.readChatRoom(roomId);
-    }
-
 
 }

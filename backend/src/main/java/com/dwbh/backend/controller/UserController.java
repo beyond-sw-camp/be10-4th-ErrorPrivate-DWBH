@@ -81,4 +81,12 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("/user")
+    @Operation(summary = "회원 탈퇴")
+    public ResponseEntity<Void> deleteUser() {
+        userService.deleteUser(userService.getUserSeq(AuthUtil.getAuthUser()));
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

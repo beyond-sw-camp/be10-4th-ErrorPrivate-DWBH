@@ -14,7 +14,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-
+        //웹소켓 핸드셰이크 커넥션을 생성
         log.info("::::::::::: Registering stomp endpoints :::::::::::");
 
         registry.addEndpoint("/stomp/chat")
@@ -26,9 +26,8 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         log.info("::::::::::: Configuring message broker :::::::::::");
 
-        config.setApplicationDestinationPrefixes("/pub");
-        config.enableSimpleBroker("/sub");
+        config.setApplicationDestinationPrefixes("/pub"); // @MessageMapping으로 라우팅
+        config.enableSimpleBroker("/sub"); // 해당 경로를 sub하는 client에게 메세지 전달 (내부 메세지 브로커 활성화)
     }
-
 
 }
