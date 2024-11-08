@@ -72,7 +72,7 @@ function goBackToList() {
       <nav>
         <div class="logo">
           <RouterLink to="/" active-class="active" replace>
-            <img src="@/images/logo.png" alt="에러 해적단 로고"/>
+            <img src="@/images/ms-icon-310x310.png" alt="DWBH 로고"/>
           </RouterLink>
         </div>
 
@@ -82,7 +82,7 @@ function goBackToList() {
           </RouterLink>
 
           <template v-if="!isLoggedIn">
-            <RouterLink to="/signup" active-class="active" replace>
+            <RouterLink to="/register" active-class="active" replace>
               Sign Up
             </RouterLink>
             <RouterLink to="/login" active-class="active" replace>
@@ -164,15 +164,15 @@ function goBackToList() {
 
 header {
   width: 100%; /* 화면 전체 너비 차지 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
 
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px; /* 간격 조정 */
-  padding-left: 20px; /* 좌우 패딩 축소 */
+  gap: 20px;
+  padding-left: 40px;
   padding-right: 40px;
   flex-wrap: nowrap; /* 화면이 줄어들어도 글씨 가로로 유지 */
 }

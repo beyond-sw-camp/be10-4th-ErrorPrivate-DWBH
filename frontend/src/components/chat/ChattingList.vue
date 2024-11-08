@@ -17,6 +17,9 @@ const fetchChats = async () => {
 const evaluateChat = (chatSeq, event) => {
   event.preventDefault();
   console.log(`Evaluating chat with seq: ${chatSeq}`);
+  // 새로운 창에서 경로 열기
+  const url = `/chat/${chatSeq}/evaluation/`;
+  window.open(url, '_blank'); // 새 창에서 열기
 };
 
 onMounted(fetchChats);
@@ -39,7 +42,7 @@ onMounted(fetchChats);
             <span class="last-message">안녕하세요.</span>
 <!--            <span class="last-message">{{ chat.lastMessage }}</span>-->
             </div>
-          <button class="evaluation-button" v-if="chat.showEvaluation" @click="(event) => evaluateChat(chat.chatSeq, event)">평가</button>
+          <button class="evaluation-button" v-if="!chat.showEvaluation" @click.stop="(event) => evaluateChat(chat.chatSeq, event)">평가</button>
         </div>
       </li>
     </ul>

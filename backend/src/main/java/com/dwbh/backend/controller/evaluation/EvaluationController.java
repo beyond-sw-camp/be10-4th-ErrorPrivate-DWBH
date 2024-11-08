@@ -1,5 +1,6 @@
 package com.dwbh.backend.controller.evaluation;
 
+import com.dwbh.backend.dto.evaluation.EvaluationCommentResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.service.evaluation.EvaluationService;
@@ -20,12 +21,22 @@ public class EvaluationController {
 
     private final EvaluationService evaluationService;
 
-    // 평가 수정을 위한 조회
+    // 평가 수정을 위한 평가 조회
     @Operation(summary = "평가 조회", description = "채팅방번호에 해당하는 평가를 조회한다.")
     @GetMapping("/chat/{chatSeq}/evaluation")
     public ResponseEntity<EvaluationResponse> readEvaluation(@PathVariable("chatSeq") Long chatSeq) {
 
         EvaluationResponse response = evaluationService.readEvaluation(chatSeq);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 평가를 하고자 하는 댓글 조회
+    @Operation(summary = "평가 댓글 조회", description = "채팅방번호에 해당하는 댓글을 조회한다.")
+    @GetMapping("/chat/{chatSeq}/evaluation/comment")
+    public ResponseEntity<EvaluationCommentResponse> readEvaluationComment(@PathVariable("chatSeq") Long chatSeq) {
+
+        EvaluationCommentResponse response = evaluationService.readEvaluationComment(chatSeq);
 
         return ResponseEntity.ok(response);
     }
@@ -36,6 +47,9 @@ public class EvaluationController {
     public ResponseEntity<String> createEvaluation(
             @RequestBody EvaluationRequest evaluationRequest
     ) {
+//        String email = AuthUtil.getAuthUser();
+//        // 채팅방 생성 유저랑 현재 로그인 된 유저가 같은 지 비교 -> 평가 가능한 사람
+
         evaluationService.createEvaluation(evaluationRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("평가작성성공");
