@@ -107,6 +107,6 @@ public class CounselorService {
             throw new CustomException(ErrorCodeType.POST_NOT_FOUND);
         }
 
-        return customRepositoryimpl.findCounselorHireDetail(hireSeq, currentUserSeq);
+        return counselorRepository.findCounselorHireDetail(hireSeq, currentUserSeq);
     }
 }
