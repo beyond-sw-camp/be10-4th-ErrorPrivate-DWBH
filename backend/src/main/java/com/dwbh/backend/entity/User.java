@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
         @AttributeOverride(name = "regDate", column = @Column(name = "user_reg_date")),
         @AttributeOverride(name = "modDate", column = @Column(name = "user_mod_date"))
 })
-public class User extends BaseDateEntity {
 @SQLDelete(sql = "UPDATE tb_user SET user_status = 'delete', user_del_date = NOW() WHERE user_seq = ?")
+public class User extends BaseDateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

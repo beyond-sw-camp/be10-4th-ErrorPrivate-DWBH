@@ -49,6 +49,10 @@ public class UserService implements UserDetailsService {
         User loginUser = userRepository.findByUserEmail(userId)
                 .orElseThrow(() -> new UsernameNotFoundException(userId));
 
+        if ( loginUser.getUserStatus().equals("delete") ) {
+            throw new CustomException(ErrorCodeType.USER_NOT_FOUND);
+        }
+
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         return new org.springframework.security.core.userdetails.User(loginUser.getUserEmail(), loginUser.getUserPassword(), grantedAuthorities);
@@ -95,5 +99,10 @@ public class UserService implements UserDetailsService {
         } else { user.modifyUser(modifyUserRequest, false); }
 
         userRepository.save(user);
+    }
+
+    // 회원 탈퇴
+    public void deleteUser(Long userSeq) {
+        userRepository.deleteById(userSeq);
     }
 }
