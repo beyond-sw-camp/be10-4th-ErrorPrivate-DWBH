@@ -13,4 +13,5 @@ public class EvaluationResponse {
     private Integer evaluationCommunication;
     private Integer evaluationKindness;
     private Double evaluationScore;
+    private Boolean isEvaluation = false;
 }

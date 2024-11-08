@@ -20,7 +20,7 @@ public class EvaluationController {
 
     private final EvaluationService evaluationService;
 
-    // 평가 수정을 위한 조회
+    // 평가 수정을 위한 평가 조회
     @Operation(summary = "평가 조회", description = "채팅방번호에 해당하는 평가를 조회한다.")
     @GetMapping("/chat/{chatSeq}/evaluation")
     public ResponseEntity<EvaluationResponse> readEvaluation(@PathVariable("chatSeq") Long chatSeq) {

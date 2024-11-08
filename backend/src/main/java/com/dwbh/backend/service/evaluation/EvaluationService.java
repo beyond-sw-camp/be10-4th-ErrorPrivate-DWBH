@@ -25,13 +25,15 @@ public class EvaluationService {
     @Transactional
     public EvaluationResponse readEvaluation(Long chatSeq) {
         Evaluation evaluation = evaluationRepository.findByChatSeq(chatSeq);
-        // 채팅방에 해당하는 평가가 있는지 체크
+
+//         채팅방에 해당하는 평가가 있는지 체크
         if (evaluation == null) {
             throw new CustomException(ErrorCodeType.EVALUATION_NOT_FOUND);
         }
 
         // 엔티티를 DTO 로 변환
         EvaluationResponse evaluationResponse = evaluationMapper.toDTO(evaluation);
+        evaluationResponse.setIsEvaluation(true);
 
         return evaluationResponse;
     }
