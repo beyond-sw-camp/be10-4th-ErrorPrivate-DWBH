@@ -9,6 +9,7 @@ import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,14 @@ public class UserController {
         userService.createUser(createUserRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/user/email-check/{userEmail}")
+    @Operation(summary = "이메일 중복 확인")
+    public ResponseEntity<Boolean> emailCheck(
+            @PathVariable String userEmail) {
+
+        return ResponseEntity.ok(userService.emailCheck(userEmail));
     }
 
     @GetMapping("/user/{userSeq}")
