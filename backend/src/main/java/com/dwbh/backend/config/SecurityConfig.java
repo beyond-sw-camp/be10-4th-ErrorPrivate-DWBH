@@ -48,7 +48,8 @@ public class SecurityConfig {
                                         new AntPathRequestMatcher("/swagger**/**"),
                                         new AntPathRequestMatcher("/v3/api-docs/**"),
                                         new AntPathRequestMatcher("/stomp/chat"),
-                                        new AntPathRequestMatcher("/api/v1/**")).permitAll()
+                                        new AntPathRequestMatcher("/api/v1/**"),
+                                        new AntPathRequestMatcher("/api/v1/counselor-hire")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/**"))
                                 .authenticated()
                 ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
