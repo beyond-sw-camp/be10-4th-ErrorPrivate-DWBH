@@ -70,9 +70,9 @@ public class CounselorHire extends BaseDateEntity {
         this.user = foundUser;
     }
 
-    public void updateCounselor(String counselorHireTitle, String counselorHireContent, String counselorHireCounselorGender) {
+    public void updateCounselor(String counselorHireTitle, String counselorHireContent, Gender counselorHireCounselorGender) {
         this.hireTitle = counselorHireTitle;
         this.hireContent = counselorHireContent;
-        this.hireGender = Gender.valueOf(counselorHireCounselorGender);
+        this.hireGender = counselorHireCounselorGender;
     }
 }
