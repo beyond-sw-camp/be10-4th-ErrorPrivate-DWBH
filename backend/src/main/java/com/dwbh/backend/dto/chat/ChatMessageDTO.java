@@ -2,8 +2,9 @@ package com.dwbh.backend.dto.chat;
 
 import com.dwbh.backend.common.util.CustomLocalDateTimeDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +22,7 @@ public class ChatMessageDTO {
         private String senderNickName;
         private String receiveSeq;
         @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
-        private LocalDateTime regDate;
+        private LocalDateTime regDate = LocalDateTime.now();
 
         public void changeMessageRequest(String chatMessageSeq, String message, String type) {
             this.chatMessageSeq = chatMessageSeq;
@@ -51,10 +52,9 @@ public class ChatMessageDTO {
         private String sendSeq;
         private String senderNickName;
         private String receiveSeq;
-        @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
-        private LocalDateTime regDate;
-        @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
-        private LocalDateTime modDate;
+        private String regDate;
+        private String modDate;
+        private String readYn;
 
     }
 

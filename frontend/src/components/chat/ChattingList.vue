@@ -19,6 +19,10 @@ const evaluateChat = (chatSeq, event) => {
   console.log(`Evaluating chat with seq: ${chatSeq}`);
 };
 
+const truncateMessage = (message) => {
+  return message.length > 13 ? message.substring(0, 13) + '...' : message;
+};
+
 onMounted(fetchChats);
 
 </script>
@@ -36,8 +40,7 @@ onMounted(fetchChats);
         <div class="chat-info">
           <div class="chat-details">
             <span class="chat-title">{{ chat.receiveUser.userNickname }}</span>
-            <span class="last-message">안녕하세요.</span>
-<!--            <span class="last-message">{{ chat.lastMessage }}</span>-->
+            <span class="last-message">{{ truncateMessage(chat.lastMessage) }}</span>
             </div>
           <button class="evaluation-button" v-if="chat.showEvaluation" @click="(event) => evaluateChat(chat.chatSeq, event)">평가</button>
         </div>
@@ -79,8 +82,10 @@ onMounted(fetchChats);
 }
 
 .evaluation-button {
-  margin-left: 150px;
   white-space: nowrap;
+  margin-top: 13px;
+  max-height: 35px;
+  max-width: 48px;
 }
 
 .chat-item.unread::marker {

@@ -7,17 +7,27 @@ import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
-    private final ChatMessageRepository chatMessageRepository;
 
     private final MongoTemplate mongoTemplate;
 
+    public List<ChatMessageDTO.Response> getChatHistory(String roomId) {
+        Query query = new Query(Criteria.where("chatRoomSeq").is(roomId));
+
+        return mongoTemplate.find(query, ChatMessageDTO.Response.class, "request");
+    }
 
     @Transactional
     public void saveMessage(ChatMessageDTO.Request request) {
@@ -30,5 +40,7 @@ public class ChatMessageService {
             throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
         }
     }
+
+
 
 }

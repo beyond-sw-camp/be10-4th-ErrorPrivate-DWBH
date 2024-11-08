@@ -15,6 +15,7 @@
     "bootstrap-vue-3": "^0.5.1",
     "pinia": "^2.2.4",
     "sockjs-client": "^1.6.1",
+    "uuid": "^11.0.2",
     "vue": "^3.5.12",
     "vue-router": "^4.0.13",
     "webstomp-client": "^1.2.6"

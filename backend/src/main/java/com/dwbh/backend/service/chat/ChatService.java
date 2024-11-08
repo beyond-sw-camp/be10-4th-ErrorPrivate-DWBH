@@ -1,5 +1,6 @@
 package com.dwbh.backend.service.chat;
 
+import com.dwbh.backend.common.util.DateTimeUtil;
 import com.dwbh.backend.dto.chat.ChatDTO;
 import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
@@ -15,9 +16,14 @@ import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,11 +34,11 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final ChatRepository chatRepository;
-    private final ChatMessageRepository chatMessageRepository;
     private final NotificationRepository notificationRepository;
     private final ChatMapper chatMapper;
     private final NotificationMapper notificationMapper;
     private final ModelMapper modelMapper;
+    private final MongoTemplate mongoTemplate;
 
     @Transactional
     public boolean createChat(ChatDTO.Create chatCreateDTO) {
@@ -44,18 +50,15 @@ public class ChatService {
             }
 
             Chat chat = chatMapper.toEntity(chatCreateDTO);
-
             chatRepository.save(chat);
 
             ChatDTO chatDTO = chatMapper.toDTO(chat);
-
             if(chatDTO.getChatSeq() == null) {
                 throw new CustomException(ErrorCodeType.CHAT_CREATE_ERROR);
             }
 
             // 채팅방 생성 완료 시 알림 생성
             Notification notification = notificationMapper.toEntity(new CreateNotificationRequest(chatDTO.getChatSeq(), chatDTO.getReceiveSeq()));
-
             notificationRepository.save(notification);
 
             result = true;
@@ -70,13 +73,15 @@ public class ChatService {
         List<ChatDTO.Response> chatResponseList = null;
         try {
 
-             List<Chat> chatList = chatRepository.findAll();
-
-             //TODO 아영 - mongodb에서 last message 가져오기
-
+            List<Chat> chatList = chatRepository.findAll();
             chatResponseList = chatList.stream()
                     .map(chat -> modelMapper.map(chat, ChatDTO.Response.class))
-                    .collect(Collectors.toList()); //정렬은 최신순으로 바꾸기
+                    .collect(Collectors.toList());
+
+            for (ChatDTO.Response response : chatResponseList) {
+                checkChatLastMessage(response);  // 마지막 메세지와 읽음여부 반환
+                checkEvaluationPeriod(response);
+            }
 
         } catch (Exception e) {
             log.error("readChatList Error : {}", e.getMessage());
@@ -86,18 +91,23 @@ public class ChatService {
         return chatResponseList;
     }
 
-    public ChatMessageDTO readChatRoom(String roomId) {
-        ChatMessageDTO chatResponse = null;
-        try {
+    public void checkChatLastMessage(ChatDTO.Response response) {
+        Query query = new Query(Criteria.where("chatRoomSeq").is(response.getChatSeq().toString()))
+                .with(Sort.by(Sort.Direction.DESC, "regDate")).limit(1);
 
-            //TODO 아영 - mongodb에서 채팅 내용 가져오기
-
-        } catch (Exception e) {
-            log.error("readChatRoom Error : {}", e.getMessage());
-            throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
+        ChatMessageDTO.Response messageResponse = mongoTemplate.findOne(query, ChatMessageDTO.Response.class, "request");
+        if(!ObjectUtils.isEmpty(messageResponse)) {
+            response.setLastMessage(messageResponse.getMessage());
+            response.setReadYn(messageResponse.getReadYn());
+        } else {
+            response.setLastMessage(" ");
         }
+    }
 
-        return chatResponse;
+    public void checkEvaluationPeriod(ChatDTO.Response response) {
+        if (response.getEndDate() != null) {
+            response.setShowEvaluation(DateTimeUtil.isBeforeWeek(response.getEndDate(), 2));
+        }
     }
 
 }

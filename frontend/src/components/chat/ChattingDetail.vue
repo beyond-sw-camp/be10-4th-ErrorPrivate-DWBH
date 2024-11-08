@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Stomp } from '@stomp/stompjs';
+import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   chat: Object
@@ -14,11 +15,34 @@ const sendUsername = ref(props.chat.sendUser.userNickname);
 const receiveUsername = ref(props.chat.receiveUser.userNickname);
 const isConnected = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
   const chatId = props.chat.chatSeq;
   chatTitle.value = `채팅방 ${chatId}`;
+
+  await loadChatHistory(chatId);
+
   connectWebSocket();
 });
+
+async function loadChatHistory(chatId) {
+  try {
+    const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`);
+    const data = await response.json();
+    messages.value = data.map((message) => ({
+      chatMessageSeq: message.chatMessageSeq,
+      chatRoomSeq: message.chatRoomSeq,
+      senderNickName: message.writer,
+      sendSeq: props.chat.sendUser.userSeq,
+      receiveSeq: props.chat.receiveUser.userSeq,
+      text: message.message,
+      type: message.writer === sendUsername.value ? "sent" : "received",
+      regDate: message.regDate,
+      readYn: message.readYn
+    }));
+    scrollToBottom();
+  } catch (error) {
+    console.error("Failed to load chat history:", error);
+  }
 
 onBeforeUnmount(() => {
   disconnect();
@@ -33,15 +57,20 @@ function connectWebSocket() {
     console.log("STOMP Connection established");
 
     // 메시지 수신
-    stompClient.value.subscribe(`/sub/chat/room/${props.chat.chatSeq}`, (message) => {
+    stompClient.value.subscribe(`/sub/chat/talk/${props.chat.chatSeq}`, (message) => {
       const content = JSON.parse(message.body);
-      const msgClass = content.writer === sendUsername.value ? "sent" : "received";
+      const msgType = content.writer === sendUsername.value ? "sent" : "received";
 
       messages.value.push({
-        id: Date.now(),
-        sender: content.writer,
+        chatMessageSeq: uuidv4(),
+        chatRoomSeq: props.chat.chatSeq,
+        senderNickName: content.writer,
+        sendSeq: props.chat.sendUser.userSeq,
+        receiveSeq: props.chat.receiveUser.userSeq,
         text: content.message,
-        class: msgClass
+        type: msgType,
+        regDate: new Date().toLocaleTimeString(),
+        readYn: "N"
       });
 
       if (content.message.includes("나가셨습니다.")) {
@@ -52,8 +81,9 @@ function connectWebSocket() {
     });
 
     // 방에 입장 메시지 전송
-    stompClient.value.send('/pub/chat/enter', {}, JSON.stringify({
-      roomId: props.chat.chatSeq,
+    stompClient.value.send(`/pub/chat/enter/${props.chat.chatSeq}`, {}, JSON.stringify({
+      chatMessageSeq: uuidv4(),
+      chatRoomSeq: props.chat.chatSeq,
       writer: sendUsername.value
     }));
 
@@ -62,10 +92,11 @@ function connectWebSocket() {
   stompClient.value.onclose = () => {
     isConnected.value = false;
     messages.value.push({
-      id: Date.now(),
-      sender: 'System',
-      text: " 님과의 대화가 종료되었습니다.",
-      class: "received"
+      chatMessageSeq: uuidv4(),
+      chatRoomSeq: props.chat.chatSeq,
+      sender: sendUsername.value,
+      message: " 님과의 대화가 종료되었습니다.",
+      type: "exit"
     });
     console.log("WebSocket is closed.");
   };
@@ -74,17 +105,17 @@ function connectWebSocket() {
 
 function sendMessage() {
   if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
-    stompClient.value.send('/pub/chat/message', {}, JSON.stringify({
+    stompClient.value.send(`/pub/chat/talk/${props.chat.chatSeq}`, {}, JSON.stringify({
       roomId: props.chat.chatSeq,
       message: newMessage.value,
       writer: sendUsername.value
     }));
-    /*messages.value.push({
+    messages.value.push({
       id: Date.now(),
       sender: sendUsername.value,
       text: newMessage.value,
       class: "sent"
-    });*/
+    });
     newMessage.value = '';
     scrollToBottom();
   }
@@ -92,10 +123,9 @@ function sendMessage() {
 
 function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
-    const exitMsg = `${sendUsername.value}: 님이 방을 나가셨습니다.`;
-    stompClient.value.send('/pub/chat/message', {}, JSON.stringify({
+    stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify({
       roomId: props.chat.chatSeq,
-      message: exitMsg,
+      message: `${sendUsername.value}: 님이 방을 나가셨습니다.`,
       writer: sendUsername.value
     }));
     stompClient.value.disconnect();
@@ -119,15 +149,16 @@ function scrollToBottom() {
     <button class="back-button" @click="$emit('goBack')"> <</button>
     <button id="disconn" @click="disconnect">종료하기</button>
 
-    <h2>{{ chatTitle }}</h2>
+    <h2>{{ props.chat.receiveUser.userNickname }}</h2>
     <div class="messages" ref="messagesContainer">
       <div
           v-for="message in messages"
-          :key="message.id"
-          :class="['message', message.class]"
+          :key="message.chatMessageSeq"
+          :class="['message', message.type]"
       >
-        <span class="sender">{{ message.sender }}</span> <br/>
-        <span class="text">{{ message.text }}</span>
+        <span class="sender">{{ message.senderNickName }}</span><br />
+        <span class="text">{{ message.text }}</span><br />
+        <span class="date">{{ message.regDate }}</span>
       </div>
     </div>
     <div class="input-area">

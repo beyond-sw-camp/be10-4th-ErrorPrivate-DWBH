@@ -5,28 +5,40 @@ import com.dwbh.backend.service.chat.ChatMessageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
+@RequestMapping("/api/v1/user/chat/message")
 @RequiredArgsConstructor
 @Tag(name = "Chatting Message API", description = "채팅방 API")
 public class ChatMessageController {
 
     private final ChatMessageService chatMessageService;
 
-    private final SimpMessagingTemplate template;
+
+    @GetMapping("/{roomId}")
+    public List<ChatMessageDTO.Response> getChatHistory(@PathVariable String roomId) {
+        List<ChatMessageDTO.Response> chatHistory = chatMessageService.getChatHistory(roomId);
+        return chatHistory;
+    }
 
     // 채팅방 입장
     @MessageMapping("/chat/enter/{roomId}")
     @SendTo("/sub/chat/room/{roomId}")
     public void enterUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
-        message.changeMessageRequest("1", message.getSenderNickName() + "님이 채팅방에 입장하였습니다.", "ENTER");
+        message.changeMessageRequest(message.getChatMessageSeq(), message.getSenderNickName() + "님이 채팅방에 입장하였습니다.", "ENTER");
         chatMessageService.saveMessage(message);
     }
 
@@ -41,7 +53,7 @@ public class ChatMessageController {
     @MessageMapping("/chat/exit/{roomId}")
     @SendTo("/sub/chat/room/{roomId}")
     public void exitUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
-        message.changeMessageRequest("1", message.getSenderNickName() + "님이 채팅방에 입장하였습니다.", "EXIT");
+        message.changeMessageRequest(message.getChatMessageSeq(), message.getSenderNickName() + "님이 채팅을 종료하였습니다.", "EXIT");
         chatMessageService.saveMessage(message);
     }
 
