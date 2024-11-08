@@ -1,38 +1,32 @@
 package com.dwbh.backend.service.counselor_hire;
 
-import com.dwbh.backend.dto.counselor_hire.CounselorDTO;
+import com.dwbh.backend.dto.counselor_hire.CounselorResponse;
 import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
+import com.dwbh.backend.dto.counselor_hire.CounselorUpdateRequest;
 import com.dwbh.backend.entity.CounselorHire;
-import com.dwbh.backend.entity.CounselorAge;
-import com.dwbh.backend.entity.CounselorType;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.repository.counselor_hire.*;
 import com.dwbh.backend.repository.user.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CounselorService {
 
     private final CounselorRepository counselorRepository;
     private final UserRepository userRepository;
-    private final CounselorAgeRepository counselorAgeRepository;
-    private final CounselorTypeRepository counselorTypeRepository;
-    private final CounselorCustomRepositoryImpl customRepositoryimpl;
 
     // 게시글 등록
     @Transactional
-    public void savePost(CounselorDTO savePostReqDTO) {
+    public void savePost(CounselorResponse savePostReqDTO) {
         Long loginUserId = 1L;  // 예시로 로그인된 사용자 ID 설정
 
         User foundUser = userRepository.findById(loginUserId)
@@ -58,28 +52,21 @@ public class CounselorService {
     }
 
     // 모든 게시글 조회
-    public List<CounselorDTO> findAllPosts() {
-        List<CounselorHire> counselorHires = counselorRepository.findAll();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public List<CounselorResponse> findAllPosts() {
+        List<CounselorResponse> counselorList = counselorRepository.findAllJoinUser();
 
-        return counselorHires.stream()
-                .map(counselor -> new CounselorDTO(
-                        counselor.getHireSeq(),
-                        counselor.getHireTitle(),
-                        counselor.getHireContent(),
-                        counselor.getHireGender().toString(),
-//                        counselor.getCounselorAge().getCounselorAgeRangeSeq(),
-//                        counselor.getCounselorType().getCounselorTypeSeq(),
-                        Optional.ofNullable(counselor.getRegDate())
-                                .map(date -> date.format(formatter))
-                                .orElse(null)
-                ))
-                .collect(Collectors.toList());
+        for(CounselorResponse counselor : counselorList) {
+            counselor.setAgeRanges(counselorRepository.findCounselorAgeByCounselorHireSeq(counselor.getHireSeq()));
+            counselor.setTypes(counselorRepository.findCounselorTypeByCounselorHireSeq(counselor.getHireSeq()));
+        }
+
+        log.info("counselorList : {}", counselorList);
+        return counselorList;
     }
 
     // 게시글 수정
     @Transactional
-    public void updatePost(Long id, CounselorDTO updatePostReqDTO) {
+    public void updatePost(Long id, CounselorUpdateRequest updatePostReqDTO) {
         CounselorHire counselorHire = counselorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
@@ -109,6 +96,6 @@ public class CounselorService {
             throw new CustomException(ErrorCodeType.POST_NOT_FOUND);
         }
 
-        return customRepositoryimpl.findCounselorHireDetail(hireSeq, currentUserSeq);
+        return counselorRepository.findCounselorHireDetail(hireSeq, currentUserSeq);
     }
 }
