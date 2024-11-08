@@ -59,6 +59,16 @@ public class OfferService {
         CounselorHire hire = hireRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
 
+        // 글 작성자가 자신의 글에 댓글을 작성하려고 할 때 예외처리
+        if (hire.getUser().getUserSeq().equals(user.getUserSeq())) {
+            throw new CustomException(ErrorCodeType.CANNOT_COMMENT_OWN_POST);
+        }
+
+        // 회원이 한 개의 댓글만 작성 가능하게 검증
+        boolean alreadyCommented = offerRepository.existsByUserAndHireAndDelDateIsNull(user, hire);
+        if (alreadyCommented) {
+            throw new CustomException(ErrorCodeType.ALREADY_COMMENTED); // 이미 댓글 작성한 회원인 경우 예외
+        }
 
         // 2. DTO를 Entity로 매핑
         CounselOffer offer = modelMapper.map(request, CounselOffer.class);
@@ -185,8 +195,6 @@ public class OfferService {
         // 3. 댓글과 연결된 파일이 있는 경우 처리
         if (offer.getOfferFile() != null) {
             // 2-1. 파일 소프트 삭제
-//            File file = offer.getOfferFile().getFile();
-//            fileRepository.delete(file);  // @SQLDelete로 소프트 삭제 처리됨
             fileRepository.softDeleteById(offer.getOfferFile().getFile().getFileSeq(),  LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
             // 2-2. `CounselOfferFile` 실제 삭제
