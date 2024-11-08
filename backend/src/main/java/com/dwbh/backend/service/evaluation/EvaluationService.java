@@ -1,5 +1,7 @@
 package com.dwbh.backend.service.evaluation;
 
+import com.dwbh.backend.dto.UserDetailResponse;
+import com.dwbh.backend.dto.evaluation.EvaluationCommentResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.entity.Chat;
@@ -8,10 +10,16 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.EvaluationMapper;
 import com.dwbh.backend.repository.chat.ChatRepository;
+import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
 import com.dwbh.backend.repository.evaluation.EvaluationRepository;
+import com.dwbh.backend.repository.user.CustomUserRepository;
+import com.dwbh.backend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.Period;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +27,10 @@ public class EvaluationService {
 
     private final EvaluationRepository evaluationRepository;
     private final ChatRepository chatRepository;
+    private final CustomUserRepository customUserRepository;
+    private final CounselOfferRepository counselOfferRepository;
     private final EvaluationMapper evaluationMapper;
+    private final UserRepository userRepository;
 
     // 채팅방번호에 해당하는 평가 조회
     @Transactional
@@ -37,6 +48,29 @@ public class EvaluationService {
 
         return evaluationResponse;
     }
+
+    // 평가를 하고자 하는 댓글 조회
+    @Transactional
+    public EvaluationCommentResponse readEvaluationComment(Long chatSeq) {
+        // 채팅창 찾기
+        Chat chat = chatRepository.findById(chatSeq)
+                .orElseThrow(() -> new CustomException(ErrorCodeType.CHAT_NOT_FOUND));
+
+        // 나이대 계산
+        LocalDateTime currentDate = LocalDateTime.now();
+        Period period = Period.between(chat.getSendUser().getUserBirthday(), currentDate.toLocalDate());
+        int userAge = period.getYears() / 10 * 10;
+
+        // 프로필 찾기
+        UserDetailResponse userDetailResponse = customUserRepository.findUserDetailResponse(chat.getSendUser().getUserSeq());
+        String userProfilePath = userDetailResponse.getFilePath();
+
+        // 엔티티를 DTO 로 변환
+        EvaluationCommentResponse evaluationCommentResponse = evaluationMapper.toDTO(chat, userAge, userProfilePath);
+
+        return evaluationCommentResponse;
+    }
+
 
     // 평가 생성
     @Transactional

@@ -1,5 +1,6 @@
 package com.dwbh.backend.mapper;
 
+import com.dwbh.backend.dto.evaluation.EvaluationCommentResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.entity.Chat;
@@ -26,5 +27,17 @@ public class EvaluationMapper {
         evaluation.builder(chat, evaluationScore);
 
         return evaluation;
+    }
+
+    public EvaluationCommentResponse toDTO(Chat chat, int userAge, String userProfilePath) {
+        return EvaluationCommentResponse.builder()
+                .offerContent(chat.getCounselOffer().getOfferContent())
+                .userNickname(chat.getSendUser().getUserNickname())
+                .userGender(chat.getSendUser().getUserGender())
+                .regDate(chat.getCounselOffer().getRegDate())
+                .modDate(chat.getCounselOffer().getModDate())
+                .userAge(userAge)
+                .userProfilePath(userProfilePath)
+                .build();
     }
 }

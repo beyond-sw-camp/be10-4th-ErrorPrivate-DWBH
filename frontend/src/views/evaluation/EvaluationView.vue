@@ -1,18 +1,22 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, reactive, ref} from 'vue';
 import ButtonSmallColor from "@/components/common/ButtonSmallColor.vue";
 import ModalSmall from "@/components/common/ModalSmall.vue";
 import {useRoute, useRouter} from "vue-router";
 import {
   createEvaluationData,
   deleteEvaluationData,
-  readEvaluation,
+  readEvaluationData, readEvaluationCommentData,
   updateEvaluationData
 } from "@/util/evaluationApi.js";
 import {useAuthStore} from "@/stores/auth.js";
 
-// 평가 조회 api 호출 후 데이터
-const {evaluationData, readEvaluationData} = readEvaluation();
+
+// 상태 관리를 위한 반응형 객체 생성
+const state = reactive({
+  evaluation: [],
+  comment: [],
+});
 
 const authStore = useAuthStore();
 const isLoading = ref(true); // 로딩 상태 플래그 추가
@@ -21,9 +25,6 @@ const router = useRouter();
 // 라우터로 온 데이터 받기
 const route = useRoute();
 const chatSeq = route.params.chatSeq;
-
-// 댓글 조회 받아오기 api 호출
-
 
 // 평가 데이터
 const evaluationItems = ref([
@@ -34,10 +35,10 @@ const evaluationItems = ref([
 
 const updateRatings = () => {
   // rating 데이터가 존재하는지 확인 후 업데이트
-  if (evaluationData.value) {
-    evaluationItems.value[0].rating = evaluationData.value.evaluationSatisfaction;
-    evaluationItems.value[1].rating = evaluationData.value.evaluationCommunication;
-    evaluationItems.value[2].rating = evaluationData.value.evaluationKindness;
+  if (state.evaluation) {
+    evaluationItems.value[0].rating = state.evaluation.evaluationSatisfaction;
+    evaluationItems.value[1].rating = state.evaluation.evaluationCommunication;
+    evaluationItems.value[2].rating = state.evaluation.evaluationKindness;
   }
 };
 
@@ -54,7 +55,7 @@ const isDelete = () => {
 }
 const confirmModal = async () => {
   isModalVisible.value = false;
-  deleteEvaluation(); // 삭제진행
+  await deleteEvaluation(); // 삭제진행
 }
 
 const closeModal = () => {
@@ -62,16 +63,16 @@ const closeModal = () => {
 }
 
 /* 로딩 후에 평가가 보이도록 */
-const showButton = computed(() =>
-    !isLoading.value && evaluationData.value?.isEvaluation
+const showData = computed(() =>
+    !isLoading.value && state.evaluation.isEvaluation
 );
 
 
 // 평가를 저장하는 함수
-const saveEvaluation = () => {
+const saveEvaluation = async () => {
   // 실제 저장 로직 구현
   // 창닫기 & api 호출
-  createEvaluationData(authStore.accessToken,
+  await createEvaluationData(authStore.accessToken,
       {
         chatSeq: chatSeq,
         evaluationSatisfaction: evaluationItems.value[0].rating,     // 만족도 평점 (예: 1 ~ 5 점)
@@ -91,9 +92,9 @@ const exitEvaluation = () => {
 };
 
 // 평가를 수정하는 함수
-const updateEvaluation = () => {
+const updateEvaluation = async () => {
   // 창닫기 & api 호출
-  updateEvaluationData(authStore.accessToken, evaluationData.value.evaluationSeq,
+  await updateEvaluationData(authStore.accessToken, state.evaluation.evaluationSeq,
       {
         chatSeq: chatSeq,
         evaluationSatisfaction: evaluationItems.value[0].rating,     // 만족도 평점 (예: 1 ~ 5 점)
@@ -106,26 +107,39 @@ const updateEvaluation = () => {
 };
 
 // 평가를 삭제하는 함수
-const deleteEvaluation = () => {
+const deleteEvaluation = async () => {
   // 창닫기 & api 호출
-  deleteEvaluationData(authStore.accessToken, evaluationData.value.evaluationSeq)
+  await deleteEvaluationData(authStore.accessToken, state.evaluation.evaluationSeq)
   // 현재 창 닫기
   window.close();
 };
 
+// 데이터 로드 함수
+const loadEvaluationData = async () => {
+  try {
+    // 데이터를 비동기로 로드하고 evaluationCommentData에 저장
+    state.evaluation = await readEvaluationData(authStore.accessToken, chatSeq);
+    state.comment = await readEvaluationCommentData(authStore.accessToken, chatSeq);
+    updateRatings(); // 데이터 업데이트
+    console.log(state.evaluation);
+    console.log(state.comment);
+  } catch (error) {
+    console.error('데이터 로드 실패:', error);
+  } finally {
+    isLoading.value = false; // 데이터 로드가 완료되면 로딩 상태를 false로 변경
+  }
+};
+
 onMounted(async () => {
-  await readEvaluationData(authStore.accessToken, chatSeq);
-  console.log(evaluationData.value);
-  isLoading.value = false; // API 호출 후 로딩 완료로 변경
-  updateRatings(); // 데이터 업데이트
+  await loadEvaluationData();
 });
 </script>>
 
 <template>
-  <template v-if="isLoading">
+  <div v-if="isLoading">
     <h1>로딩중.....</h1>
-  </template>
-  <template v-else>
+  </div>
+  <div v-else>
     <div class="evaluation-container">
       <!-- Header 정보 -->
       <div class="header">
@@ -140,22 +154,29 @@ onMounted(async () => {
           </div>
           <div class="user-details">
             <div class="user-top">
-              <div class="user-name">행복한 사람</div>
-              <div class="user-age">20대 남자</div>
+              <div class="user-name">
+                {{ state.comment.userNickname }}
+              </div>
+              <div class="user-age">
+                <span>{{ state.comment.userAge }}대 </span>
+                <span v-if="state.comment.userGender === 'male'">남자</span>
+                <span v-else-if="state.comment.userGender === 'female'">여자</span>
+              </div>
             </div>
             <div class="user-message">
-              안녕하세요! 저도 요즘 비슷한 고민을 하고 있어서 공감이 많이 되네요. 관계에서 오는 스트레스를 줄이는
-              방법이 있을까요? 혹시 도움이 될 만한 조언이나 경험이 있으시다면 함께 나눠주시면 정말 감사하겠습니다.
-              힘내시고, 저희도 함께 해결 방법을 찾아봐요!
+              {{ state.comment.offerContent }}
             </div>
           </div>
-          <div class="date">2024. 10.22 11:00:25</div>
+          <div class="date">
+            <span v-if="state.comment.modDate">{{ state.comment.modDate.replace("T", " ") }}</span>
+            <span v-else>{{ state.comment.regDate.replace("T", " ") }}</span>
+          </div>
         </div>
 
         <div class="evaluation-section">
           <div class="user-name">
             <span>평가항목</span>
-            <ButtonSmallColor v-if="showButton" class="black-button" @click="isDelete">
+            <ButtonSmallColor v-if="showData" class="black-button" @click="isDelete">
               삭제
             </ButtonSmallColor>
           </div>
@@ -215,7 +236,7 @@ onMounted(async () => {
 
         <!-- 저장 버튼 -->
         <div class="button-section">
-          <div v-if="!showButton">
+          <div v-if="!showData">
             <ButtonSmallColor class="black-button" @click="saveEvaluation">저장</ButtonSmallColor>
           </div>
           <div v-else>
@@ -230,7 +251,7 @@ onMounted(async () => {
     <!-- 삭제 확인 모달창 -->
     <ModalSmall :isVisible="isModalVisible" :message="'정말로 삭제하시겠습니까?'"
                 @close="closeModal" @confirm="confirmModal"/>
-  </template>
+  </div>
 
 
 </template>
@@ -268,6 +289,7 @@ onMounted(async () => {
 }
 
 .user-details {
+  width: 100%;
   margin-left: 20px;
 }
 
