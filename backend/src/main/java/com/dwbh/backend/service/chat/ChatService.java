@@ -4,6 +4,7 @@ import com.dwbh.backend.dto.chat.ChatDTO;
 import com.dwbh.backend.dto.chat.ChatRoomDTO;
 import com.dwbh.backend.dto.chat.ChatSuggestRequest;
 import com.dwbh.backend.dto.chat.suggest.ChatMessageSuggest;
+import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Notification;
@@ -103,7 +104,6 @@ public class ChatService {
         try {
 
             //TODO 아영 - mongodb에서 채팅 내용 가져오기
-            chatResponse = chatMessageRepository.findRoomById(roomId);
 
         } catch (Exception e) {
             log.error("readChatRoom Error : {}", e.getMessage());
