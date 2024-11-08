@@ -75,7 +75,7 @@ function connectWebSocket() {
 function sendMessage() {
   if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
     stompClient.value.send('/pub/chat/message', {}, JSON.stringify({
-      roomId: props.chat.chatSeq,
+      chatRoomSeq: props.chat.chatSeq,
       message: newMessage.value,
       writer: sendUsername.value
     }));
