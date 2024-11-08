@@ -72,6 +72,7 @@ const updateEvaluation = () => {
 
 // 평가를 삭제하는 함수
 const deleteEvaluation = () => {
+  isModalVisible.value = true;
   // 실제 저장 로직 구현
   // 창닫기 & api 호출
   // alert('평가가 저장되었습니다!');
@@ -91,7 +92,7 @@ onMounted(() => {
       <span>따뜻한 소리 나눔 / 평가</span>
     </div>
 
-    <!-- 평가 항목 -->
+    <!-- 평가 항목 댓글 api 호출 필요 -->
     <div class="main-section">
       <div class="user-section">
         <div class="user-avatar">
@@ -114,7 +115,7 @@ onMounted(() => {
       <div class="evaluation-section">
         <div class="user-name">
           <span>평가항목</span>
-          <ButtonSmallColor v-if="isEvaluation" class="black-button" @click="deleteEvaluation">삭제</ButtonSmallColor>
+          <ButtonSmallColor v-if="!isEvaluation" class="black-button" @click="deleteEvaluation">삭제</ButtonSmallColor>
         </div>
 
         <div class="evaluation-warning">

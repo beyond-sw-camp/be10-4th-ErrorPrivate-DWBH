@@ -82,7 +82,7 @@ function goBackToList() {
           </RouterLink>
 
           <template v-if="!isLoggedIn">
-            <RouterLink to="/signup" active-class="active" replace>
+            <RouterLink to="/register" active-class="active" replace>
               Sign Up
             </RouterLink>
             <RouterLink to="/login" active-class="active" replace>
