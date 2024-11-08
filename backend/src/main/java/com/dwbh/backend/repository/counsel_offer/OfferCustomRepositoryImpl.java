@@ -28,7 +28,6 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
     private final JPAQueryFactory queryFactory;
 
     @Override
-//    public Page<CounselOffer> findOffersByHireSeq(Long hireSeq, Pageable pageable) {
     public Page<OfferResponse> findOffersWithFilter(Long hireSeq, Pageable pageable, String sortOrder, Long currentUserId) {
 
         // 정렬 조건
@@ -38,13 +37,11 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
 
         List<OfferResponse> results = queryFactory
                 .select(Projections.fields(OfferResponse.class,
-//                .select(Projections.constructor(OfferResponse.class,
                         counselOffer.offerSeq,
                         counselOffer.hire.hireSeq,
                         counselOffer.user.userSeq,
                         counselOffer.offerContent,
                         counselOffer.offerPrivateYn,
-//                        counselOffer.offerFile.file.as("offerFilePath"),
                         file.filePath.as("offerFilePath"),
                         counselOffer.regDate,
                         counselOffer.modDate,
@@ -54,7 +51,7 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
                         user.userStatus,
                         file.filePath.as("userProfilePath")))
                 .from(counselOffer)
-                .join(counselOffer.user, user)/*.fetchJoin()*/  // 연관된 User를 함께 불러옴
+                .join(counselOffer.user, user)
                 .leftJoin(userProfileFile).on(user.userSeq.eq(userProfileFile.userSeq))
                 .leftJoin(file).on(userProfileFile.fileSeq.eq(file.fileSeq))
                 .where(counselOffer.delDate.isNull() // 필터조건
@@ -75,27 +72,6 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
         long total = (count != null) ? count : 0L;
 
         return new PageImpl<>(results, pageable, total);
-
-//        List<CounselOffer> results = queryFactory
-//                .selectFrom(counselOffer)
-//                .join(counselOffer.user, user).fetchJoin()  // 연관된 User를 함께 불러옴
-//                .leftJoin(userProfileFile).on(user.userSeq.eq(userProfileFile.userSeq))
-//                .leftJoin(file).on(userProfileFile.fileSeq.eq(file.fileSeq))
-//                .where(counselOffer.delDate.isNull()
-//                        .and(counselorHire.hireSeq.eq(hireSeq)))
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch();
-//
-//        long total = queryFactory
-//                .select(counselOffer.count())
-//                .from(counselOffer)
-//                .where(counselOffer.delDate.isNull()
-//                        .and(counselorHire.hireSeq.eq(hireSeq)))
-//                .fetchOne();
-//
-//        return new PageImpl<>(results, pageable, total);
-
     }
 
     private BooleanExpression filterPrivateComments(QCounselOffer counselOffer, Long currentUserId) {

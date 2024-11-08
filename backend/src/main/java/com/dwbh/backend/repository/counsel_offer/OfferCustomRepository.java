@@ -8,6 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface OfferCustomRepository {
 
     Page<OfferResponse> findOffersWithFilter(Long hireSeq, Pageable pageable, String sortOrder, Long currentUserId);
-//    Page<CounselOffer> findOffersByHireSeq(Long hireSeq, Pageable pageable);
 
 }
