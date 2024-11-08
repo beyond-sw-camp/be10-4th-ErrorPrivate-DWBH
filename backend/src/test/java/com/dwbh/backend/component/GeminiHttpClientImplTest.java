@@ -12,7 +12,7 @@ class GeminiHttpClientImplTest {
 
     @Test
     void suggestTest() {
-        String message = chatSuggestComponent.chatMessageSuggest("남자들이 좋아하는 운동복 추천해줘", 1L);
+        String message = chatSuggestComponent.chatMessageSuggest("남자들이 좋아하는 운동복 추천해줘", "1");
 
         System.out.println(message);
     }
