@@ -10,6 +10,7 @@ import com.dwbh.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,9 +40,17 @@ public class UserController {
     @GetMapping("/user/email-check/{userEmail}")
     @Operation(summary = "이메일 중복 확인")
     public ResponseEntity<Boolean> emailCheck(
-            @PathVariable String userEmail) {
+            @PathVariable @Valid @Email String userEmail) {
 
         return ResponseEntity.ok(userService.emailCheck(userEmail));
+    }
+
+    @GetMapping("/user/nickname-check/{userNickname}")
+    @Operation(summary = "닉네임 중복 확인")
+    public ResponseEntity<Boolean> nicknameCheck(
+            @PathVariable String userNickname) {
+
+        return ResponseEntity.ok(userService.nicknameCheck(userNickname));
     }
 
     @GetMapping("/user/{userSeq}")

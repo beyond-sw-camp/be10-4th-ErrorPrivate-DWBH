@@ -1,5 +1,6 @@
 package com.dwbh.backend.entity;
 
+import com.dwbh.backend.common.entity.BaseDateEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
         @AttributeOverride(name = "regDate", column = @Column(name = "user_reg_date")),
         @AttributeOverride(name = "modDate", column = @Column(name = "user_mod_date"))
 })
-public class User {
+public class User extends BaseDateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
