@@ -35,6 +35,9 @@ public class UserService implements UserDetailsService {
     // 회원 등록
     @Transactional
     public void createUser(CreateUserRequest newUser) {
+        if (emailCheck(newUser.getUserEmail()) || nicknameCheck(newUser.getUserNickname())) {
+            throw new CustomException(ErrorCodeType.USER_EXIST_VALUES);
+        }
         User user = modelMapper.map(newUser, User.class);
         user.encryptPassword(passwordEncoder.encode(newUser.getUserPassword()));
         userRepository.save(user);
