@@ -1,7 +1,8 @@
 package com.dwbh.backend.controller.counselor_hire;
 
-import com.dwbh.backend.dto.counselor_hire.CounselorDTO;
+import com.dwbh.backend.dto.counselor_hire.CounselorResponse;
 import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
+import com.dwbh.backend.dto.counselor_hire.CounselorUpdateRequest;
 import com.dwbh.backend.service.counselor_hire.CounselorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,21 +23,21 @@ public class CounselorController {
 
     @Operation(summary = "전체 게시글 조회", description = "전체 게시글 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<CounselorDTO>> getAllPosts() {
-        List<CounselorDTO> posts = counselorService.findAllPosts();
+    public ResponseEntity<List<CounselorResponse>> getAllPosts() {
+        List<CounselorResponse> posts = counselorService.findAllPosts();
         return ResponseEntity.ok(posts);
     }
 
     @Operation(summary = "게시글 등록", description = "게시글을 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> savePost(@RequestBody CounselorDTO savePostReqDTO) {
+    public ResponseEntity<Void> savePost(@RequestBody CounselorResponse savePostReqDTO) {
         counselorService.savePost(savePostReqDTO);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "게시글 수정", description = "ID로 특정 게시글을 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePost(@PathVariable Long id, @RequestBody CounselorDTO updatePostReqDTO) {
+    public ResponseEntity<Void> updatePost(@PathVariable Long id, @RequestBody CounselorUpdateRequest updatePostReqDTO) {
         counselorService.updatePost(id, updatePostReqDTO);
         return ResponseEntity.ok().build();
     }

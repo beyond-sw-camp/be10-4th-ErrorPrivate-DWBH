@@ -1,6 +1,10 @@
 package com.dwbh.backend.repository.counselor_hire;
 
+import com.dwbh.backend.dto.counselor_hire.CounselorAgeDTO;
+import com.dwbh.backend.dto.counselor_hire.CounselorResponse;
 import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
+import com.dwbh.backend.dto.counselor_hire.CounselorTypeDTO;
+import com.dwbh.backend.entity.QCounselorType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +25,7 @@ import static com.dwbh.backend.entity.QUser.user;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class CounselorCustomRepositoryImpl implements CounselorCustomRepository {
+public class CounselorRepositoryImpl implements CounselorCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -65,6 +69,45 @@ public class CounselorCustomRepositoryImpl implements CounselorCustomRepository 
         }
 
         return result;
+    }
+
+    @Override
+    public List<CounselorTypeDTO> findCounselorTypeByCounselorHireSeq(Long counselorHireSeq) {
+        QCounselorType counselorType = new QCounselorType("counselorType");
+
+        return queryFactory.select(Projections.constructor(CounselorTypeDTO.class
+                        ,counselorType.counselorTypeSeq
+                        ,counselorType.counselorType))
+                .from(counselorHire)
+                .leftJoin(counselorHire.hireTypes, counselorHireType)
+                .leftJoin(counselorHireType.counselorType, counselorType)
+                .where(counselorHire.hireSeq.eq(counselorHireSeq))
+                .fetch();
+    }
+
+    @Override
+    public List<CounselorAgeDTO> findCounselorAgeByCounselorHireSeq(Long counselorHireSeq) {
+        return queryFactory.select(Projections.constructor(CounselorAgeDTO.class
+                        ,counselorAge.counselorAgeRangeSeq
+                        ,counselorAge.counselorAgeRange))
+                .from(counselorHire)
+                .leftJoin(counselorHire.hireAges, counselorHireAge)
+                .leftJoin(counselorHireAge.counselorAge, counselorAge)
+                .where(counselorHire.hireSeq.eq(counselorHireSeq))
+                .fetch();
+    }
+
+    @Override
+    public List<CounselorResponse> findAllJoinUser() {
+        return queryFactory.select(Projections.constructor(CounselorResponse.class,
+                counselorHire.hireSeq,
+                counselorHire.hireTitle,
+                counselorHire.hireGender,
+                user.userNickname,
+                counselorHire.regDate))
+                .from(counselorHire)
+                .leftJoin(counselorHire.user, user)
+                .fetch();
     }
 
 }
