@@ -68,14 +68,14 @@ public class OfferController {
     @Operation(summary = "게시글 댓글 조회", description = "특정 게시글의 댓글을 조회한다.")
     public ResponseEntity<Page<OfferResponse>> readOffer(
             @PathVariable Long hireSeq,
-            @RequestParam Long currentUserId,  // 현재 로그인한 사용자
+            @RequestParam Long currentUserSeq,  // 현재 로그인한 사용자
             @RequestParam(defaultValue = "asc") String sortOrder,  // 기본값: 최신순(desc)
             @PageableDefault(size = 10) Pageable pageable) {
 
         log.info("GET /api/v1/hire-post/{}/comment 댓글 조회 요청 - sortOrder: {}, pageable: {}", hireSeq, sortOrder, pageable);
 
 
-        Page<OfferResponse> offerList = offerService.readOffersByHireSeq(hireSeq, currentUserId, pageable, sortOrder);
+        Page<OfferResponse> offerList = offerService.readOffersByHireSeq(hireSeq, currentUserSeq, pageable, sortOrder);
 
         return ResponseEntity.status(HttpStatus.OK).body(offerList);
     }

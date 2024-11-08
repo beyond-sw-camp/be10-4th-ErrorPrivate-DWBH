@@ -206,14 +206,14 @@ public class OfferService {
 
     /* 댓글 조회 */
     @Transactional
-    public Page<OfferResponse> readOffersByHireSeq(Long hireSeq, Long currentUserId, Pageable pageable, String sortOrder) {
+    public Page<OfferResponse> readOffersByHireSeq(Long hireSeq, Long currentUserSeq, Pageable pageable, String sortOrder) {
         log.info("--------------댓글조회 서비스 진입----------------");
         pageable = PageRequest.of(
                 pageable.getPageNumber() <= 0? 0 : pageable.getPageNumber() -1,
                 pageable.getPageSize()
         );
 
-        return counselOfferRepository.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserId);
+        return counselOfferRepository.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserSeq);
     }
 
 

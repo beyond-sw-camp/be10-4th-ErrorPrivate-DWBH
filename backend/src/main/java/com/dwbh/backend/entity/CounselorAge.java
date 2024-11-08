@@ -14,5 +14,5 @@ public class CounselorAge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long counselorAgeRangeSeq;
 
-    private Integer counselorAgeRange;
+    private String counselorAgeRange;
 }
