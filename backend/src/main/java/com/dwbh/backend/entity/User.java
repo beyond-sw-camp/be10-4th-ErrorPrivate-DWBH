@@ -1,11 +1,14 @@
 package com.dwbh.backend.entity;
 
 import com.dwbh.backend.common.entity.BaseDateEntity;
+import com.dwbh.backend.dto.user.ModifyUserRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,6 +25,8 @@ import java.time.LocalDateTime;
         @AttributeOverride(name = "modDate", column = @Column(name = "user_mod_date"))
 })
 public class User extends BaseDateEntity {
+@SQLDelete(sql = "UPDATE tb_user SET user_status = 'delete', user_del_date = NOW() WHERE user_seq = ?")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,5 +44,14 @@ public class User extends BaseDateEntity {
     // 패스워드 암호화
     public void encryptPassword(String encodedPwd) {
         this.userPassword = encodedPwd;
+    }
+
+    // 회원 정보 수정
+    public void modifyUser(ModifyUserRequest modify, boolean modifyPassword) {
+        this.userNickname = modify.getUserNickname();
+        if (modifyPassword) this.userPassword = modify.getUserPassword();
+        this.userGender = modify.getUserGender();
+        this.userBirthday = modify.getUserBirthday();
+        this.userMbti = modify.getUserMbti();
     }
 }

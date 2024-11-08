@@ -1,24 +1,31 @@
-package com.dwbh.backend.service.offer;
+package com.dwbh.backend.service.counsel_offer;
 
 import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.common.util.FileUploadUtils;
-import com.dwbh.backend.dto.offer.CreateOrUpdateOfferRequest;
-import com.dwbh.backend.dto.offer.OfferDTO;
+import com.dwbh.backend.dto.counsel_offer.CreateOrUpdateOfferRequest;
+import com.dwbh.backend.dto.counsel_offer.OfferResponse;
 import com.dwbh.backend.entity.*;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
+import com.dwbh.backend.repository.counsel_offer.OfferCustomRepositoryImpl;
 import com.dwbh.backend.repository.counselor_hire.CounselorRepository;
 import com.dwbh.backend.repository.file.FileRepository;
-import com.dwbh.backend.repository.offer.OfferRepository;
 import com.dwbh.backend.repository.user.UserRepository;
 import com.dwbh.backend.service.UserService;
+import com.querydsl.core.types.OrderSpecifier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -28,7 +35,7 @@ import java.time.ZoneId;
 @Slf4j
 public class OfferService {
 
-    private final OfferRepository offerRepository;
+    private final CounselOfferRepository offerRepository;
     private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
@@ -36,10 +43,11 @@ public class OfferService {
     private static final String UPLOAD_DIR = "uploads"; // 파일 저장 디렉토리
 
     private final UserService userService;
+    private final OfferCustomRepositoryImpl offerCustomRepositoryImpl;
 
     // 댓글 작성
     @Transactional
-    public OfferDTO  createOffer(Long hireSeq, CreateOrUpdateOfferRequest request, MultipartFile file) {
+    public OfferResponse createOffer(Long hireSeq, CreateOrUpdateOfferRequest request, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
 
         // 요청한 사용자가 현재 로그인한 사용자인지 검증
@@ -51,11 +59,19 @@ public class OfferService {
         CounselorHire hire = hireRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
 
+        // 글 작성자가 자신의 글에 댓글을 작성하려고 할 때 예외처리
+        if (hire.getUser().getUserSeq().equals(user.getUserSeq())) {
+            throw new CustomException(ErrorCodeType.CANNOT_COMMENT_OWN_POST);
+        }
+
+        // 회원이 한 개의 댓글만 작성 가능하게 검증
+        boolean alreadyCommented = offerRepository.existsByUserAndHireAndDelDateIsNull(user, hire);
+        if (alreadyCommented) {
+            throw new CustomException(ErrorCodeType.ALREADY_COMMENTED); // 이미 댓글 작성한 회원인 경우 예외
+        }
 
         // 2. DTO를 Entity로 매핑
         CounselOffer offer = modelMapper.map(request, CounselOffer.class);
-//        offer.putHireSeq(2L); // 임의로 설정
-//        offer.putUserSeq(request.getUserSeq()); // 임의 설정
         offer.putUserSeq(user);
         offer.putHireSeq(hire);
 
@@ -85,14 +101,14 @@ public class OfferService {
         CounselOffer savedOffer = offerRepository.save(offer);
 
         // 5. Entity를 Response DTO로 매핑
-        OfferDTO response = modelMapper.map(savedOffer, OfferDTO.class);
+        OfferResponse response = modelMapper.map(savedOffer, OfferResponse.class);
 
         return response;
     }
 
     // 댓글 수정
     @Transactional
-    public OfferDTO updateOffer(Long hireSeq, Long offerSeq, CreateOrUpdateOfferRequest request, MultipartFile newFile) {
+    public OfferResponse updateOffer(Long hireSeq, Long offerSeq, CreateOrUpdateOfferRequest request, MultipartFile newFile) {
         log.info("--------------댓글수정 서비스 진입----------------");
 
         // 요청한 사용자가 현재 로그인한 사용자인지 검증
@@ -156,7 +172,7 @@ public class OfferService {
         }
 
         // 4. 엔티티를 DTO로 변환하여 반환
-        return modelMapper.map(offer, OfferDTO.class);
+        return modelMapper.map(offer, OfferResponse.class);
     }
 
     /* 댓글 삭제 */
@@ -179,8 +195,6 @@ public class OfferService {
         // 3. 댓글과 연결된 파일이 있는 경우 처리
         if (offer.getOfferFile() != null) {
             // 2-1. 파일 소프트 삭제
-//            File file = offer.getOfferFile().getFile();
-//            fileRepository.delete(file);  // @SQLDelete로 소프트 삭제 처리됨
             fileRepository.softDeleteById(offer.getOfferFile().getFile().getFileSeq(),  LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
             // 2-2. `CounselOfferFile` 실제 삭제
@@ -191,6 +205,17 @@ public class OfferService {
         offerRepository.softDeleteById(offerSeq, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 
+    /* 댓글 조회 */
+    @Transactional
+    public Page<OfferResponse> readOffersByHireSeq(Long hireSeq, Long currentUserId, Pageable pageable, String sortOrder) {
+        log.info("--------------댓글조회 서비스 진입----------------");
+        pageable = PageRequest.of(
+                pageable.getPageNumber() <= 0? 0 : pageable.getPageNumber() -1,
+                pageable.getPageSize()
+        );
+
+        return offerCustomRepositoryImpl.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserId);
+    }
 
 
     // 현재 로그인한 사용자와 요청한 사용자의 userSeq를 비교하여 권한 검증
@@ -203,5 +228,6 @@ public class OfferService {
             throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
         }
     }
+
 
 }
