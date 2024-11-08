@@ -15,10 +15,10 @@ public class CounselorHireType {
     private Long counselorHireTypeSeq;
 
     @ManyToOne
-    @JoinColumn(name = "counselorTypeSeq")
+    @JoinColumn(name = "counselor_type_seq")
     private CounselorType counselorType;
 
     @ManyToOne
-    @JoinColumn(name = "counselorHireSeq")
+    @JoinColumn(name = "counselor_hire_seq")
     private CounselorHire counselorHire;
 }
