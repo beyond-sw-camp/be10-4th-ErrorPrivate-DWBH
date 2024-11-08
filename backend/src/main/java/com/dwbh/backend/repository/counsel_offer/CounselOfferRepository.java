@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
-public interface CounselOfferRepository extends JpaRepository<CounselOffer, Long>, CounselOfferCustomRepository  {
+public interface CounselOfferRepository extends JpaRepository<CounselOffer, Long>, CounselOfferCustomRepository, OfferCustomRepository {
 
     @Modifying
     @Query("UPDATE CounselOffer o SET o.delDate = :delDate WHERE o.offerSeq = :offerSeq")

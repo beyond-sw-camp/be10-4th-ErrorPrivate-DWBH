@@ -3,11 +3,14 @@ package com.dwbh.backend.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
+@AllArgsConstructor
 public class CreateUserRequest {
     @NotBlank @Email
     private String userEmail;
