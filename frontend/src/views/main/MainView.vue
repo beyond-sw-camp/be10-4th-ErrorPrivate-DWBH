@@ -24,7 +24,13 @@
 
 <style scoped>
 
-
+.container {
+  font-family: Arial, sans-serif;
+  color: #333;
+  background-color: #f4f1ea;
+  padding: 20px;
+  width: 100%; /* 전체 너비로 설정 */
+}
 .content {
   display: flex;
   align-items: center;
@@ -80,5 +86,6 @@ button {
   font-size: 1rem;
   cursor: pointer;
 }
+
 
 </style>
