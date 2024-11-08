@@ -10,7 +10,6 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.ChatMapper;
 import com.dwbh.backend.mapper.NotificationMapper;
-import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
