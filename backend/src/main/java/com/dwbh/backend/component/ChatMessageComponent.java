@@ -26,12 +26,12 @@ public class ChatMessageComponent {
         }
     }
 
-    public String chatMessageSuggest(String text, Long chatRoomSeq) {
+    public String chatMessageSuggest(String text, String chatRoomSeq) {
         ChatMessageSuggest chatMessageSuggest = chatMessageSuggestRepository.findByChatRoomSeq(chatRoomSeq);
         log.info("chatMessageSuggest : {}", chatMessageSuggest);
         ChatSuggestRequest request = new ChatSuggestRequest(text, "user", chatMessageSuggest.getContents());
 
-        chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq.intValue(), request.getContents()));
+        chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq, request.getContents()));
 
         ChatSuggestResponse response = httpRequest(request);
         if(response != null) {

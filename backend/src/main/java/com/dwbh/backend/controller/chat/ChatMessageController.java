@@ -5,7 +5,10 @@ import com.dwbh.backend.service.chat.ChatMessageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,11 +33,8 @@ public class ChatMessageController {
     // 채팅방 대화
     @MessageMapping("/chat/talk/{roomId}")
     @SendTo("/sub/chat/room/{roomId}")
-    public void talkUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
+    public void talkUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message) {
         chatMessageService.saveMessage(message);
-
-        log.info("sendMessage 진입 성공 , {}", message  );
-        chatMessageService.createChatMessage(message);
     }
 
     // 채팅방 퇴장

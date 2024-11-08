@@ -1,7 +1,6 @@
 package com.dwbh.backend.service.chat;
 
 import com.dwbh.backend.dto.chat.ChatDTO;
-import com.dwbh.backend.dto.chat.ChatRoomDTO;
 import com.dwbh.backend.dto.chat.ChatSuggestRequest;
 import com.dwbh.backend.dto.chat.suggest.ChatMessageSuggest;
 import com.dwbh.backend.dto.chat.ChatMessageDTO;
@@ -16,7 +15,6 @@ import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import com.dwbh.backend.repository.chat.ChatMessageSuggestRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
-import com.dwbh.backend.repository.counselor_hire.CounselorRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +62,7 @@ public class ChatService {
 
             // 채팅방 생성 완료 시 채팅 프롬프트 생성
             String counselorContent = counselOfferRepository.findCounselorContentByCounselOfferSeq(chatCreateDTO.getCounselOfferSeq()) + " 대답은 항상 30글자 이내 5줄 이내로 작성해주세요.";
-            chatMessageSuggestRepository.save(new ChatMessageSuggest(chatDTO.getChatSeq().intValue(), new ChatSuggestRequest(counselorContent, "user", new ArrayList<>()).getContents()));
+            chatMessageSuggestRepository.save(new ChatMessageSuggest(chatDTO.getChatSeq().toString(), new ChatSuggestRequest(counselorContent, "user", new ArrayList<>()).getContents()));
 
             // 채팅방 생성 완료 시 알림 생성
             Notification notification = notificationMapper.toEntity(new CreateNotificationRequest(chatDTO.getChatSeq(), chatDTO.getReceiveSeq()));
@@ -99,8 +97,8 @@ public class ChatService {
         return chatResponseList;
     }
 
-    public ChatRoomDTO readChatRoom(String roomId) {
-        ChatRoomDTO chatResponse = null;
+    public ChatMessageDTO readChatRoom(String roomId) {
+        ChatMessageDTO chatResponse = null;
         try {
 
             //TODO 아영 - mongodb에서 채팅 내용 가져오기

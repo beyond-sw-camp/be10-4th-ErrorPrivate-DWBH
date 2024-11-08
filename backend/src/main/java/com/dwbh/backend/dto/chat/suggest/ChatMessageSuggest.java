@@ -17,10 +17,10 @@ public class ChatMessageSuggest {
     @Id
     private String id;  // MongoDB의 ID 필드
     @Field("chatRoomSeq")
-    private Integer chatRoomSeq;
+    private String chatRoomSeq;
     private List<Content> contents;
 
-    public ChatMessageSuggest(Integer chatRoomSeq, List<Content> contents) {
+    public ChatMessageSuggest(String chatRoomSeq, List<Content> contents) {
         this.chatRoomSeq = chatRoomSeq;
         this.contents = contents;
     }

@@ -1,14 +1,19 @@
 package com.dwbh.backend.service.chat;
 
+
+import com.dwbh.backend.component.ChatMessageComponent;
 import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
-import jakarta.transaction.Transactional;
+import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j @Service
+@Slf4j
+@Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
@@ -19,15 +24,14 @@ public class ChatMessageService {
 
 
     @Transactional
-    public boolean createChatMessage(ChatMessageDTO chatMessageDTO) {
+    public void saveMessage(ChatMessageDTO.Request request) {
         boolean result = false;
         try {
             //chatMessageDTO.setMessageType(ChatMessageDTO.MessageType.TALK);
 
             mongoTemplate.insert(request);
-            chatMessageComponent.chatMessageSuggest(chatMessageDTO.getMessage(), chatMessageDTO.getChatRoomSeq());
+            chatMessageComponent.chatMessageSuggest(request.getMessage(), request.getChatRoomSeq());
             //채팅 메세지 몽고디비 연동
-            result = true;
 
         } catch (Exception e) {
             log.error("saveMessage Error : {}", e.getMessage());
