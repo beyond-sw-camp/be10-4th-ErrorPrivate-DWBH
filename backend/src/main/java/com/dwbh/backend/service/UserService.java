@@ -51,6 +51,16 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(loginUser.getUserEmail(), loginUser.getUserPassword(), grantedAuthorities);
     }
 
+    // 이메일 중복 확인
+    public Boolean emailCheck(String userEmail) {
+        return userRepository.existsByUserEmail(userEmail);
+    }
+
+    // 닉네임 중복 확인
+    public Boolean nicknameCheck(String userNickname) {
+        return userRepository.existsByUserNickname(userNickname);
+    }
+
     // user_email 로 user_seq 검색
     public Long getUserSeq(String Email) {
         User user = userRepository.findByUserEmail(Email).orElseThrow();
