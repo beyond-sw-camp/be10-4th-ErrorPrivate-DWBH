@@ -1,6 +1,7 @@
 package com.dwbh.backend.service.counselor_hire;
 
 import com.dwbh.backend.dto.counselor_hire.CounselorResponse;
+import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
 import com.dwbh.backend.dto.counselor_hire.CounselorUpdateRequest;
 import com.dwbh.backend.entity.CounselorHire;
@@ -9,6 +10,7 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.repository.counselor_hire.*;
 import com.dwbh.backend.repository.user.UserRepository;
+import com.dwbh.backend.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ public class CounselorService {
 
     private final CounselorRepository counselorRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     // 게시글 등록
     @Transactional
@@ -85,17 +88,25 @@ public class CounselorService {
 
     // 게시글 상세조회
     @Transactional
-    public CounselorDetailResponse readPostDetail(Long hireSeq, Long currentUserSeq) {
+    public CounselorDetailResponse readPostDetail(Long hireSeq) {
         CounselorHire hire = counselorRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
 
         // 삭제된 글 예외처리
         boolean isDeleted = counselorRepository.existsByHireSeqAndDelDateIsNotNull(hireSeq);
 
+        // 현재 로그인한 사용자의 userSeq 가져오기
+        Long currentUserSeq = userService.getUserSeq(AuthUtil.getAuthUser());
+
+        // 현재 로그인한 사용자와 요청의 사용자 검증
+        if (!currentUserSeq.equals(hire.getUser().getUserSeq())) {
+            throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
+        }
+
         if (isDeleted) {
             throw new CustomException(ErrorCodeType.POST_NOT_FOUND);
         }
 
-        return counselorRepository.findCounselorHireDetail(hireSeq, currentUserSeq);
+        return customRepositoryimpl.findCounselorHireDetail(hireSeq, currentUserSeq);
     }
 }
