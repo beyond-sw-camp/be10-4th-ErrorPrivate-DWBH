@@ -45,13 +45,19 @@ public class CounselorHire extends BaseDateEntity {
     @Enumerated(EnumType.STRING)
     private Gender hireGender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "counselor_age_range_seq", nullable = false)
-    private CounselorAge counselorAge;
+    @OneToMany(mappedBy = "counselorHire")
+    private List<CounselorHireAge> hireAges = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "counselor_type_seq", nullable = false)
-    private CounselorType counselorType;
+    @OneToMany(mappedBy = "counselorHire")
+    private List<CounselorHireType> hireTypes = new ArrayList<>();
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "counselor_age_range_seq", nullable = false)
+//    private CounselorAge counselorAge;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "counselor_type_seq", nullable = false)
+//    private CounselorType counselorType;
 
     @Column(name = "counselor_hire_del_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")

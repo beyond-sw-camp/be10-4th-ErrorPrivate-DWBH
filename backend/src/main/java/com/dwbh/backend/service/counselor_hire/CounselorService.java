@@ -1,14 +1,16 @@
 package com.dwbh.backend.service.counselor_hire;
 
 import com.dwbh.backend.dto.counselor_hire.CounselorDTO;
+import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
 import com.dwbh.backend.entity.CounselorHire;
 import com.dwbh.backend.entity.CounselorAge;
 import com.dwbh.backend.entity.CounselorType;
 import com.dwbh.backend.entity.User;
-import com.dwbh.backend.repository.counselor_hire.CounselorAgeRepository;
-import com.dwbh.backend.repository.counselor_hire.CounselorTypeRepository;
-import com.dwbh.backend.repository.counselor_hire.CounselorRepository;
+import com.dwbh.backend.exception.CustomException;
+import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.repository.counselor_hire.*;
 import com.dwbh.backend.repository.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class CounselorService {
     private final UserRepository userRepository;
     private final CounselorAgeRepository counselorAgeRepository;
     private final CounselorTypeRepository counselorTypeRepository;
+    private final CounselorCustomRepositoryImpl customRepositoryimpl;
 
     // 게시글 등록
     @Transactional
@@ -36,22 +39,22 @@ public class CounselorService {
                 .orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
 
         // `CounselorAge`와 `CounselorType` 엔티티 조회
-        CounselorAge counselorAge = counselorAgeRepository.findById(savePostReqDTO.getAgeRangeId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 나이대입니다."));
-        CounselorType counselorType = counselorTypeRepository.findById(savePostReqDTO.getTypeId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 조건 유형입니다."));
+//        CounselorAge counselorAge = counselorAgeRepository.findById(savePostReqDTO.getAgeRangeId())
+//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 나이대입니다."));
+//        CounselorType counselorType = counselorTypeRepository.findById(savePostReqDTO.getTypeId())
+//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 조건 유형입니다."));
 
         // `CounselorHire` 엔티티 생성
-        CounselorHire saveCounselor = new CounselorHire(
-                savePostReqDTO.getHireTitle(),
-                savePostReqDTO.getHireContent(),
-                savePostReqDTO.getHireGender(),
-                foundUser,
-                counselorAge,
-                counselorType
-        );
-
-        counselorRepository.save(saveCounselor);
+//        CounselorHire saveCounselor = new CounselorHire(
+//                savePostReqDTO.getHireTitle(),
+//                savePostReqDTO.getHireContent(),
+//                savePostReqDTO.getHireGender(),
+//                foundUser,
+//                counselorAge,
+//                counselorType
+//        );
+//
+//        counselorRepository.save(saveCounselor);
     }
 
     // 모든 게시글 조회
@@ -65,8 +68,8 @@ public class CounselorService {
                         counselor.getHireTitle(),
                         counselor.getHireContent(),
                         counselor.getHireGender().toString(),
-                        counselor.getCounselorAge().getCounselorAgeRangeSeq(),
-                        counselor.getCounselorType().getCounselorTypeSeq(),
+//                        counselor.getCounselorAge().getCounselorAgeRangeSeq(),
+//                        counselor.getCounselorType().getCounselorTypeSeq(),
                         Optional.ofNullable(counselor.getRegDate())
                                 .map(date -> date.format(formatter))
                                 .orElse(null)
@@ -91,5 +94,21 @@ public class CounselorService {
         CounselorHire counselorHire = counselorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
         counselorRepository.delete(counselorHire);
+    }
+
+    // 게시글 상세조회
+    @Transactional
+    public CounselorDetailResponse readPostDetail(Long hireSeq, Long currentUserSeq) {
+        CounselorHire hire = counselorRepository.findById(hireSeq)
+                .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
+
+        // 삭제된 글 예외처리
+        boolean isDeleted = counselorRepository.existsByHireSeqAndDelDateIsNotNull(hireSeq);
+
+        if (isDeleted) {
+            throw new CustomException(ErrorCodeType.POST_NOT_FOUND);
+        }
+
+        return customRepositoryimpl.findCounselorHireDetail(hireSeq, currentUserSeq);
     }
 }

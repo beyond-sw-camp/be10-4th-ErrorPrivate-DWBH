@@ -1,11 +1,12 @@
 package com.dwbh.backend.controller.counselor_hire;
 
 import com.dwbh.backend.dto.counselor_hire.CounselorDTO;
+import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
 import com.dwbh.backend.service.counselor_hire.CounselorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,4 +47,13 @@ public class CounselorController {
         counselorService.deletePost(id);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "게시글 상세조회", description = "ID로 특정 게시글을 조회합니다.")
+    @GetMapping("/hire-post/{id}")
+    public ResponseEntity<CounselorDetailResponse> readPostDetail(@PathVariable Long id, @RequestParam Long currentUserSeq) {
+
+        CounselorDetailResponse detail = counselorService.readPostDetail(id, currentUserSeq);
+        return ResponseEntity.status(HttpStatus.OK).body(detail);
+    }
+
 }
