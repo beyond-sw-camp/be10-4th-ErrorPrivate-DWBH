@@ -35,7 +35,7 @@ import java.time.ZoneId;
 @Slf4j
 public class OfferService {
 
-    private final CounselOfferRepository offerRepository;
+    private final CounselOfferRepository counselOfferRepository;
     private final FileRepository fileRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
@@ -43,7 +43,6 @@ public class OfferService {
     private static final String UPLOAD_DIR = "uploads"; // 파일 저장 디렉토리
 
     private final UserService userService;
-    private final OfferCustomRepositoryImpl offerCustomRepositoryImpl;
 
     // 댓글 작성
     @Transactional
@@ -65,7 +64,7 @@ public class OfferService {
         }
 
         // 회원이 한 개의 댓글만 작성 가능하게 검증
-        boolean alreadyCommented = offerRepository.existsByUserAndHireAndDelDateIsNull(user, hire);
+        boolean alreadyCommented = counselOfferRepository.existsByUserAndHireAndDelDateIsNull(user, hire);
         if (alreadyCommented) {
             throw new CustomException(ErrorCodeType.ALREADY_COMMENTED); // 이미 댓글 작성한 회원인 경우 예외
         }
@@ -98,7 +97,7 @@ public class OfferService {
         }
 
         // 4. 엔티티 저장
-        CounselOffer savedOffer = offerRepository.save(offer);
+        CounselOffer savedOffer = counselOfferRepository.save(offer);
 
         // 5. Entity를 Response DTO로 매핑
         OfferResponse response = modelMapper.map(savedOffer, OfferResponse.class);
@@ -120,7 +119,7 @@ public class OfferService {
         CounselorHire hire = hireRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
 
-        CounselOffer offer = offerRepository.findById(offerSeq)
+        CounselOffer offer = counselOfferRepository.findById(offerSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
 
         // 탈퇴된 회원인지 확인
@@ -181,7 +180,7 @@ public class OfferService {
         log.info("--------------댓글삭제 서비스 진입----------------");
 
         // 1. 삭제할 댓글 조회
-        CounselOffer offer = offerRepository.findById(offerSeq)
+        CounselOffer offer = counselOfferRepository.findById(offerSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
 
         // 2. 댓글 작성자와 현재 로그인한 사용자가 동일한지 검증
@@ -202,7 +201,7 @@ public class OfferService {
         }
 
         // 4. 댓글 소프트 삭제 처리
-        offerRepository.softDeleteById(offerSeq, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        counselOfferRepository.softDeleteById(offerSeq, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 
     /* 댓글 조회 */
@@ -214,7 +213,7 @@ public class OfferService {
                 pageable.getPageSize()
         );
 
-        return offerCustomRepositoryImpl.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserId);
+        return counselOfferRepository.findOffersWithFilter(hireSeq, pageable, sortOrder, currentUserId);
     }
 
 
