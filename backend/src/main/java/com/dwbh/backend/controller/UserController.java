@@ -4,6 +4,7 @@ import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.dto.CreateUserRequest;
 import com.dwbh.backend.dto.UserDetailResponse;
 import com.dwbh.backend.dto.user.ModifyUserRequest;
+import com.dwbh.backend.dto.user.SendEmailRequest;
 import com.dwbh.backend.dto.user.UserModifyResponse;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
@@ -93,11 +94,23 @@ public class UserController {
     }
 
     @PostMapping("/user/email")
+    @Operation(summary = "이메일 인증 메일 전송")
     public ResponseEntity<Void> sandEmail(
-            @RequestBody String email) {
+            @RequestBody @Valid SendEmailRequest sendEmailRequest) {
 
-        emailService.sendEmail(email);
+        emailService.sendEmail(sendEmailRequest);
 
         return null;
+    }
+
+    @GetMapping("/user/email")
+    @Operation(summary = "이메일 인증 코드 검증")
+    public ResponseEntity<Void> verifyEmail(
+            @RequestParam @Valid @Email String email,
+            @RequestParam String code) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("result", emailService.verifyEmail(email, code))
+                .build();
     }
 }
