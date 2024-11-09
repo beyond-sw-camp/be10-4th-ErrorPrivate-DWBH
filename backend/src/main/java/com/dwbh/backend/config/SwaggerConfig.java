@@ -40,8 +40,15 @@ public class SwaggerConfig {
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
                                 .in(SecurityScheme.In.HEADER)
-                                .name("Authorization")))
+                                .name("Authorization"))
+                        .addSecuritySchemes("emailVerify", new SecurityScheme()
+                                .type(SecurityScheme.Type.APIKEY)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .in(SecurityScheme.In.HEADER)
+                                .name("Email-Verify-Header")))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .addSecurityItem(new SecurityRequirement().addList("emailVerify"))
                 .info(swaggerInfo());
     }
 

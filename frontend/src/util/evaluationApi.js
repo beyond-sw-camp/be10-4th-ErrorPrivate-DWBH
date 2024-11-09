@@ -63,9 +63,9 @@ export const updateEvaluationData = async (token, evaluationSeq, evaluationData)
 };
 
 // 평가 삭제 API 호출
-export const deleteEvaluationData = async (token, evaluationSeq) => {
+export const deleteEvaluationData = async (token, chatSeq, evaluationSeq) => {
     try {
-        const response = await axios.delete(`http://localhost:8089/api/v1/evaluation/${evaluationSeq}`, {
+        const response = await axios.delete(`http://localhost:8089/api/v1/chat/${chatSeq}/evaluation/${evaluationSeq}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
