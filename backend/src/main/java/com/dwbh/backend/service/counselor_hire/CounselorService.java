@@ -108,12 +108,12 @@ public class CounselorService {
         // 삭제된 글 예외처리
         boolean isDeleted = counselorRepository.existsByHireSeqAndDelDateIsNotNull(hireSeq);
 
-        // 현재 로그인한 사용자의 userSeq 가져오기
-        Long currentUserSeq = userService.getUserSeq(AuthUtil.getAuthUser());
-
         // 현재 로그인한 사용자와 요청의 사용자 검증
-        if (!currentUserSeq.equals(hire.getUser().getUserSeq())) {
-            throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
+        Long currentUserSeq = null;
+
+        String email = AuthUtil.getAuthUser();
+        if (email != null) { // 로그인된 경우에만 userSeq 설정
+            currentUserSeq = userService.getUserSeq(email);
         }
 
         if (isDeleted) {
