@@ -62,3 +62,13 @@ button {
     cursor: pointer;
 }
 
+.title-container {
+    margin-bottom: 20px;
+}
+
+.title-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: left;
+    color: #333;
+}
