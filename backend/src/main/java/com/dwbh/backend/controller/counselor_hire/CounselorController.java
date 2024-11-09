@@ -1,16 +1,14 @@
 package com.dwbh.backend.controller.counselor_hire;
 
-import com.dwbh.backend.dto.counselor_hire.CounselorDTO;
-import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
+import com.dwbh.backend.dto.counselor_hire.*;
 import com.dwbh.backend.service.counselor_hire.CounselorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,21 +20,21 @@ public class CounselorController {
 
     @Operation(summary = "전체 게시글 조회", description = "전체 게시글 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<CounselorDTO>> getAllPosts() {
-        List<CounselorDTO> posts = counselorService.findAllPosts();
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<CounselorListResponse> readCounselorList(@ModelAttribute ReadCounselorListRequest request, Pageable pageable) {
+        CounselorListResponse response = counselorService.readCounselorList(request, pageable);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "게시글 등록", description = "게시글을 등록합니다.")
     @PostMapping
-    public ResponseEntity<Void> savePost(@RequestBody CounselorDTO savePostReqDTO) {
-        counselorService.savePost(savePostReqDTO);
+    public ResponseEntity<Void> createCounselor(@RequestBody CreateCounselorRequest request) {
+        counselorService.savePost(request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "게시글 수정", description = "ID로 특정 게시글을 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePost(@PathVariable Long id, @RequestBody CounselorDTO updatePostReqDTO) {
+    public ResponseEntity<Void> updatePost(@PathVariable Long id, @RequestBody CounselorUpdateRequest updatePostReqDTO) {
         counselorService.updatePost(id, updatePostReqDTO);
         return ResponseEntity.ok().build();
     }
@@ -49,7 +47,7 @@ public class CounselorController {
     }
 
     @Operation(summary = "게시글 상세조회", description = "ID로 특정 게시글을 조회합니다.")
-    @GetMapping("/hire-post/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CounselorDetailResponse> readPostDetail(@PathVariable Long id) {
 
         CounselorDetailResponse detail = counselorService.readPostDetail(id);

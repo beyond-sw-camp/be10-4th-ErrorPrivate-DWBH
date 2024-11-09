@@ -10,7 +10,15 @@ public class AuthUtil {
 
     public static String getAuthUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) { return null;}  // 비회원이거나 예상치 않은 Principal일 경우 null 반환
-        else { return ((UserDetails) authentication.getPrincipal()).getUsername(); }
+        if (authentication == null) { return null;}
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            return (String) principal;  // String 타입인 경우 그대로 반환
+        }
+
+        return null;
     }
 }
