@@ -62,11 +62,6 @@ public class CounselorService {
     public CounselorListResponse readCounselorList(ReadCounselorListRequest request, Pageable pageable) {
         Page<CounselorDTO> counselorList = counselorRepository.findAllJoinUser(request, pageable);
 
-        for(CounselorDTO counselor : counselorList) {
-            counselor.setAgeRanges(counselorRepository.findCounselorAgeByCounselorHireSeq(counselor.getHireSeq()));
-            counselor.setTypes(counselorRepository.findCounselorTypeByCounselorHireSeq(counselor.getHireSeq()));
-        }
-
         List<CounselorAge> counselorAges = counselorAgeRepository.findAll();
         List<CounselorAgeDTO> counselorAgeList = counselorAges.stream().map(
                 counselorAge -> new CounselorAgeDTO(
