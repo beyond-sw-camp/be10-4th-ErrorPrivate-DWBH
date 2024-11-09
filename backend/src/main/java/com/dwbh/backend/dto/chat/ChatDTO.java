@@ -55,7 +55,7 @@ public class ChatDTO {
         @Setter
         private String lastMessage;
         @Setter
-        private boolean showEvaluation;
+        private boolean showEvaluation = false;
         @Setter
         private String readYn = "N";
         private LocalDateTime modDate;

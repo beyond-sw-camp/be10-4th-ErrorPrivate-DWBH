@@ -7,7 +7,6 @@ import dayjs from 'dayjs';
 const props = defineProps({
   chat: Object
 });
-const chatTitle = ref('');
 const messages = ref([]);
 const newMessage = ref('');
 const messagesContainer = ref(null);
@@ -15,11 +14,10 @@ const stompClient = ref(null);
 const sendUsername = ref(props.chat.sendUser.userNickname);
 const receiveUsername = ref(props.chat.receiveUser.userNickname);
 const isConnected = ref(false);
+const emit = defineEmits(['goBack']);
 
 onMounted(async () => {
   const chatId = props.chat.chatSeq;
-  chatTitle.value = `채팅방 ${chatId}`;
-
   await loadChatHistory(chatId);
 
   connectWebSocket();
@@ -32,11 +30,11 @@ async function loadChatHistory(chatId) {
     messages.value = data.map((message) => ({
       chatMessageSeq: message.chatMessageSeq,
       chatRoomSeq: message.chatRoomSeq,
-      senderNickName: sendUsername,
+      senderNickName: sendUsername.value,
       sendSeq: props.chat.sendUser.userSeq,
       receiveSeq: props.chat.receiveUser.userSeq,
       text: message.message,
-      type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername ? "sent" : "received", // ENTER 구분 추가
+      type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername.value ? "sent" : "received", // ENTER 구분 추가
       regDate: message.regDate,
       readYn: message.readYn
     }));
@@ -65,18 +63,18 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = content.writer === sendUsername ? "sent" : "received";
+        msgType = content.writer === sendUsername.value ? "sent" : "received";
       }
 
       messages.value.push({
         chatMessageSeq: uuidv4(),
         chatRoomSeq: props.chat.chatSeq,
-        senderNickName: sendUsername,
+        senderNickName: sendUsername.value,
         sendSeq: props.chat.sendUser.userSeq,
         receiveSeq: props.chat.receiveUser.userSeq,
         text: content.message,
         type: msgType,
-        regDate: new Date().toLocaleTimeString(),
+        regDate: new Date(),
         readYn: "N"
       });
 
@@ -91,7 +89,7 @@ function connectWebSocket() {
     stompClient.value.send(`/pub/chat/enter/${props.chat.chatSeq}`, {}, JSON.stringify({
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      writer: receiveUsername
+      writer: receiveUsername.value
     }));
 
   });
@@ -101,7 +99,7 @@ function connectWebSocket() {
     messages.value.push({
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      sender: sendUsername,
+      sender: sendUsername.value,
       message: " 님과의 대화가 종료되었습니다.",
       type: "exit"
     });
@@ -112,39 +110,66 @@ function connectWebSocket() {
 
 function sendMessage() {
   if (newMessage.value.trim() && stompClient.value && stompClient.value.connected) {
-    stompClient.value.send(`/pub/chat/talk/${props.chat.chatSeq}`, {}, JSON.stringify({
-      roomId: props.chat.chatSeq,
-      message: newMessage.value,
-      writer: sendUsername
-    }));
-
-    messages.value.push({
+    const payload = {
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      senderNickName: sendUsername,
+      senderNickName: sendUsername.value,
       sendSeq: props.chat.sendUser.userSeq,
       receiveSeq: props.chat.receiveUser.userSeq,
       text: newMessage.value,
-      type: "sent",
-      regDate: new Date().toLocaleTimeString(),
-      readYn: "N"
-    });
-    newMessage.value = '';
-    scrollToBottom();
-  }
+      type: "talk",
+      readYn: "N",
+    };
 
+    try {
+      stompClient.value.send(`/pub/chat/talk/${props.chat.chatSeq}`, {}, JSON.stringify(payload));
+      messages.value.push({
+        chatMessageSeq: uuidv4(),
+        chatRoomSeq: props.chat.chatSeq,
+        senderNickName: sendUsername.value,
+        sendSeq: props.chat.sendUser.userSeq,
+        receiveSeq: props.chat.receiveUser.userSeq,
+        text: newMessage.value,
+        type: "sent",
+        regDate: new Date(),
+        readYn: "N"
+      });
+      newMessage.value = '';
+      scrollToBottom();
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  }
 }
 
 function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
     stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify({
       roomId: props.chat.chatSeq,
-      message: `${sendUsername}: 님이 방을 나가셨습니다.`,
-      writer: sendUsername
+      message: `${sendUsername.value}: 님이 방을 나가셨습니다.`,
+      writer: sendUsername.value
     }));
     stompClient.value.disconnect();
     isConnected.value = false;
     console.log("Disconnected from STOMP server");
+  }
+}
+
+function disconnectEvent() {
+  if(confirm("채팅을 종료하시겠습니까?")) {
+    disconnect();
+
+    // TODO 아영 - endDate 변경하기
+
+    emit("goBack");
+  }
+}
+
+function goEvaluation() {
+  if(confirm("평가 화면으로 이동하시겠습니까?")) {
+    // 새로운 창에서 경로 열기
+    const url = `/chat/${chatId}/evaluation/`;
+    window.open(url, '_blank');
   }
 }
 
@@ -164,8 +189,11 @@ function formatDate(regDate) {
 
 <template>
   <div class="chat-room">
-    <button class="chat-room-button back" @click="$emit('goBack')"> < </button>
-    <button class="chat-room-button disconn" id="disconn" @click="disconnect"> {{ chat.showEvaluation ? '평가하기' : '종료하기' }}</button>
+    <button class="chat-room-button back" @click="emit('goBack')"> < </button>
+
+    <button v-if="chat.showEvaluation" class="chat-room-button disconn" id="disconn" @click="goEvaluation"> 평가하기</button>
+    <button v-else class="chat-room-button disconn" id="disconn" @click="disconnectEvent">종료하기</button>
+
     <hr style="border: 1px solid #262627; margin: 10px 0;" />
 
     <div class="messages" ref="messagesContainer">
@@ -174,24 +202,75 @@ function formatDate(regDate) {
           :key="message.chatMessageSeq"
           :class="['message', message.type]"
       >
-        <span class="sender">{{ message.sender }}</span> <br/>
-        <span class="text">{{ message.text }}</span>
+
+          <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
+
+          <template v-else>
+            <div class="message-content" :class="{ 'sent-message': message.type === 'sent' }">
+              <img
+                  class="profile-image"
+                  src="@/images/profile-image.jpg"
+                  alt="프로필 이미지"
+                  :style="message.type === 'sent' ? 'margin-left: 10px;' : 'margin-right: 10px;'"
+              />
+              <div class="message-details">
+            <span
+                class="sender"
+                :class="{
+                  'sender-sent': message.type === 'sent',
+                  'sender-received': message.type === 'received'
+                }"
+            >
+            {{ message.senderNickName }}
+            </span><br />
+            <span class="text">{{ message.text }}</span><br />
+            <span class="date">{{ formatDate(message.regDate) }}</span><br />
+          </div>
+        </div>
+        </template>
       </div>
     </div>
     <div class="input-area">
-      <input class="sendMessage-area"
+      <input v-if="!chat.showEvaluation" class="sendMessage-area"
           v-model="newMessage"
           @keydown.enter="sendMessage"
-          placeholder="메시지를 입력하세요"
-          :disabled="!isConnected"
-      />
-      <button class="chat-room-button submit-btn" @click="sendMessage" :disabled="!isConnected"> 전송</button>
+          placeholder="메세지를 입력하세요."
+          :disabled="!isConnected">
+      <input v-else class="sendMessage-area"
+             placeholder="종료된 채팅방은 조회만 가능합니다."
+             :disabled="true">
+      <button v-if="!chat.showEvaluation" class="chat-room-button submit-btn" @click="sendMessage" :disabled="!isConnected"> 전송</button>
+      <button v-else class="chat-room-button un-submit-btn" :disabled="true"> 전송</button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.message-content {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
 
+.sent-message {
+  flex-direction: row-reverse;
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover; /* 이미지가 비율에 맞게 잘림 */
+  border: 1px solid #ddd; /* 테두리 추가 */
+}
+
+.message-details {
+  max-width: 70%; /* 메시지 내용 너비 제한 */
+}
+
+.message-details {
+  flex: 1;
+}
 .chat-room-button.back {
   all: unset;
   height: 38px;
@@ -218,6 +297,7 @@ function formatDate(regDate) {
   border-style: solid;
   border-radius: 5px;
 }
+
 .chat-room-button.submit-btn {
   width: 58px;
   height: 40px;
@@ -226,6 +306,16 @@ function formatDate(regDate) {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  float : right;
+}
+.chat-room-button.un-submit-btn {
+  width: 58px;
+  height: 40px;
+  background-color: lightgrey;
+  border: none;
+  border-radius: 5px;
   font-size: 15px;
   font-weight: bold;
   float : right;
@@ -239,7 +329,7 @@ function formatDate(regDate) {
 
 .messages {
   margin-top: 10px;
-  height: 415px;
+  height: 450px;
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 1rem;
@@ -247,6 +337,7 @@ function formatDate(regDate) {
 }
 
 .message {
+  font-size: 12px;
   margin-bottom: 0.5rem;
 }
 
@@ -255,7 +346,11 @@ function formatDate(regDate) {
   align-self: center;
   text-align: center;
   color: #333333;
-  font-size: 0.9rem;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background-color: lightgrey;
+  margin-bottom: 20px;
 }
 
 .message.sent {
@@ -273,13 +368,14 @@ function formatDate(regDate) {
 /* 공통 닉네임 스타일 */
 .sender {
   font-weight: bold;
+  font-size: 14px;
   margin-bottom: 0.2rem;
 }
 
 /* 보낸 사람 닉네임 스타일 */
 .sender-sent {
   font-weight: bold;
-  color: blue; /* 보낸 사람은 파란색 */
+  color: #555555;
   text-decoration: underline
 }
 
@@ -292,9 +388,8 @@ function formatDate(regDate) {
 
 /* 날짜 스타일 */
 .date {
-  font-size: 0.8rem;
+  font-size: 0.5rem;
   color: #333333;
-  margin-top: 0.2rem;
 }
 
 .input-area {

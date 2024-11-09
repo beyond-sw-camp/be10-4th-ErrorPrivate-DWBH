@@ -1,10 +1,11 @@
 package com.dwbh.backend.service.chat;
 
+import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.common.util.DateTimeUtil;
 import com.dwbh.backend.dto.chat.ChatDTO;
+import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.dto.chat.ChatSuggestRequest;
 import com.dwbh.backend.dto.chat.suggest.ChatMessageSuggest;
-import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.dto.notification.request.CreateNotificationRequest;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Notification;
@@ -12,7 +13,6 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.ChatMapper;
 import com.dwbh.backend.mapper.NotificationMapper;
-import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import com.dwbh.backend.repository.chat.ChatMessageSuggestRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
@@ -83,8 +83,9 @@ public class ChatService {
         List<ChatDTO.Response> chatResponseList = null;
 
         try {
-
             // TODO 아영 - 유저 검증코드 완성되면 테스트 해보기
+            String user = AuthUtil.getAuthUser();
+
             List<Chat> chatList = chatRepository.findAll();
                     /*.stream().filter(chat -> chat.getSendUser().getUserSeq().toString().equals(AuthUtil.getAuthUser()))
                     .toList();*/
@@ -93,7 +94,7 @@ public class ChatService {
                     .map(chat -> modelMapper.map(chat, ChatDTO.Response.class))
                     .collect(Collectors.toList());
 
-            // 마지막 메세지와 읽음여부 반환
+            // 마지막 메세지와 읽음 여부 반환
             for (ChatDTO.Response response : chatResponseList) {
                 checkChatLastMessage(response);
                 checkEvaluationPeriod(response);
@@ -108,12 +109,13 @@ public class ChatService {
     }
 
     public void checkChatLastMessage(ChatDTO.Response response) {
-        Query query = new Query(Criteria.where("chatRoomSeq").is(response.getChatSeq().toString()))
+        Query query = new Query(Criteria.where("chatRoomSeq").is(response.getChatSeq().toString())
+                .and("type").is("TALK"))
                 .with(Sort.by(Sort.Direction.DESC, "regDate")).limit(1);
 
         ChatMessageDTO.Response messageResponse = mongoTemplate.findOne(query, ChatMessageDTO.Response.class, "request");
         if(!ObjectUtils.isEmpty(messageResponse)) {
-            response.setLastMessage(messageResponse.getMessage());
+            response.setLastMessage(messageResponse.getMessage()==null ? "" : messageResponse.getMessage());
             response.setReadYn(messageResponse.getReadYn());
         } else {
             response.setLastMessage(" ");
