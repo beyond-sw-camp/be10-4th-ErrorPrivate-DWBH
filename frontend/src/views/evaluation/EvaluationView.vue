@@ -109,7 +109,7 @@ const updateEvaluation = async () => {
 // 평가를 삭제하는 함수
 const deleteEvaluation = async () => {
   // 창닫기 & api 호출
-  await deleteEvaluationData(authStore.accessToken, state.evaluation.evaluationSeq)
+  await deleteEvaluationData(authStore.accessToken, chatSeq, state.evaluation.evaluationSeq)
   // 현재 창 닫기
   window.close();
 };

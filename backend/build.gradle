@@ -81,6 +81,8 @@ dependencies {
 	// file
 	implementation 'commons-io:commons-io:2.16.1'
 
+	// Mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 test {

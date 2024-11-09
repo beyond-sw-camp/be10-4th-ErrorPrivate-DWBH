@@ -48,6 +48,14 @@ class EvaluationServiceTest {
         );
     }
 
+    /* 평가 댓글 조회 테스트 */
+    @Test
+    void testReadEvaluationComment() {
+        Assertions.assertDoesNotThrow(
+                () -> evaluationService.readEvaluationComment(3L)
+        );
+    }
+
     /* 평가 작성 테스트 */
     @ParameterizedTest
     @MethodSource("createEvaluationArguments")
@@ -92,6 +100,14 @@ class EvaluationServiceTest {
     void testDeleteEvaluation() {
         Assertions.assertDoesNotThrow(
                 () -> evaluationService.deleteEvaluation(4L)
+        );
+    }
+
+    /* 평가 가능 유저 체킹 테스트 */
+    @Test
+    void testCheckUser() {
+        Assertions.assertDoesNotThrow(
+                () -> evaluationService.checkUser(3L, "kkm7hjh@naver.com")
         );
     }
 }
