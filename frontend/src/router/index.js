@@ -34,6 +34,11 @@ const routes = [
         path: '/chat/:chatSeq/evaluation/',
         name: 'Evaluation',
         component: () => import("@/views/evaluation/EvaluationView.vue")
+    },
+    {
+        path: '/counsel/counselCreate',
+        name: 'CounselCreate',
+        component: () => import("@/views/counsel/CounselCreateView.vue")
     }
 ];
 

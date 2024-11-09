@@ -1,8 +1,8 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import dayjs from "dayjs";
-import "@/css/style.css"
+import "@/css/style.css";
 import Pagination from "@/components/common/Pagination.vue";
 import router from "@/router/index.js";
 
@@ -36,40 +36,46 @@ const fetchCounselHires = async () => {
     counselTypes.value = response.data.counselorTypeList;
     counselAgeRanges.value = response.data.counselorAgeList;
   } catch (error) {
-    console.error('게시판 목록을 가져오는 중 오류 발생', error)
+    console.error('게시판 목록을 가져오는 중 오류 발생', error);
   }
-}
+};
 
 const receivePagination = (page) => {
   currentPage.value = page.currentPage;
   pageSize.value = page.pageSize;
 
   fetchCounselHires();
-}
+};
 
 const goCounselHireDetail = (counselSeq) => {
   router.push(`/counsel/${counselSeq}`);
 };
 
+const goToList = () => {
+  router.push("/counsel/Counselcreate"); // 등록 페이지로 이동
+};
+
 onMounted(() => {
-  fetchCounselHires()
-})
+  fetchCounselHires();
+});
 </script>
 
 <template>
   <div class="container content">
     <div class="responsive-container mt-4">
-      <!-- 제목 -->
-      <div class="title-container">
+      <!-- 제목 및 목록 버튼 -->
+      <div class="title-container d-flex justify-content-between align-items-center">
         <h2 class="title-text">마음을 이어주는 다리</h2>
+        <button class="btn btn-dark" @click="goToList">글쓰기</button>
       </div>
+
       <!-- 테이블 -->
       <div class="table-container">
         <!-- 필터 및 검색 -->
         <div class="filter-container row mb-3 justify-content-end">
           <div class="col-md-2">
             <select class="form-select" v-model="hopeAgeSeq">
-              <option value=0 selected>희망 나이대</option>
+              <option value="0" selected>희망 나이대</option>
               <option v-for="(counselAgeRange, index) in counselAgeRanges" :key="index" :value="counselAgeRange.counselorAgeRangeSeq">
                 {{ counselAgeRange.counselorAgeRange }}
               </option>
@@ -84,7 +90,7 @@ onMounted(() => {
           </div>
           <div class="col-md-2">
             <select class="form-select" v-model="hopeTypeSeq">
-              <option value=0 selected>희망 조언 유형</option>
+              <option value="0" selected>희망 조언 유형</option>
               <option v-for="(counselorType, index) in counselTypes" :key="index" :value="counselorType.counselorTypeSeq">
                 {{ counselorType.counselorType }}
               </option>
@@ -148,7 +154,6 @@ onMounted(() => {
       <Pagination :totalCount="totalCount" @sendPagination="receivePagination"/>
     </div>
   </div>
-
 </template>
 
 <style scoped>
@@ -195,5 +200,11 @@ onMounted(() => {
 .table th {
   background: #ffffff;
   font-weight: bold;
+}
+
+.btn.btn-dark {
+  background-color: #333;
+  color: #fff;
+  border: none;
 }
 </style>
