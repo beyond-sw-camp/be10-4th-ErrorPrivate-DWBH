@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Getter @Setter
+@ToString
 public class ChatMessageDTO {
 
     @Getter

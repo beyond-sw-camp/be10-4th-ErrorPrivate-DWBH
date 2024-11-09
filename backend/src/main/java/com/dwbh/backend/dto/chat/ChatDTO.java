@@ -27,6 +27,7 @@ public class ChatDTO {
 
     @AllArgsConstructor
     @Getter
+    @NoArgsConstructor
     public static class Create {
 
         private Long counselOfferSeq;
@@ -57,8 +58,8 @@ public class ChatDTO {
         private boolean showEvaluation;
         @Setter
         private String readYn = "N";
-        private String modDate;
-        private String endDate;
+        private LocalDateTime modDate;
+        private LocalDateTime endDate;
 
     }
 

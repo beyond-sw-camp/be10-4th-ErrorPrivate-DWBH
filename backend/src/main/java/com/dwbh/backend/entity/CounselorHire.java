@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "tb_counselor_hire")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EntityListeners(AuditingEntityListener.class)  // 엔티티 생성, 삭제 시점 체크를 위해 필요한 리스너
+@EntityListeners(AuditingEntityListener.class)
 @AttributeOverrides({
         @AttributeOverride(name = "regDate", column = @Column(name = "counselor_hire_reg_date")),
         @AttributeOverride(name = "modDate", column = @Column(name = "counselor_hire_mod_date"))
@@ -27,8 +27,8 @@ import java.util.List;
 public class CounselorHire extends BaseDateEntity {
 
     @Id
-    @Column(name = "counselor_hire_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "counselor_hire_seq")
     private Long hireSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,6 +45,12 @@ public class CounselorHire extends BaseDateEntity {
     @Enumerated(EnumType.STRING)
     private Gender hireGender;
 
+    @OneToMany(mappedBy = "counselorHire")
+    private List<CounselorHireAge> hireAges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "counselorHire")
+    private List<CounselorHireType> hireTypes = new ArrayList<>();
+
     @Column(name = "counselor_hire_del_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime delDate;
@@ -52,15 +58,19 @@ public class CounselorHire extends BaseDateEntity {
     @OneToMany(mappedBy = "hire", cascade = CascadeType.REMOVE)
     private List<CounselOffer> offers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "counselorHire", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CounselorHireAge> counselorHireAges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "counselorHire", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CounselorHireType> counselorHireTypes = new ArrayList<>();
+
     public void updateUser(User foundUser){
         this.user = foundUser;
     }
 
-    public void updateCounselor(String counselorHireTitle, String counselorHireContent, String counselorHireCounselorGender) {
+    public void updateCounselor(String counselorHireTitle, String counselorHireContent, Gender counselorHireCounselorGender) {
         this.hireTitle = counselorHireTitle;
         this.hireContent = counselorHireContent;
-        this.hireGender = Gender.valueOf(counselorHireCounselorGender);
+        this.hireGender = counselorHireCounselorGender;
     }
-
 }
-

@@ -1,11 +1,14 @@
 package com.dwbh.backend.service.chat;
 
+
+import com.dwbh.backend.component.ChatMessageComponent;
 import com.dwbh.backend.common.util.DateTimeUtil;
 import com.dwbh.backend.dto.chat.ChatDTO;
 import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.repository.chat.ChatMessageRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +25,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j @Service
+@Slf4j
+@Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
+    private final ChatMessageComponent chatMessageComponent;
+    private final ChatMessageRepository chatMessageRepository;
 
     private final MongoTemplate mongoTemplate;
 
@@ -58,7 +64,8 @@ public class ChatMessageService {
     public void saveMessage(ChatMessageDTO.Request request) {
         try {
 
-             mongoTemplate.insert(request);
+            mongoTemplate.insert(request);
+            chatMessageComponent.chatMessageSuggest(request.getMessage(), request.getChatRoomSeq());
 
              if("EXIT".equals(request.getType())) {
                  ChatDTO.Update update = ChatDTO.Update.builder()

@@ -1,0 +1,74 @@
+
+.container {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f4f1ea;
+    padding: 20px;
+    width: 100%; /* 전체 너비로 설정 */
+}
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 가운데 정렬 */
+    max-width: 16000px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    gap: 40px; /* 텍스트와 이미지 간의 간격 조절 */
+    height: 100vh; /* 화면 전체 높이 설정 */
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.text-section {
+    max-width: 500px;
+}
+
+.text-section h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.text-section p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.cta-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #bfa68b;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.image-section {
+    width: 300px;
+    height: 300px;
+    background-color: #bfa68b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-section img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+button {
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.title-container {
+    margin-bottom: 20px;
+}
+
+.title-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: left;
+    color: #333;
+}

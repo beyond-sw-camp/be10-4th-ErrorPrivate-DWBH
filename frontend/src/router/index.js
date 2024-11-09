@@ -6,9 +6,9 @@ const routes = [
         component: () => import("@/views/main/MainView.vue")
     },
     {
-        path: '/signup',
-        name: 'Signup',
-        component: () => import("@/views/user/SignupView.vue")
+        path: '/register',
+        name: 'Register',
+        component: () => import("@/views/user/RegisterView.vue")
     },
     {
         path: '/login',
@@ -23,7 +23,17 @@ const routes = [
     {
         path: '/counsel',
         name: 'CounselList',
-        component: () => import("@/views/counsel/CounselView.vue")
+        component: () => import("@/views/counsel/CounselListView.vue")
+    },
+    {
+        path: '/counsel/:counselSeq',
+        name: 'CounselDetail',
+        component: () => import("@/views/counsel/CounselDetailView.vue")
+    },
+    {
+        path: '/chat/:chatSeq/evaluation/',
+        name: 'Evaluation',
+        component: () => import("@/views/evaluation/EvaluationView.vue")
     }
 ];
 

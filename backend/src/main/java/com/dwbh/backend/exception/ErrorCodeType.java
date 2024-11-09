@@ -20,6 +20,8 @@ public enum ErrorCodeType {
     // user 관련 오류
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_ERROR_001", "사용자를 찾을 수 없습니다."),
     INACTIVATE_USER(HttpStatus.NOT_FOUND, "USER_ERROR_002", "탈퇴된 회원입니다."),
+    USER_EXIST_VALUES(HttpStatus.CONFLICT, "USER_ERROR_003", "중복 검증에 실패했습니다."),
+    USER_EMAIL_TOKEN_ERROR(HttpStatus.BAD_REQUEST, "USER_ERROR_004", "이메일 인증 토큰 검증에 실패했습니다."),
 
     // chat 관련 오류
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT_ERROR_001", "채팅방을 찾을 수 없습니다."),
@@ -31,10 +33,12 @@ public enum ErrorCodeType {
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE_ERROR_003", "첨부할 수 없는 파일형식입니다."),
 
     // 게시글 관련 오류
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "OFFER_ERROR_001", "댓글을 찾을 수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST_ERROR_001", "게시글을 찾을 수 없습니다."),
 
     // 댓글 관련 오류
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "OFFER_ERROR_001", "댓글을 찾을 수 없습니다."),
+    CANNOT_COMMENT_OWN_POST(HttpStatus.FORBIDDEN, "OFFER_ERROR_002", "자신의 글에는 댓글을 작성할 수 없습니다."),
+    ALREADY_COMMENTED(HttpStatus.CONFLICT, "OFFER_ERROR_003", "이미 이 게시글에 댓글을 작성했습니다."),
 
     // 알림 관련 오류
     NOTICE_ERROR(HttpStatus.BAD_REQUEST, "NOTICE_ERROR_001", "알림 발송에 실패하였습니다."),

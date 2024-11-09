@@ -174,20 +174,8 @@ function formatDate(regDate) {
           :key="message.chatMessageSeq"
           :class="['message', message.type]"
       >
-        <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
-        <template v-else-if="message.type == 'receive'">
-          <span
-              class="sender"
-              :class="{
-          'sender-sent': message.type === 'sent',
-          'sender-received': message.type === 'received'
-        }"
-          >
-      {{ message.senderNickName }}
-    </span><br />
-          <span class="text">{{ message.text }}</span><br />
-          <span class="date">{{ formatDate(message.regDate) }}</span><br />
-        </template>
+        <span class="sender">{{ message.sender }}</span> <br/>
+        <span class="text">{{ message.text }}</span>
       </div>
     </div>
     <div class="input-area">

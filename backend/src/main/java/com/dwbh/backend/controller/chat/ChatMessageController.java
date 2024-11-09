@@ -43,7 +43,7 @@ public class ChatMessageController {
     // 채팅방 대화
     @MessageMapping("/chat/talk/{roomId}")
     @SendTo("/sub/chat/room/{roomId}")
-    public void talkUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
+    public void talkUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message) {
         chatMessageService.saveMessage(message);
     }
 

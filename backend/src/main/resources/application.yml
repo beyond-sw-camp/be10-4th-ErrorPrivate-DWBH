@@ -29,8 +29,20 @@ spring:
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
   servlet:
     multipart:
+      enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   data:
     mongodb:
@@ -55,6 +67,8 @@ logging:
   file:
     path: C:/logs/dwbh/backend
   level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.mongodb.core.MongoDbUtils: DEBUG
     root: info
     org.springframework.web: info
     com.zaxxer.hikari: info
@@ -63,6 +77,11 @@ logging:
     jdbc.resultsettable: info
     jdbc.connection: info
 
+
 token:
   secret: KPNYWGkEcXk9j4VJs6YlatJN0R7HT8QNJKbv61SkoDSCfLegTcNZy4S0Vkzt5YfBDU4b8UJtaJIMg3kSVzahow==
   expiration_time : 43200000
+
+chatSuggest:
+  url: ${GOOGLE_GEMINI_API_URL}
+  apiKey: ${GOOGLE_GEMINI_API_KEY}
