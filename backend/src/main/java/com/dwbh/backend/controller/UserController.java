@@ -7,6 +7,7 @@ import com.dwbh.backend.dto.user.ModifyUserRequest;
 import com.dwbh.backend.dto.user.UserModifyResponse;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
+import com.dwbh.backend.service.EmailService;
 import com.dwbh.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final EmailService emailService;
 
     @PostMapping("/user")
     @Operation(summary = "회원 등록")
@@ -88,5 +90,14 @@ public class UserController {
         userService.deleteUser(userService.getUserSeq(AuthUtil.getAuthUser()));
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/user/email")
+    public ResponseEntity<Void> sandEmail(
+            @RequestBody String email) {
+
+        emailService.sendEmail(email);
+
+        return null;
     }
 }
