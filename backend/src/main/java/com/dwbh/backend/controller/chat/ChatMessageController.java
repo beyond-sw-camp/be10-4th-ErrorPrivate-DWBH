@@ -26,10 +26,10 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
 
+    // 채팅방 대화내역
     @GetMapping("/{roomId}")
     public List<ChatMessageDTO.Response> getChatHistory(@PathVariable String roomId) {
-        List<ChatMessageDTO.Response> chatHistory = chatMessageService.getChatHistory(roomId);
-        return chatHistory;
+        return chatMessageService.getChatHistory(roomId);
     }
 
     // 채팅방 입장

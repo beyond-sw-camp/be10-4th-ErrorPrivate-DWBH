@@ -69,15 +69,21 @@ public class ChatService {
 
     public List<ChatDTO.Response> readChatList() {
         List<ChatDTO.Response> chatResponseList = null;
+
         try {
 
+            // TODO 아영 - 유저 검증코드 완성되면 테스트 해보기
             List<Chat> chatList = chatRepository.findAll();
+                    /*.stream().filter(chat -> chat.getSendUser().getUserSeq().toString().equals(AuthUtil.getAuthUser()))
+                    .toList();*/
+
             chatResponseList = chatList.stream()
                     .map(chat -> modelMapper.map(chat, ChatDTO.Response.class))
                     .collect(Collectors.toList());
 
+            // 마지막 메세지와 읽음여부 반환
             for (ChatDTO.Response response : chatResponseList) {
-                checkChatLastMessage(response);  // 마지막 메세지와 읽음여부 반환
+                checkChatLastMessage(response);
                 checkEvaluationPeriod(response);
             }
 

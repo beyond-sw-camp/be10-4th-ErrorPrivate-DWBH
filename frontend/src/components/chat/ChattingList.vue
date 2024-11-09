@@ -20,7 +20,7 @@ const evaluateChat = (chatSeq, event) => {
 };
 
 const truncateMessage = (message) => {
-  return message.length > 13 ? message.substring(0, 13) + '...' : message;
+  return message.length > 15 ? message.substring(0, 15) + '...' : message;
 };
 
 onMounted(fetchChats);

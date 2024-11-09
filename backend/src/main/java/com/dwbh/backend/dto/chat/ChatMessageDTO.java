@@ -52,8 +52,8 @@ public class ChatMessageDTO {
         private String sendSeq;
         private String senderNickName;
         private String receiveSeq;
-        private String regDate;
-        private String modDate;
+        private LocalDateTime regDate;
+        private LocalDateTime modDate;
         private String readYn;
 
     }

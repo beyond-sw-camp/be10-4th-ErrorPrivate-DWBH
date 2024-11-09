@@ -2,10 +2,9 @@ package com.dwbh.backend.dto.chat;
 
 import com.dwbh.backend.common.entity.YnType;
 import com.dwbh.backend.dto.user.UserDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data
 public class ChatDTO {
@@ -14,8 +13,8 @@ public class ChatDTO {
     private Long counselOfferSeq;
     private Long sendSeq;
     private Long receiveSeq;
-    private String modDate;
-    private String endDate;
+    private LocalDateTime modDate;
+    private LocalDateTime endDate;
     private YnType readYn;
 
     @Getter
@@ -33,6 +32,16 @@ public class ChatDTO {
         private Long counselOfferSeq;
         private Long sendSeq;
         private Long receiveSeq;
+
+    }
+
+    @Builder
+    public static class Update {
+
+        private Long chatSeq;
+        private YnType readYn;
+        private LocalDateTime modDate;
+        private LocalDateTime endDate;
 
     }
 
