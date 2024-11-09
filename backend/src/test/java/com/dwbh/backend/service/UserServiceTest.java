@@ -37,7 +37,7 @@ class UserServiceTest {
                 LocalDate.of(1900, 1, 1),
                 "test");
 
-        Assertions.assertDoesNotThrow(() -> userService.createUser(createUserRequest));
+        Assertions.assertDoesNotThrow(() -> userService.createUser(createUserRequest, "test@test.te"));
     }
 
     private static Stream<Arguments> emailCheckParam() {
