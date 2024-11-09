@@ -14,11 +14,11 @@ public class CounselorHireType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long counselorHireTypeSeq;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counselor_type_seq")
     private CounselorType counselorType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counselor_hire_seq")
     private CounselorHire counselorHire;
 }

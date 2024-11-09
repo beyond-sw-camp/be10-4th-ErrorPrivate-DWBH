@@ -23,7 +23,12 @@ const routes = [
     {
         path: '/counsel',
         name: 'CounselList',
-        component: () => import("@/views/counsel/CounselView.vue")
+        component: () => import("@/views/counsel/CounselListView.vue")
+    },
+    {
+        path: '/counsel/:counselSeq',
+        name: 'CounselDetail',
+        component: () => import("@/views/counsel/CounselDetailView.vue")
     },
     {
         path: '/chat/:chatSeq/evaluation/',
