@@ -16,6 +16,7 @@
     "dayjs": "^1.11.13",
     "pinia": "^2.2.4",
     "sockjs-client": "^1.6.1",
+    "summernote": "^0.9.1",
     "vue": "^3.5.12",
     "vue-router": "^4.0.13",
     "webstomp-client": "^1.2.6"
