@@ -6,6 +6,7 @@ import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
 import com.dwbh.backend.entity.Chat;
 import com.dwbh.backend.entity.Evaluation;
+import com.dwbh.backend.entity.User;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.EvaluationMapper;
@@ -132,5 +133,20 @@ public class EvaluationService {
                 .orElseThrow(() -> new CustomException(ErrorCodeType.EVALUATION_NOT_FOUND));
 
         evaluationRepository.delete(evaluation);
+    }
+
+    // 이메일로 유저가 평가를 할 수있는 유저인지 체킹
+    public void checkUser(Long chatSeq, String email) {
+        // 이메일로 유저 체크
+        User user = userRepository.findByUserEmail(email).orElseThrow();
+
+        // chat 엔티티 받아옴
+        Chat chat = chatRepository.findById(chatSeq)
+                .orElseThrow(() -> new CustomException(ErrorCodeType.CHAT_NOT_FOUND));
+
+        // 게시글 작성자와 로그인한 사용자가 같으면 통과
+        if(!chat.getReceiveUser().getUserSeq().equals(user.getUserSeq())) {
+            throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
+        }
     }
 }
