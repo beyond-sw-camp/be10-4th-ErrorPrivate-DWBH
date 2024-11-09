@@ -1,17 +1,24 @@
 package com.dwbh.backend.repository.counselor_hire;
 
-import com.dwbh.backend.dto.counselor_hire.CounselorAgeDTO;
-import com.dwbh.backend.dto.counselor_hire.CounselorResponse;
-import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
-import com.dwbh.backend.dto.counselor_hire.CounselorTypeDTO;
+import com.dwbh.backend.common.entity.Gender;
+import com.dwbh.backend.common.entity.YnType;
+import com.dwbh.backend.dto.counselor_hire.*;
 import com.dwbh.backend.entity.QCounselorType;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.util.StringUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.dwbh.backend.entity.QCounselorAge.counselorAge;
 import static com.dwbh.backend.entity.QCounselorHire.counselorHire;
@@ -98,16 +105,45 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
     }
 
     @Override
-    public List<CounselorResponse> findAllJoinUser() {
-        return queryFactory.select(Projections.constructor(CounselorResponse.class,
+    public Page<CounselorDTO> findAllJoinUser(ReadCounselorListRequest request, Pageable pageable) {
+        QueryResults<CounselorDTO> results = queryFactory.select(Projections.constructor(CounselorDTO.class,
                 counselorHire.hireSeq,
                 counselorHire.hireTitle,
                 counselorHire.hireGender,
                 user.userNickname,
                 counselorHire.regDate))
                 .from(counselorHire)
-                .leftJoin(counselorHire.user, user)
-                .fetch();
+                .join(counselorHire.user, user)
+                .leftJoin(counselorHireAge).on(counselorHireAge.counselorHire.eq(counselorHire))
+                .leftJoin(counselorHireType).on(counselorHireType.counselorHire.eq(counselorHire))
+                .where(ageSeqEq(request.getSearchAgeSeq()),
+                        genderEq(request.getSearchGender()),
+                        typeSeqEq(request.getSearchTypeSeq()),
+                        titleLike(request.getSearchTitle()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<CounselorDTO> counselorList = results.getResults();
+        long totalCount = results.getTotal();
+
+        return new PageImpl<>(counselorList, pageable, totalCount);
     }
 
+    private BooleanExpression ageSeqEq(Long searchAgeSeq) {
+        return Optional.ofNullable(searchAgeSeq).orElse(0L) == 0 ? null : counselorHireAge.counselorHireAgeSeq.eq(searchAgeSeq);
+    }
+
+    private BooleanExpression genderEq(Gender searchGender) {
+        return searchGender == null ? null : counselorHire.hireGender.eq(searchGender);
+    }
+
+    private BooleanExpression typeSeqEq(Long searchTypeSeq) {
+        return Optional.ofNullable(searchTypeSeq).orElse(0L) == 0 ? null : counselorHireType.counselorHireTypeSeq.eq(searchTypeSeq);
+    }
+
+    private BooleanExpression titleLike(String searchTitle) {
+        log.info("searchTitle : {}", searchTitle);
+        return StringUtils.isBlank(searchTitle) ? null : counselorHire.hireTitle.like("%"+searchTitle+"%");
+    }
 }

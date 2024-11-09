@@ -10,6 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class CounselorTypeDTO {
-    private Long counselorAgeRangeSeq;
+    private Long counselorTypeSeq;
     private String counselorType;
 }

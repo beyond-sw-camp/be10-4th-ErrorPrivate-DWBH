@@ -14,11 +14,11 @@ public class CounselorHireAge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long counselorHireAgeSeq;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counselor_age_range_seq")
     private CounselorAge counselorAge;
 
-    @ManyToOne
-    @JoinColumn(name = "counselor_hire_seq")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_hire_seq", nullable = false)
     private CounselorHire counselorHire;
 }

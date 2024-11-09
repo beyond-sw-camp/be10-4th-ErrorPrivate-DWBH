@@ -1,10 +1,10 @@
 package com.dwbh.backend.service.counselor_hire;
 
-import com.dwbh.backend.dto.counselor_hire.CounselorResponse;
+import com.dwbh.backend.dto.counselor_hire.*;
 import com.dwbh.backend.common.util.AuthUtil;
-import com.dwbh.backend.dto.counselor_hire.CounselorDetailResponse;
-import com.dwbh.backend.dto.counselor_hire.CounselorUpdateRequest;
+import com.dwbh.backend.entity.CounselorAge;
 import com.dwbh.backend.entity.CounselorHire;
+import com.dwbh.backend.entity.CounselorType;
 import com.dwbh.backend.entity.User;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
@@ -14,6 +14,8 @@ import com.dwbh.backend.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +27,13 @@ public class CounselorService {
 
     private final CounselorRepository counselorRepository;
     private final UserRepository userRepository;
+    private final CounselorAgeRepository counselorAgeRepository;
+    private final CounselorTypeRepository counselorTypeRepository;
     private final UserService userService;
 
     // 게시글 등록
     @Transactional
-    public void savePost(CounselorResponse savePostReqDTO) {
+    public void savePost(CreateCounselorRequest request) {
         Long loginUserId = 1L;  // 예시로 로그인된 사용자 ID 설정
 
         User foundUser = userRepository.findById(loginUserId)
@@ -55,16 +59,35 @@ public class CounselorService {
     }
 
     // 모든 게시글 조회
-    public List<CounselorResponse> findAllPosts() {
-        List<CounselorResponse> counselorList = counselorRepository.findAllJoinUser();
+    public CounselorListResponse readCounselorList(ReadCounselorListRequest request, Pageable pageable) {
+        Page<CounselorDTO> counselorList = counselorRepository.findAllJoinUser(request, pageable);
 
-        for(CounselorResponse counselor : counselorList) {
+        for(CounselorDTO counselor : counselorList) {
             counselor.setAgeRanges(counselorRepository.findCounselorAgeByCounselorHireSeq(counselor.getHireSeq()));
             counselor.setTypes(counselorRepository.findCounselorTypeByCounselorHireSeq(counselor.getHireSeq()));
         }
 
-        log.info("counselorList : {}", counselorList);
-        return counselorList;
+        List<CounselorAge> counselorAges = counselorAgeRepository.findAll();
+        List<CounselorAgeDTO> counselorAgeList = counselorAges.stream().map(
+                counselorAge -> new CounselorAgeDTO(
+                        counselorAge.getCounselorAgeRangeSeq(),
+                        counselorAge.getCounselorAgeRange()
+                )
+        ).toList();
+
+        List<CounselorType> counselorTypes = counselorTypeRepository.findAll();
+        List<CounselorTypeDTO> counselorTypeList = counselorTypes.stream().map(
+                counselorType -> new CounselorTypeDTO(
+                        counselorType.getCounselorTypeSeq(),
+                        counselorType.getCounselorType()
+                )
+        ).toList();
+
+        return new CounselorListResponse(
+                counselorList,
+                counselorAgeList,
+                counselorTypeList
+        );
     }
 
     // 게시글 수정

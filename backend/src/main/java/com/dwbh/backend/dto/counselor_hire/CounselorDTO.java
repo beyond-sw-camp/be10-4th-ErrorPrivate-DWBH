@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
-public class CounselorResponse {
+public class CounselorDTO {
     private Long hireSeq;           // 게시글 번호
     private String hireTitle;       // 게시글 제목
     private Gender hireGender;      // 희망 성별
@@ -22,7 +22,7 @@ public class CounselorResponse {
     private List<CounselorAgeDTO> ageRanges;
     private List<CounselorTypeDTO> types;
 
-    public CounselorResponse(Long hireSeq, String hireTitle, Gender hireGender, String userNickname, LocalDateTime regDate) {
+    public CounselorDTO(Long hireSeq, String hireTitle, Gender hireGender, String userNickname, LocalDateTime regDate) {
         this.hireSeq = hireSeq;
         this.hireTitle = hireTitle;
         this.hireGender = hireGender;
