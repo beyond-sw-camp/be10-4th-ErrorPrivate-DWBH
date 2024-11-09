@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -58,5 +60,24 @@ public class JwtUtil {
 
     public String getUserId(String token) {
         return parseClaims(token).getSubject();
+    }
+
+    /**
+     * 매개변수를 받아 토큰을 반환합니다.
+     * response의 header에 추가하여 반환해야 할 수 있습니다.
+     *
+     * @param subject 주제
+     * @param claims 값
+     * @param exp 만료 시간(ms)
+     * @return 완성한 토큰
+     */
+    public String createCustomToken(String subject, Map<String, String> claims, long exp) {
+
+        Claims newClaims = Jwts.claims().setSubject(subject);
+        if (claims != null) newClaims.putAll(claims);
+
+        return Jwts.builder().setClaims(newClaims).setExpiration(
+                        new Date(System.currentTimeMillis() + exp)
+                ).signWith(key, SignatureAlgorithm.HS512).compact();
     }
 }
