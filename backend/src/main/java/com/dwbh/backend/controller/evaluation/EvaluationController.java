@@ -1,5 +1,6 @@
 package com.dwbh.backend.controller.evaluation;
 
+import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.dto.evaluation.EvaluationCommentResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
 import com.dwbh.backend.dto.evaluation.EvaluationResponse;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "평가 컨트롤러", description = "평가 조회/작성/수정/삭제")
 @RestController(value = "evaluationController")
-@RequiredArgsConstructor    // final을 받은 필드의 생성자를 주입
+@RequiredArgsConstructor    // final 을 받은 필드의 생성자를 주입
 @RequestMapping("/api/v1")
 @Slf4j
 public class EvaluationController {
@@ -26,6 +27,10 @@ public class EvaluationController {
     @GetMapping("/chat/{chatSeq}/evaluation")
     public ResponseEntity<EvaluationResponse> readEvaluation(@PathVariable("chatSeq") Long chatSeq) {
 
+        //  이메일로 유저가 평가를 할 수있는 유저인지 체킹
+        String email = AuthUtil.getAuthUser();
+        evaluationService.checkUser(chatSeq, email);
+
         EvaluationResponse response = evaluationService.readEvaluation(chatSeq);
 
         return ResponseEntity.ok(response);
@@ -35,6 +40,10 @@ public class EvaluationController {
     @Operation(summary = "평가 댓글 조회", description = "채팅방번호에 해당하는 댓글을 조회한다.")
     @GetMapping("/chat/{chatSeq}/evaluation/comment")
     public ResponseEntity<EvaluationCommentResponse> readEvaluationComment(@PathVariable("chatSeq") Long chatSeq) {
+
+        //  이메일로 유저가 평가를 할 수있는 유저인지 체킹
+        String email = AuthUtil.getAuthUser();
+        evaluationService.checkUser(chatSeq, email);
 
         EvaluationCommentResponse response = evaluationService.readEvaluationComment(chatSeq);
 
@@ -47,8 +56,9 @@ public class EvaluationController {
     public ResponseEntity<String> createEvaluation(
             @RequestBody EvaluationRequest evaluationRequest
     ) {
-//        String email = AuthUtil.getAuthUser();
-//        // 채팅방 생성 유저랑 현재 로그인 된 유저가 같은 지 비교 -> 평가 가능한 사람
+        //  이메일로 유저가 평가를 할 수있는 유저인지 체킹
+        String email = AuthUtil.getAuthUser();
+        evaluationService.checkUser(evaluationRequest.getChatSeq(), email);
 
         evaluationService.createEvaluation(evaluationRequest);
 
@@ -62,6 +72,10 @@ public class EvaluationController {
             @PathVariable Long evaluationSeq,
             @RequestBody EvaluationRequest evaluationRequest
     ) {
+        //  이메일로 유저가 평가를 할 수있는 유저인지 체킹
+        String email = AuthUtil.getAuthUser();
+        evaluationService.checkUser(evaluationRequest.getChatSeq(), email);
+
         evaluationService.updateEvaluation(evaluationSeq, evaluationRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("평가수정성공");
@@ -69,10 +83,15 @@ public class EvaluationController {
 
     // 평가 삭제
     @Operation(summary = "평가 삭제", description = "이미 작성된 평가를 삭제한다.")
-    @DeleteMapping("/evaluation/{evaluationSeq}")
+    @DeleteMapping("/chat/{chatSeq}/evaluation/{evaluationSeq}")
     public ResponseEntity<String> deleteEvaluation(
+            @PathVariable("chatSeq") Long chatSeq,
             @PathVariable Long evaluationSeq
     ) {
+        //  이메일로 유저가 평가를 할 수있는 유저인지 체킹
+        String email = AuthUtil.getAuthUser();
+        evaluationService.checkUser(chatSeq, email);
+
         evaluationService.deleteEvaluation(evaluationSeq);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("평가삭제성공");
