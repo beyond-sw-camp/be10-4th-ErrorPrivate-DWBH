@@ -1,18 +1,54 @@
 <script setup>
 import {RouterLink} from "vue-router";
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, onUnmounted, reactive, ref} from "vue";
 import ButtonSmallColor from "@/components/common/ButtonSmallColor.vue";
 import router from "@/router/index.js";
 import SideNotificationBar from "@/components/common/SideNotificationBar.vue";
 import {useAuthStore} from "@/stores/auth.js";
 import ChatList from '@/components/chat/ChattingList.vue';
 import ChatDetail from '@/components/chat/ChattingDetail.vue';
+import axios from "axios";
 
 const authStore = useAuthStore();
 const isSideNotificationBarOn = ref(false); // 기본 off 상태
 const isModalOpen = ref(false);
 const isDetailOpen = ref(false);
 const selectedChat = ref(null);
+
+const notifications = reactive([]);  // 알림을 저장하는 Vue reactive 배열
+const checkInterval = 30000; // 30초
+let eventSource = null;
+
+const setupEventSource = () => {
+  if (isLoggedIn.value) {
+    const token = authStore.accessToken;
+    eventSource = new EventSource(`http://localhost:8089/api/v1/notification/subscribe?token=${token}`);
+
+    eventSource.addEventListener('notification', (event) => {
+      const notificationData = JSON.parse(event.data); // DTO 데이터를 파싱하여 사용
+      notifications.push(notificationData); // 알림 데이터를 Vue 상태에 추가
+    });
+
+    eventSource.onerror = (error) => {
+      console.error('SSE 연결 오류:', error);
+      eventSource.close();
+    };
+  }
+};
+
+// 알림 조회
+const readNotificationList = async () => {
+  try {
+    const response = await axios.get('http://localhost:8089/api/v1/notification', {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    });
+  } catch (error) {
+    console.error("알림 가져오기 실패:", error);
+  }
+};
+
 
 // accessToken 이 있으면 로그인한 상태
 const isLoggedIn = computed(() => !!authStore.accessToken);
@@ -37,13 +73,26 @@ const handleClickOutside = (event) => {
   }
 };
 
+let intervalId;
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
+  setupEventSource();
+
+  // 매 30초 마다 알림을 가져오는 간격 설정
+  intervalId = setInterval(readNotificationList, checkInterval);
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside);
+  if (eventSource) {
+    eventSource.close();
+  }
 });
+
+onUnmounted(() => {
+  clearInterval(intervalId); // 컴포넌트가 언마운트될 때 간격 해제
+})
+
 
 function openModal() {
   isModalOpen.value = true;
@@ -123,7 +172,7 @@ function goBackToList() {
       >
         <div class="modal-content" @click.stop>
           <button class="close-button" @click="closeModal">X</button>
-          <ChatView />
+          <ChatView/>
         </div>
       </div>
     </transition>
@@ -149,11 +198,11 @@ function goBackToList() {
       <!-- 목록 또는 상세 화면 표시 -->
       <template v-if="!isDetailOpen">
         <!-- 채팅 목록 화면 -->
-        <ChatList @selectChat="openChatDetail" />
+        <ChatList @selectChat="openChatDetail"/>
       </template>
       <template v-else>
         <!-- 대화 상세 화면 -->
-        <ChatDetail v-if="selectedChat" :chat="selectedChat" @goBack="goBackToList" />
+        <ChatDetail v-if="selectedChat" :chat="selectedChat" @goBack="goBackToList"/>
       </template>
     </div>
   </div>
@@ -236,10 +285,10 @@ img {
 }
 
 .side-menubar-button {
-  background: none;   /* 배경 제거 */
-  border: none;       /* 테두리 제거 */
-  padding: 0;         /* 기본 패딩 제거 */
-  cursor: pointer;    /* 마우스 포인터 커서 설정 */
+  background: none; /* 배경 제거 */
+  border: none; /* 테두리 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+  cursor: pointer; /* 마우스 포인터 커서 설정 */
 }
 
 .side-menubar {
