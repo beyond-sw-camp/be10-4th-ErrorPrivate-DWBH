@@ -117,7 +117,7 @@ public class CounselorService {
         Long currentUserSeq = null;
 
         String email = AuthUtil.getAuthUser();
-        if (email != null) { // 로그인된 경우에만 userSeq 설정
+        if (email != null && !"anonymousUser".equals(email)) { // 로그인된 경우에만 userSeq 설정
             currentUserSeq = userService.getUserSeq(email);
         }
 
