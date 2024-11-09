@@ -4,6 +4,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "@/css/style.css"
 import Pagination from "@/components/common/Pagination.vue";
+import router from "@/router/index.js";
 
 const counselHires = ref([]);
 const counselTypes = ref([]);
@@ -45,6 +46,10 @@ const receivePagination = (page) => {
 
   fetchCounselHires();
 }
+
+const goCounselHireDetail = (counselSeq) => {
+  router.push(`/counsel/${counselSeq}`);
+};
 
 onMounted(() => {
   fetchCounselHires()
@@ -111,7 +116,7 @@ onMounted(() => {
             <tbody>
             <tr v-for="(counselHire, index) in counselHires" :key="index">
               <td>{{ index + 1 }}</td>
-              <td>{{ counselHire.hireTitle }}</td>
+              <td style="cursor:pointer;" @click="goCounselHireDetail(counselHire.hireSeq)">{{ counselHire.hireTitle }}</td>
               <td>{{ counselHire.userNickname }}</td>
               <td>{{ counselHire.hireGender === "male" ? "남성" : "여성" }}</td>
               <td>
