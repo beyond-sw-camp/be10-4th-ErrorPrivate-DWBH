@@ -10,12 +10,14 @@ import {useRoute, useRouter} from "vue-router";
   const route = useRoute();
 
   const chatSeq = route.params.chatSeq;
+  // 라우트에서 id 파라미터를 가져옴
+  const id = route.params.id;
 
   const counselHire = ref([]);
 
   const fetchCounselHires = async () => {
     try {
-      const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/${chatSeq}`);
+      const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/${id}`);
       console.log(response.data);
       counselHire.value = response.data;
 
