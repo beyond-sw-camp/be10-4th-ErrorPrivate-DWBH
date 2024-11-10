@@ -15,26 +15,11 @@ const isModalOpen = ref(false);
 const isDetailOpen = ref(false);
 const selectedChat = ref(null);
 
-const notifications = reactive([]);  // 알림을 저장하는 Vue reactive 배열
-const checkInterval = 30000; // 30초
-let eventSource = null;
-
-const setupEventSource = () => {
-  if (isLoggedIn.value) {
-    const token = authStore.accessToken;
-    eventSource = new EventSource(`http://localhost:8089/api/v1/notification/subscribe?token=${token}`);
-
-    eventSource.addEventListener('notification', (event) => {
-      const notificationData = JSON.parse(event.data); // DTO 데이터를 파싱하여 사용
-      notifications.push(notificationData); // 알림 데이터를 Vue 상태에 추가
-    });
-
-    eventSource.onerror = (error) => {
-      console.error('SSE 연결 오류:', error);
-      eventSource.close();
-    };
-  }
-};
+const chat = ref(null);
+const state = reactive({
+  notificationList: [],
+  isConfirmation: true,
+});
 
 // 알림 조회
 const readNotificationList = async () => {
@@ -44,11 +29,32 @@ const readNotificationList = async () => {
         Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
+    state.notificationList = response.data.notifications;
+    state.isConfirmation = response.data.isConfirmation;
+    console.log(state.notificationList);
   } catch (error) {
     console.error("알림 가져오기 실패:", error);
   }
 };
 
+// 알림 상세 조회 (채팅방 입장)
+const readNotification = async (notificationSeq) => {
+  try {
+    const response = await axios.get(`http://localhost:8089/api/v1/notification/${notificationSeq}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    });
+    chat.value = response.data
+    console.log(chat.value);
+  } catch (error) {
+    console.error("알림 상세 조회 (채팅방 입장) 가져오기 실패:", error);
+  }
+
+  isSideNotificationBarOn.value = !isSideNotificationBarOn.value;
+  isModalOpen.value = true;
+  openChatDetail(chat.value);
+};
 
 // accessToken 이 있으면 로그인한 상태
 const isLoggedIn = computed(() => !!authStore.accessToken);
@@ -73,26 +79,20 @@ const handleClickOutside = (event) => {
   }
 };
 
-let intervalId;
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
-  setupEventSource();
-
-  // 매 30초 마다 알림을 가져오는 간격 설정
-  intervalId = setInterval(readNotificationList, checkInterval);
+  readNotificationList();
+  if (isLoggedIn.value) {
+    // console.log(authStore.userSeq);  // seq 정보 사용
+    // console.log(authStore.accessToken);  // seq 정보 사용
+    // console.log(authStore.userRole);  // seq 정보 사용
+    // readUserInfo();
+  }
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside);
-  if (eventSource) {
-    eventSource.close();
-  }
 });
-
-onUnmounted(() => {
-  clearInterval(intervalId); // 컴포넌트가 언마운트될 때 간격 해제
-})
-
 
 function openModal() {
   isModalOpen.value = true;
@@ -151,12 +151,15 @@ function goBackToList() {
               />
             </button>
             <!-- 사이드 알림바 토글 버튼-->
-            <img
-                src="@/images/notification.png"
-                alt="side menubar icon"
-                class="side-menubar"
-                @click.stop="toggleSideNotificationBar"
-            />
+            <button @click.stop="toggleSideNotificationBar" class="side-menubar-button">
+              <img
+                  src="@/images/notification.png"
+                  alt="side menubar icon"
+                  class="side-menubar"
+              />
+              <span v-if="!state.isConfirmation" class="notification-badge"></span>
+            </button>
+
             <ButtonSmallColor @click="handleLogout">Log Out</ButtonSmallColor>
           </template>
         </div>
@@ -172,7 +175,7 @@ function goBackToList() {
       >
         <div class="modal-content" @click.stop>
           <button class="close-button" @click="closeModal">X</button>
-          <ChatView/>
+          <!--          <ChatView/>-->
         </div>
       </div>
     </transition>
@@ -184,7 +187,8 @@ function goBackToList() {
           class="side-menubar-container"
           @click.stop
       >
-        <SideNotificationBar @close="toggleSideNotificationBar"/>
+        <SideNotificationBar :notifications="state.notificationList"
+                             @close="toggleSideNotificationBar" @selectChat="readNotification"/>
       </div>
     </transition>
   </div>
@@ -264,6 +268,16 @@ img {
   cursor: pointer;
 }
 
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+}
+
 /* 반응형으로 조절하고 싶을 경우 */
 .side-menubar {
   max-width: 100%; /* 부모 요소에 맞춰 최대 크기를 설정 */
@@ -289,6 +303,7 @@ img {
   border: none; /* 테두리 제거 */
   padding: 0; /* 기본 패딩 제거 */
   cursor: pointer; /* 마우스 포인터 커서 설정 */
+  position: relative;
 }
 
 .side-menubar {

@@ -3,9 +3,10 @@ import { ref, onMounted } from 'vue';
 
 // 어디서든 사용할 수 있는 useAuthStore
 export const useAuthStore = defineStore('auth', () => {
-    const accessToken = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJra203aGpoQG5hdmVyLmNvbSIsInNlcSI6MywiYXV0aCI6W10sImV4cCI6MTczMTIwMTE5M30.HiBaXlL-o9vK-zlXPnjQhpW_sIVfVTlBbjuiIm-rkGVRbJQpqTPPNByHFY3OSs8FkdFZ22S_-Mpd_S1TSSXaqQ');
+    const accessToken = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJra203aGpoQG5hdmVyLmNvbSIsInNlcSI6MywiYXV0aCI6W10sImV4cCI6MTczMTI1NTEyMX0.cfYfhWLqUWAD1_gYGP5v-K1p7k4oOx4Kb8y57eSUDd9iN6W4TMyzmM6maO3VDUJUl_StDTQzzt71Nsq6asilzA');
     const userRole = ref(null);
     const userEmail = ref(null);
+    const userSeq = ref(null);
 
     // 페이지가 로드될 때 localStorage 에서 토큰을 읽어와 상태를 초기화한다.
     onMounted(() => {
@@ -15,6 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
             // JWT 토큰의 페이로드 추출
             const payload = JSON.parse(atob(token.split('.')[1]));
             userRole.value = payload.auth;
+            userSeq.value = payload.seq;
         }
     });
 
@@ -40,11 +42,13 @@ export const useAuthStore = defineStore('auth', () => {
         // JWT 토큰의 페이로드 추출
         const payload = JSON.parse(atob(token.split('.')[1]));
         userRole.value = payload.auth;
+        userSeq.value = payload.seq;  // seq 정보 추출해서 저장
     }
 
     function logout() {
         accessToken.value = null;
         userRole.value = null;
+        userSeq.value = null;
         localStorage.removeItem('accessToken');
     }
 
@@ -54,5 +58,5 @@ export const useAuthStore = defineStore('auth', () => {
         return userRole.value.includes(requiredRole);
     }
 
-    return { accessToken, userRole, login, logout, isAuthorized, userEmail, registerEmail, clearEmail };
+    return { accessToken, userRole, userSeq, login, logout, isAuthorized, userEmail, registerEmail, clearEmail };
 });

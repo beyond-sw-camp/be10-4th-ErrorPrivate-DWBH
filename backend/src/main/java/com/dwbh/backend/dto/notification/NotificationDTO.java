@@ -16,4 +16,6 @@ public class NotificationDTO {
     private YnType notificationCheckYn;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
+
+    private String userNickname;
 }

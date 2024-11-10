@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequestMapping("/api/v1/notification")
@@ -39,11 +38,4 @@ public class NotificationController {
         return ResponseEntity.ok(notificationDTOList);
     }
 
-    @GetMapping("/subscribe")
-    @Operation(summary = "SSE 연결")
-    public SseEmitter subscribe(@RequestParam("token") String token) {
-        Long userSeq = userService.getUserSeq(AuthUtil.getAuthUser());
-
-        return notificationService.createEmitter(userSeq);
-    }
 }

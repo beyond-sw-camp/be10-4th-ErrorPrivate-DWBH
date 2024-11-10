@@ -11,6 +11,5 @@ import java.util.List;
 @Schema(description = "알림 응답 데이터")
 public class NotificationResponse {
     List<NotificationDTO> notifications;
-    List<String> userNicknames;
     Boolean isConfirmation;
 }

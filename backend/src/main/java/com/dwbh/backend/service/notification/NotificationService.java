@@ -17,12 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +29,6 @@ public class NotificationService {
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
     private final NotificationMapper notificationMapper;
-
-    // 사용자별 SSE 연결을 관리하는 맵
-    private final Map<Long, SseEmitter> clients = new ConcurrentHashMap<>();
 
     @Transactional
     public ChatDTO.Response readNotification(Long notificationSeq) {
@@ -60,10 +53,11 @@ public class NotificationService {
                 .map(notificationMapper::toDTO)
                 .toList();
 
-        // 채팅 상대방 닉네임 찾기 (게시글 작성자이자 채팅방 생성자)
-        List<String> userNicknameList = notificationList.stream()
-                .map(notification -> notification.getChat().getReceiveUser().getUserNickname())  // Notification 객체에서 userNickname 추출
-                .toList();
+        // 각 Notification 객체에서 userNickname을 추출하여 개별 NotificationDTO에 설정
+        for (int i = 0; i < notificationDTOList.size(); i++) {
+            String userNickname = notificationList.get(i).getChat().getReceiveUser().getUserNickname();
+            notificationDTOList.get(i).setUserNickname(userNickname);
+        }
 
         // 알림 체크를 다 했는지 체크
         Boolean isConfirmation = notificationDTOList.stream()
@@ -71,41 +65,10 @@ public class NotificationService {
 
         NotificationResponse notificationResponse = NotificationResponse.builder()
                 .notifications(notificationDTOList)
-                .userNicknames(userNicknameList)
                 .isConfirmation(isConfirmation)
                 .build();
-
-        // SSE 로 알림 발송
-        SseEmitter emitter = clients.get(userSeq);
-        if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event().name("notification").data(notificationResponse));
-            } catch (IOException e) {
-                clients.remove(userSeq);
-            }
-        }
 
         return notificationResponse;
     }
 
-    // SSE 연결
-    public SseEmitter createEmitter(Long userSeq) {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-
-        try {
-            emitter.send(SseEmitter.event().name("connect"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // 새로운 클라이언트를 맵에 저장
-        clients.put(userSeq, emitter);
-
-        // SSE 연결이 완료되거나 중단되면 맵에서 제거
-        emitter.onCompletion(() -> clients.remove(userSeq));
-        emitter.onTimeout(() -> clients.remove(userSeq));
-        emitter.onError((e) -> clients.remove(userSeq));
-
-        return emitter;
-    }
 }
