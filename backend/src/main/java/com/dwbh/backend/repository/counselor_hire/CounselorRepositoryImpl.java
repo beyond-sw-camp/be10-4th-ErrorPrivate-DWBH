@@ -130,12 +130,11 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
                         genderEq(request.getSearchGender()),
                         typeSeqEq(request.getSearchTypeSeq()),
                         titleLike(request.getSearchTitle()))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .orderBy(counselorHire.regDate.desc())
                 .fetchResults();
 
         List<CounselorDTO> counselorList = results.getResults();
-
+        log.info("counselorList.size() : {}", counselorList.size());
         // 그룹화 처리
         Map<Long, CounselorDTO> groupedMap = new HashMap<>();
 
@@ -172,6 +171,7 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
         // 그룹화된 리스트로 변환
         List<CounselorDTO> groupedList = new ArrayList<>(groupedMap.values());
         log.info("groupedList : {}", groupedList);
+        log.info("groupedList.size() : {}", groupedList.size());
         return new PageImpl<>(groupedList, pageable, groupedList.size());
     }
 

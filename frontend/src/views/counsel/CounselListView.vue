@@ -7,6 +7,7 @@ import Pagination from "@/components/common/Pagination.vue";
 import router from "@/router/index.js";
 
 const counselHires = ref([]);
+const paginationCounselHires = ref([]);
 const counselTypes = ref([]);
 const counselAgeRanges = ref([]);
 const hopeAgeSeq = ref(0);
@@ -33,11 +34,22 @@ const fetchCounselHires = async () => {
 
     counselHires.value = response.data.counselorList.content;
     totalCount.value = counselHires.value.length;
+    console.log(totalCount.value);
     counselTypes.value = response.data.counselorTypeList;
     counselAgeRanges.value = response.data.counselorAgeList;
+
+    paginate();
   } catch (error) {
     console.error('게시판 목록을 가져오는 중 오류 발생', error);
   }
+};
+
+// 현재 페이지에 따라 데이터 나누기
+const paginate = () => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  console.log(start, end);
+  paginationCounselHires.value = counselHires.value.slice(start, end);
 };
 
 const receivePagination = (page) => {
@@ -120,8 +132,8 @@ onMounted(() => {
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(counselHire, index) in counselHires" :key="index">
-              <td>{{ index + 1 }}</td>
+            <tr v-for="(counselHire, index) in paginationCounselHires" :key="index">
+              <td>{{ index + 1 + (currentPage - 1) * pageSize }}</td>
               <td style="cursor:pointer;" @click="goCounselHireDetail(counselHire.hireSeq)">{{ counselHire.hireTitle }}</td>
               <td>{{ counselHire.userNickname }}</td>
               <td>{{ counselHire.hireGender === "male" ? "남성" : "여성" }}</td>
