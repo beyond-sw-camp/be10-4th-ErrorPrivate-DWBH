@@ -63,7 +63,7 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = content.senderNickName == sendUsername.value ? "sent" : "received";
+        msgType = message.senderNickName == sendUsername.value ? "sent" : "received";
       }
 
       messages.value.push({

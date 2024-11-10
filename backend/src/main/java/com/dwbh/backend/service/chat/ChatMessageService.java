@@ -76,7 +76,7 @@ public class ChatMessageService {
                  chatRepository.save(modelMapper.map(update, Chat.class));
              }
 
-            Query queryLimit = new Query(Criteria.where("chatRoomSeq").is(request.getChatMessageSeq()));
+            Query queryLimit = new Query(Criteria.where("chatMessageSeq").is(request.getChatMessageSeq()));
             response = mongoTemplate.findOne(queryLimit, ChatMessageDTO.Response.class, "request");
 
         } catch (Exception e) {
