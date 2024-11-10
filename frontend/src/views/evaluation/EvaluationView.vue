@@ -268,7 +268,7 @@ onMounted(async () => {
   align-items: center;
   margin-top: 10px;
   padding: 20px;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: bold;
 }
 

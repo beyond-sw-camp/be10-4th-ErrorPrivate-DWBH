@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 
 // 어디서든 사용할 수 있는 useAuthStore
 export const useAuthStore = defineStore('auth', () => {
-    const accessToken = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJra203aGpoQG5hdmVyLmNvbSIsInNlcSI6MywiYXV0aCI6W10sImV4cCI6MTczMTI1NTEyMX0.cfYfhWLqUWAD1_gYGP5v-K1p7k4oOx4Kb8y57eSUDd9iN6W4TMyzmM6maO3VDUJUl_StDTQzzt71Nsq6asilzA');
+    const accessToken = ref(null);
     const userRole = ref(null);
     const userEmail = ref(null);
     const userSeq = ref(null);
@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
             const payload = JSON.parse(atob(token.split('.')[1]));
             userRole.value = payload.auth;
             userSeq.value = payload.seq;
+            userEmail.value = payload.sub;
         }
     });
 
@@ -43,12 +44,14 @@ export const useAuthStore = defineStore('auth', () => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         userRole.value = payload.auth;
         userSeq.value = payload.seq;  // seq 정보 추출해서 저장
+        userEmail.value = payload.sub;
     }
 
     function logout() {
         accessToken.value = null;
         userRole.value = null;
         userSeq.value = null;
+        userEmail.value = null;
         localStorage.removeItem('accessToken');
     }
 

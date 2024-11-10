@@ -34,8 +34,8 @@ const selectChat = (notificationSeq) => {
 <template>
   <div class="side-menu-bar">
     <div class="user-info">
-      <!--      <h3>{{ userInfo?.userName}} 님</h3>-->
-      <!--      <p>{{ userInfo?.userEmail}}</p>-->
+<!--      <h3>{{ user.userNickname }} 님</h3>-->
+      <h3>{{ authStore.userEmail }}</h3>
     </div>
 
     <hr class="menu-divider"/>
@@ -112,7 +112,7 @@ a {
 
 .menu-divider {
   border: none;
-  border-top: 1px solid #ddd; /* 옅은 회색 선 */
+  border-top: 5px solid #CCB997;
   margin: 10px 0; /* 메뉴 간 여백 */
 }
 
