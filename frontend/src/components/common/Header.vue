@@ -31,7 +31,7 @@ const readNotificationList = async () => {
     });
     state.notificationList = response.data.notifications;
     state.isConfirmation = response.data.isConfirmation;
-    console.log(state.notificationList);
+    console.log(state);
   } catch (error) {
     console.error("알림 가져오기 실패:", error);
   }
@@ -51,8 +51,9 @@ const readNotification = async (notificationSeq) => {
     console.error("알림 상세 조회 (채팅방 입장) 가져오기 실패:", error);
   }
 
-  isSideNotificationBarOn.value = !isSideNotificationBarOn.value;
-  isModalOpen.value = true;
+  await readNotificationList(); // 알림 새로 조회
+  isSideNotificationBarOn.value = !isSideNotificationBarOn.value; // 알림 창 닫기
+  isModalOpen.value = true; // 채팅방으로 이동
   openChatDetail(chat.value);
 };
 
@@ -84,9 +85,7 @@ onMounted(() => {
   readNotificationList();
   if (isLoggedIn.value) {
     // console.log(authStore.userSeq);  // seq 정보 사용
-    // console.log(authStore.accessToken);  // seq 정보 사용
-    // console.log(authStore.userRole);  // seq 정보 사용
-    // readUserInfo();
+    // readUserInfo(authStore.userSeq);  // 유저 정보 받아올 예정
   }
 });
 
