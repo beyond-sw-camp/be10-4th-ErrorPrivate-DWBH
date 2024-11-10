@@ -64,8 +64,6 @@ springdoc:
     doc-expansion: none
 
 logging:
-  file:
-    path: C:/logs/dwbh/backend
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     org.springframework.data.mongodb.core.MongoDbUtils: DEBUG
