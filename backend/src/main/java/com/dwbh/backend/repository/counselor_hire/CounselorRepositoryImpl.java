@@ -47,6 +47,13 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
                 .where(counselorHire.hireSeq.eq(hireSeq))
                 .fetch();
 
+        List<String> counselorTypes = queryFactory
+                .select(counselorType1.counselorType)
+                .from(counselorHireType)
+                .join(counselorType1).on(counselorHireType.counselorType.counselorTypeSeq.eq(counselorType1.counselorTypeSeq))
+                .where(counselorHire.hireSeq.eq(hireSeq))
+                .fetch();
+
         CounselorDetailResponse result = queryFactory
                 .select(Projections.fields(CounselorDetailResponse.class,
                         counselorHire.hireSeq,
@@ -55,15 +62,12 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
                         counselorHire.hireTitle,
                         counselorHire.hireContent,
                         counselorHire.hireGender,
-                        counselorType1.counselorType.as("counselorType"),
                         counselorHire.regDate,
                         counselorHire.modDate,
                         file.filePath.as("hireFilePath")
                         ))
                 .from(counselorHire)
                 .join(counselorHire.user, user)
-                .join(counselorHireType).on(counselorHire.hireSeq.eq(counselorHireType.counselorHire.hireSeq))
-                .join(counselorType1).on(counselorHireType.counselorType.counselorTypeSeq.eq(counselorType1.counselorTypeSeq))
                 .leftJoin(counselorHireFile).on(counselorHire.hireSeq.eq(counselorHireFile.hireSeq))
                 .leftJoin(file).on(counselorHireFile.fileSeq.eq(file.fileSeq))
                 .where(counselorHire.hireSeq.eq(hireSeq))
@@ -72,6 +76,7 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
         // DTO에 나이대 설정
         if (result != null) {
             result.setCounselorAgeRanges(counselorAgeRanges);
+            result.setCounselorTypes(counselorTypes);
         }
 
         return result;
@@ -129,12 +134,13 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
                 .where(ageSeqEq(request.getSearchAgeSeq()),
                         genderEq(request.getSearchGender()),
                         typeSeqEq(request.getSearchTypeSeq()),
-                        titleLike(request.getSearchTitle()))
+                        titleLike(request.getSearchTitle()),
+                        counselorHire.delDate.isNull())
                 .orderBy(counselorHire.regDate.desc())
                 .fetchResults();
 
         List<CounselorDTO> counselorList = results.getResults();
-        log.info("counselorList.size() : {}", counselorList.size());
+
         // 그룹화 처리
         Map<Long, CounselorDTO> groupedMap = new HashMap<>();
 
@@ -152,7 +158,6 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
             // AgeRanges 추가
             if (dto.getCounselorAgeRangeSeq() != null) {
                 groupedDto.getAgeRanges().add(new CounselorAgeDTO(dto.getCounselorAgeRangeSeq(), dto.getCounselorAgeRange()));
-                log.info("groupedDto.getAgeRanges() : {}", groupedDto.getAgeRanges());
             }
 
             // Types 추가
@@ -169,9 +174,8 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
         }
 
         // 그룹화된 리스트로 변환
-        List<CounselorDTO> groupedList = new ArrayList<>(groupedMap.values());
-        log.info("groupedList : {}", groupedList);
-        log.info("groupedList.size() : {}", groupedList.size());
+        List<CounselorDTO> groupedList = new ArrayList<>(groupedMap.values()).stream().sorted(Comparator.comparing(CounselorDTO::getRegDate).reversed()).toList();
+
         return new PageImpl<>(groupedList, pageable, groupedList.size());
     }
 
