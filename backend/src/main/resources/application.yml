@@ -77,8 +77,8 @@ logging:
 
 
 token:
-  secret: KPNYWGkEcXk9j4VJs6YlatJN0R7HT8QNJKbv61SkoDSCfLegTcNZy4S0Vkzt5YfBDU4b8UJtaJIMg3kSVzahow==
-  expiration_time : 43200000
+  secret: ${TOKEN_SECRET}
+  expiration_time : ${TOKEN_EXPIRATION_TIME}
 
 chatSuggest:
   url: ${GOOGLE_GEMINI_API_URL}
