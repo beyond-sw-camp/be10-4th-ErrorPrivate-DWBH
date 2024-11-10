@@ -16,10 +16,10 @@ DROP TABLE IF EXISTS tb_counselor_type;
 -- 채팅방 테이블
 CREATE TABLE tb_chat (
                          chat_seq bigint NOT NULL AUTO_INCREMENT COMMENT '채팅방 번호',
-                         counsel_offer_seq bigint NOT NULL COMMENT '상담 제안 번호',
-                         chat_send_seq bigint NOT NULL COMMENT '댓글 작성자 번호',
-                         chat_receive_seq bigint NOT NULL COMMENT '게시판 작성자 번호',
-                         chat_reg_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '채팅방 생성일',
+                         counsel_offer_seq bigint NULL COMMENT '상담 제안 번호',
+                         chat_send_seq bigint NULL COMMENT '댓글 작성자 번호',
+                         chat_receive_seq bigint NULL COMMENT '게시판 작성자 번호',
+                         chat_reg_date timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '채팅방 생성일',
                          chat_mod_date timestamp NULL COMMENT '채팅방 수정일',
                          chat_end_date timestamp NULL COMMENT '채팅방 종료일',
                          chat_read_yn	enum('Y ', 'N')	NOT NULL	DEFAULT 'N'	COMMENT '읽음 여부',

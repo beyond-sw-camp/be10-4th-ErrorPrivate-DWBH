@@ -111,6 +111,7 @@ function openChatDetail(chat) {
 
 function goBackToList() {
   isDetailOpen.value = false;
+  selectedChat.value = null;
 }
 
 </script>
@@ -166,19 +167,6 @@ function goBackToList() {
       </nav>
     </header>
 
-    <!-- ChatView 모달 -->
-    <transition>
-      <div
-          v-if="isModalOpen"
-          class="modal-overlay"
-          @click="closeModal"
-      >
-        <div class="modal-content" @click.stop>
-          <button class="close-button" @click="closeModal">X</button>
-          <!--          <ChatView/>-->
-        </div>
-      </div>
-    </transition>
 
     <!-- 사이드 알림바 -->
     <transition name="slide">
@@ -197,7 +185,7 @@ function goBackToList() {
   <!-- 채팅방 모달 -->
   <div v-if="isModalOpen" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
-      <button class="close-button" @click="closeModal">X</button>
+      <button class="close-button" @click="closeModal">{{ selectedChat ? '' : 'X'}}</button>
 
       <!-- 목록 또는 상세 화면 표시 -->
       <template v-if="!isDetailOpen">

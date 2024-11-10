@@ -85,7 +85,7 @@ public class UserController {
         } else { throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR); }
     }
 
-    @PutMapping(name = "/user", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/user", consumes = {"multipart/form-data"})
     @Operation(summary = "회원 정보 수정")
     public ResponseEntity<Void> modifyUser(
             @Valid @RequestPart ModifyUserRequest modifyUserRequest,
