@@ -12,7 +12,7 @@ const props = defineProps({
 const emit = defineEmits(['sendPagination']);
 
 const currentPage = ref(1); // 현재 페이지
-const pageSize = ref(11); // 페이지당 항목 수
+const pageSize = ref(10); // 페이지당 항목 수
 // 총 페이지 수 계산
 const totalPages = computed(() => {
   return Math.ceil(props.totalCount / pageSize.value);

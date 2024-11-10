@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import $ from "jquery";
+import "@/css/style.css";
 import "summernote/dist/summernote-lite.css";
 import "summernote/dist/summernote-lite.js";
 import axios from "axios";
@@ -106,8 +107,8 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div id="counsel-create-view" class="container content">
-    <div class="form-container responsive-container mt-4">
+  <div class="container content">
+    <div class="responsive-container mt-4">
       <div class="title-container d-flex justify-content-between align-items-center">
         <h2 class="title-text">마음을 이어주는 다리 / 글 작성</h2>
         <button class="btn btn-dark" @click="goToList">목록으로</button>
@@ -115,13 +116,7 @@ const handleSubmit = () => {
 
       <div class="form-group">
         <label for="title">제목</label>
-        <input
-            type="text"
-            id="title"
-            v-model="title"
-            placeholder="제목을 입력하세요"
-            required
-            class="form-control"
+        <input type="text" id="title" v-model="title" placeholder="제목을 입력하세요" required class="form-control"
         />
       </div>
 
@@ -133,14 +128,7 @@ const handleSubmit = () => {
       <!-- 희망 상담사 나이대 -->
       <div class="form-group d-flex align-items-center">
         <label for="age" class="me-2">희망 상담사 나이대</label>
-        <input
-            type="text"
-            readonly
-            :value="selectedAges.map(a => a.label).join(', ')"
-            placeholder="나이대를 선택해주세요."
-            class="form-control me-2"
-            style="width: 200px;"
-        />
+        <input type="text" readonly :value="selectedAges.map(a => a.label).join(', ')" placeholder="나이대를 선택해주세요." class="form-control me-2" style="width: 200px;"/>
         <div class="dropdown">
           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
             선택
@@ -183,16 +171,6 @@ const handleSubmit = () => {
 </template>
 
 <style scoped>
-.responsive-container {
-  width: 90vw; /* 화면 너비의 90% */
-  max-width: 1600px; /* 너무 커지지 않도록 최대 크기 제한 */
-  margin: 150px; /* 중앙 정렬 */
-  padding: 20px; /* 내부 여백 */
-  background-color: #ffffff; /* 배경색 */
-  border-radius: 10px; /* 모서리 둥글게 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-}
-
 h2 {
   font-weight: bold;
   font-size: 1.5rem;

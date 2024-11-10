@@ -16,7 +16,7 @@ const searchTitle = ref("");
 
 const totalCount = ref(0); // 전체 개수
 const currentPage = ref(1); // 현재 페이지
-const pageSize = ref(11); // 페이지당 항목 수
+const pageSize = ref(10); // 페이지당 항목 수
 
 const fetchCounselHires = async () => {
   try {
@@ -51,8 +51,8 @@ const goCounselHireDetail = (counselSeq) => {
   router.push(`/counsel/${counselSeq}`);
 };
 
-const goToList = () => {
-  router.push("/counsel/Counselcreate"); // 등록 페이지로 이동
+const goCounselHireCreate = () => {
+  router.push("/counsel/counselCreate"); // 등록 페이지로 이동
 };
 
 onMounted(() => {
@@ -66,7 +66,7 @@ onMounted(() => {
       <!-- 제목 및 목록 버튼 -->
       <div class="title-container d-flex justify-content-between align-items-center">
         <h2 class="title-text">마음을 이어주는 다리</h2>
-        <button class="btn btn-dark" @click="goToList">글쓰기</button>
+        <button class="btn btn-dark" @click="goCounselHireCreate">글쓰기</button>
       </div>
 
       <!-- 테이블 -->
@@ -157,17 +157,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.responsive-container {
-  width: 90vw; /* 화면 너비의 90% */
-  height: 100vh; /* 화면 높이의 70% */
-  max-width: 1600px; /* 너무 커지지 않도록 최대 크기 제한 */
-  margin: 0 auto; /* 중앙 정렬 */
-  padding: 20px; /* 내부 여백 */
-  background-color: #ffffff; /* 배경색 */
-  border-radius: 10px; /* 모서리 둥글게 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-}
-
 .filter-container {
   margin-bottom: 20px;
 }
