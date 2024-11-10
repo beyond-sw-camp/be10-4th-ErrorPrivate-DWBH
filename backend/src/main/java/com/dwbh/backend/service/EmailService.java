@@ -29,10 +29,13 @@ public class EmailService {
     private static final int VERIFY_LIMIT = 10;
     private static final long VERIFY_LIMIT_MS = 600000L;
 
+    // 인증 코드 길이
+    private static final int VERIFY_CODE_LENGTH = 10;
+
     // 이메일 인증 메일 전송
     public void sendEmail(SendEmailRequest sendEmailRequest) {
 
-        String verifyKey = RandomStringGeneratorUtil.generateRandomString(VERIFY_LIMIT);
+        String verifyKey = RandomStringGeneratorUtil.generateRandomString(VERIFY_CODE_LENGTH);
         Pair pair = new Pair(verifyKey, LocalDateTime.now().plusMinutes(VERIFY_LIMIT));
         String body = "DWBH 이메일 인증 번호입니다.<br>" + verifyKey;
         fakeInMemoryDB.put(sendEmailRequest.getEmail(), pair);
