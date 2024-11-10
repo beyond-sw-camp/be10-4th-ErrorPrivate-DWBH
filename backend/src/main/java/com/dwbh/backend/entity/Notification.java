@@ -21,11 +21,11 @@ public class Notification extends BaseDateEntity {
     private Long notificationSeq;
 
     @OneToOne
-    @JoinColumn(name = "chatSeq")
+    @JoinColumn(name = "chat_seq")
     private Chat chat;
 
     @ManyToOne
-    @JoinColumn(name = "userSeq")
+    @JoinColumn(name = "user_seq")
     private User user;
 
     @Enumerated(EnumType.STRING)
