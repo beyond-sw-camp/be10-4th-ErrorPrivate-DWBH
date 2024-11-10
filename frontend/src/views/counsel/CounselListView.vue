@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import "@/css/style.css";
 import Pagination from "@/components/common/Pagination.vue";
 import router from "@/router/index.js";
+import CounselList from "@/components/counsel/CounselList.vue";
 
 const counselHires = ref([]);
 const paginationCounselHires = ref([]);
@@ -34,7 +35,6 @@ const fetchCounselHires = async () => {
 
     counselHires.value = response.data.counselorList.content;
     totalCount.value = counselHires.value.length;
-    console.log(totalCount.value);
     counselTypes.value = response.data.counselorTypeList;
     counselAgeRanges.value = response.data.counselorAgeList;
 
@@ -57,10 +57,6 @@ const receivePagination = (page) => {
   pageSize.value = page.pageSize;
 
   fetchCounselHires();
-};
-
-const goCounselHireDetail = (counselSeq) => {
-  router.push(`/counsel/${counselSeq}`);
 };
 
 const goCounselHireCreate = () => {
@@ -117,51 +113,7 @@ onMounted(() => {
             </div>
           </div>
         </div>
-
-        <div class="table-wrapper">
-          <table class="table table-bordered text-center align-middle">
-            <thead class="table-light">
-            <tr>
-              <th>No.</th>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>희망 성별</th>
-              <th>희망 나이대</th>
-              <th>희망 조언 유형</th>
-              <th>작성일</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(counselHire, index) in paginationCounselHires" :key="index">
-              <td>{{ index + 1 + (currentPage - 1) * pageSize }}</td>
-              <td style="cursor:pointer;" @click="goCounselHireDetail(counselHire.hireSeq)">{{ counselHire.hireTitle }}</td>
-              <td>{{ counselHire.userNickname }}</td>
-              <td>{{ counselHire.hireGender === "male" ? "남성" : "여성" }}</td>
-              <td>
-                <template v-if="counselHire.ageRanges.length === 0">
-                  무관
-                </template>
-                <template v-else>
-                  <template v-for="(ageRange, index) in counselHire.ageRanges" :key="index">
-                    {{ ageRange.counselorAgeRange }}&nbsp;
-                  </template>
-                </template>
-              </td>
-              <td>
-                <template v-if="counselHire.types.length === 0">
-                  무관
-                </template>
-                <template v-else>
-                  <template v-for="(type, index) in counselHire.types" :key="index">
-                    {{ type.counselorType }}&nbsp;
-                  </template>
-                </template>
-              </td>
-              <td>{{ dayjs(counselHire.regDate).format("YYYY-MM-DD HH:mm:ss") }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <CounselList :counselHires="paginationCounselHires" :currentPage="currentPage" :pageSize="pageSize" :totalCount="totalCount"/>
       </div>
       <Pagination :totalCount="totalCount" @sendPagination="receivePagination"/>
     </div>
@@ -179,6 +131,7 @@ onMounted(() => {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
   border: 2px solid #ccc;
+  margin-bottom: 0;
 }
 
 .table-wrapper {

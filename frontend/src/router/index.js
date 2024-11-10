@@ -26,7 +26,7 @@ const routes = [
         component: () => import("@/views/counsel/CounselListView.vue")
     },
     {
-        path: '/counsel/:counselSeq',
+        path: '/counsel/:hireSeq',
         name: 'CounselDetail',
         component: () => import("@/views/counsel/CounselDetailView.vue")
     },

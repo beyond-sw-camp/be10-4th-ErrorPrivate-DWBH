@@ -6,6 +6,7 @@
     padding: 20px;
     width: 100%; /* 전체 너비로 설정 */
 }
+
 .content {
     display: flex;
     align-items: center;
@@ -82,4 +83,14 @@ button {
     background-color: #ffffff; /* 배경색 */
     border-radius: 10px; /* 모서리 둥글게 */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+.detail-container {
+    background-color: #ffffff;
+}
+
+.detail-title {
+    font-size: 30px;
+    color: #333;
+    font-weight: bold;
 }

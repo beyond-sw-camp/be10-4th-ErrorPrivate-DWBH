@@ -22,7 +22,7 @@ public class CounselorDetailResponse {
     private String hireContent;         // 게시글 내용
     private Gender hireGender;          // 희망 성별
     private List<String> counselorAgeRanges; // 희망 나이대
-    private String counselorType;       // 희망 조언유형
+    private List<String> counselorTypes;       // 희망 조언유형
     private LocalDateTime regDate;             // 작성일
     private LocalDateTime modDate;             // 수정일
     private LocalDateTime delDate;             // 삭제일
