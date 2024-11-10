@@ -1,5 +1,6 @@
 package com.dwbh.backend.service.chat;
 
+import com.dwbh.backend.common.entity.YnType;
 import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.common.util.DateTimeUtil;
 import com.dwbh.backend.dto.chat.ChatDTO;
@@ -116,7 +117,7 @@ public class ChatService {
         ChatMessageDTO.Response messageResponse = mongoTemplate.findOne(query, ChatMessageDTO.Response.class, "request");
         if(!ObjectUtils.isEmpty(messageResponse)) {
             response.setLastMessage(messageResponse.getMessage()==null ? "" : messageResponse.getMessage());
-            response.setReadYn(messageResponse.getReadYn());
+            response.setReadYn("N".equals(messageResponse.getReadYn()) ? YnType.N : YnType.Y);
         } else {
             response.setLastMessage(" ");
         }

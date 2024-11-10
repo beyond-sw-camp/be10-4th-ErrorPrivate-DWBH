@@ -36,11 +36,11 @@ public class ChatDTO {
 
     }
 
-    @Builder
+    @Getter @Builder
     public static class Update {
 
         private Long chatSeq;
-        private YnType readYn;
+        private YnType readYn = YnType.N;
         private LocalDateTime modDate;
         private LocalDateTime endDate;
 
@@ -57,7 +57,7 @@ public class ChatDTO {
         @Setter
         private boolean showEvaluation = false;
         @Setter
-        private String readYn = "N";
+        private YnType readYn = YnType.N;
         private LocalDateTime modDate;
         private LocalDateTime endDate;
 

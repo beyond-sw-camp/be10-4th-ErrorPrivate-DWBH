@@ -6,4 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface ChatMessageSuggestRepository extends MongoRepository<ChatMessageSuggest, String> {
 
     ChatMessageSuggest findByChatRoomSeq(String chatRoomSeq);
+
 }

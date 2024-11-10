@@ -2,10 +2,7 @@ package com.dwbh.backend.dto.chat;
 
 import com.dwbh.backend.common.util.CustomLocalDateTimeDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 

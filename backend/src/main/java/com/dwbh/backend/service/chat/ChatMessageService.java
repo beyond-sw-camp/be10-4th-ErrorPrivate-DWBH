@@ -61,7 +61,8 @@ public class ChatMessageService {
     }
 
     @Transactional
-    public void saveMessage(ChatMessageDTO.Request request) {
+    public ChatMessageDTO.Response saveMessage(ChatMessageDTO.Request request) {
+        ChatMessageDTO.Response response = new ChatMessageDTO.Response();
         try {
 
             mongoTemplate.insert(request);
@@ -75,12 +76,23 @@ public class ChatMessageService {
                  chatRepository.save(modelMapper.map(update, Chat.class));
              }
 
+            Query queryLimit = new Query(Criteria.where("chatRoomSeq").is(request.getChatMessageSeq()));
+            response = mongoTemplate.findOne(queryLimit, ChatMessageDTO.Response.class, "request");
+
         } catch (Exception e) {
             log.error("saveMessage Error : {}", e.getMessage());
             throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
         }
+
+        return response;
     }
 
+    public void endChatRoom(ChatDTO.Update update) {
+        Chat existingChat = chatRepository.findById(update.getChatSeq())
+                .orElseThrow(() -> new CustomException(ErrorCodeType.CHAT_NOT_FOUND));
+        modelMapper.map(update, existingChat);
+        chatRepository.save(existingChat);
+    }
 
 
 }

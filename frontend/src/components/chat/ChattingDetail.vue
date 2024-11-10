@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
@@ -17,8 +18,7 @@ const isConnected = ref(false);
 const emit = defineEmits(['goBack']);
 
 onMounted(async () => {
-  const chatId = props.chat.chatSeq;
-  await loadChatHistory(chatId);
+  await loadChatHistory(props.chat.chatSeq);
 
   connectWebSocket();
 });
@@ -63,16 +63,16 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = content.writer === sendUsername.value ? "sent" : "received";
+        msgType = content.senderNickName == sendUsername.value ? "sent" : "received";
       }
 
       messages.value.push({
-        chatMessageSeq: uuidv4(),
+        chatMessageSeq: content.chatMessageSeq,
         chatRoomSeq: props.chat.chatSeq,
         senderNickName: sendUsername.value,
         sendSeq: props.chat.sendUser.userSeq,
         receiveSeq: props.chat.receiveUser.userSeq,
-        text: content.message,
+        message: content.message,
         type: msgType,
         regDate: new Date(),
         readYn: "N"
@@ -85,24 +85,30 @@ function connectWebSocket() {
       scrollToBottom();
     });
 
+    //퇴장 메세지 전송
+    stompClient.value.subscribe(`/sub/chat/exit/${props.chat.chatSeq}`, (message) => {
+      messages.value.push({
+        chatMessageSeq: message.chatMessageSeq,
+        chatRoomSeq: props.chat.chatSeq,
+        senderNickName: sendUsername.value,
+        sendSeq: message.sendSeq,
+        receiveSeq: message.receiveSeq,
+        message: " 님과의 대화가 종료되었습니다.",
+        type: "EXIT"
+      });
+    });
+
     // 방에 입장 메시지 전송
     stompClient.value.send(`/pub/chat/enter/${props.chat.chatSeq}`, {}, JSON.stringify({
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      writer: receiveUsername.value
+      senderNickName: receiveUsername.value
     }));
 
   });
 
   stompClient.value.onclose = () => {
     isConnected.value = false;
-    messages.value.push({
-      chatMessageSeq: uuidv4(),
-      chatRoomSeq: props.chat.chatSeq,
-      sender: sendUsername.value,
-      message: " 님과의 대화가 종료되었습니다.",
-      type: "exit"
-    });
     console.log("WebSocket is closed.");
   };
 }
@@ -116,7 +122,7 @@ function sendMessage() {
       senderNickName: sendUsername.value,
       sendSeq: props.chat.sendUser.userSeq,
       receiveSeq: props.chat.receiveUser.userSeq,
-      text: newMessage.value,
+      message: newMessage.value,
       type: "talk",
       readYn: "N",
     };
@@ -129,7 +135,7 @@ function sendMessage() {
         senderNickName: sendUsername.value,
         sendSeq: props.chat.sendUser.userSeq,
         receiveSeq: props.chat.receiveUser.userSeq,
-        text: newMessage.value,
+        message: newMessage.value,
         type: "sent",
         regDate: new Date(),
         readYn: "N"
@@ -155,20 +161,29 @@ function disconnect() {
   }
 }
 
-function disconnectEvent() {
+async function disconnectEvent() {
   if(confirm("채팅을 종료하시겠습니까?")) {
-    disconnect();
+    try {
+      await axios.put(`http://localhost:8089/api/v1/user/chat/message/${props.chat.chatSeq}/endDate`, {
+        chatSeq: props.chat.chatSeq,
+        modDate: new Date(),
+        endDate: new Date()
+      });
+      disconnect();
+      emit("goBack");
 
-    // TODO 아영 - endDate 변경하기
-
-    emit("goBack");
+      alert("채팅이 종료되었습니다.");
+    } catch (error) {
+      console.error("endDate 변경 중 오류 발생:", error);
+      alert("채팅 종료 중 오류가 발생하였습니다. 다시 시도해주세요.");
+    }
   }
 }
 
 function goEvaluation() {
   if(confirm("평가 화면으로 이동하시겠습니까?")) {
     // 새로운 창에서 경로 열기
-    const url = `/chat/${chatId}/evaluation/`;
+    const url = `/chat/${props.chat.chatSeq}/evaluation/`;
     window.open(url, '_blank');
   }
 }
@@ -280,7 +295,7 @@ function formatDate(regDate) {
 }
 
 .chat-room-button.disconn {
-  width: 85px;
+  width: 92px;
   height: 38px;
   background-color: #262627;
   color: #ffffff;
@@ -299,7 +314,7 @@ function formatDate(regDate) {
 }
 
 .chat-room-button.submit-btn {
-  width: 58px;
+  width: 65px;
   height: 40px;
   background-color: #CCB997;
   color: #262627;
@@ -311,7 +326,7 @@ function formatDate(regDate) {
   float : right;
 }
 .chat-room-button.un-submit-btn {
-  width: 58px;
+  width: 65px;
   height: 40px;
   background-color: lightgrey;
   border: none;
