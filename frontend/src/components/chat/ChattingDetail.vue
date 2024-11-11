@@ -67,7 +67,7 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = message.senderNickName == sendUsername.value ? "sent" : "received";
+        msgType = message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED";
       }
 
       messages.value.push({
@@ -127,7 +127,7 @@ function sendMessage() {
       sendSeq: props.chat.sendUserSeq,
       receiveSeq: props.chat.receiveUserSeq,
       message: newMessage.value,
-      type: "talk",
+      type: "TALK",
       readYn: "N",
     };
 
@@ -140,7 +140,7 @@ function sendMessage() {
         sendSeq: props.chat.sendUserSeq,
         receiveSeq: props.chat.receiveUserSeq,
         message: newMessage.value,
-        type: "sent",
+        type: "SENT",
         regDate: new Date(),
         readYn: "N"
       });
@@ -232,19 +232,19 @@ function formatDate(regDate) {
           <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
 
           <template v-else>
-            <div class="message-content" :class="{ 'sent-message': message.type === 'sent' }">
+            <div class="message-content" :class="{ 'sent-message': message.type === 'SENT' }">
               <img
                   class="profile-image"
                   src="@/images/profile-image.jpg"
                   alt="프로필 이미지"
-                  :style="message.type === 'sent' ? 'margin-left: 10px;' : 'margin-right: 10px;'"
+                  :style="message.type == 'SENT' ? 'margin-left: 10px;' : 'margin-right: 10px;'"
               />
               <div class="message-details">
             <span
                 class="sender"
                 :class="{
-                  'sender-sent': message.type === 'sent',
-                  'sender-received': message.type === 'received'
+                  'sender-sent': message.type == 'SENT',
+                  'sender-received': message.type == 'RECEIVED'
                 }"
             >
             {{ message.senderNickName }}
