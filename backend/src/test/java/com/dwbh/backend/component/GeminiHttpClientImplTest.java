@@ -11,7 +11,7 @@ class GeminiHttpClientImplTest {
     ChatMessageComponent chatSuggestComponent;
 
     @Test
-    void suggestTest() {
+    void suggestTest() throws Exception {
         String message = chatSuggestComponent.chatMessageSuggest("남자들이 좋아하는 운동복 추천해줘", "1");
 
         System.out.println(message);
