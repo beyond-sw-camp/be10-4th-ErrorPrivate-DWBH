@@ -28,7 +28,7 @@ const readNotificationList = async () => {
   try {
     const response = await axios.get('http://localhost:8089/api/v1/notification', {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
     state.notificationList = response.data.notifications;
@@ -43,7 +43,7 @@ const readNotification = async (notificationSeq) => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/notification/${notificationSeq}`, {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
     chat.value = response.data
@@ -64,7 +64,7 @@ const readUser = async () => {
     const userSeq = authStore.userSeq;
     const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
     userNickname.value = response.data.userNickname;

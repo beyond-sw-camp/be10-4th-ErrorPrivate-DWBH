@@ -27,7 +27,7 @@ async function loadChatHistory(chatId) {
   try {
     const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
     const data = await response.json();
