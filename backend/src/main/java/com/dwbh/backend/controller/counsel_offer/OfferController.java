@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/hire-post")
+@RequestMapping("/api/v1/hire-post/{hireSeq}/comment")
 @Tag(name = "Counsel Offer API", description = "게시글 댓글 API")
 @Slf4j
 public class OfferController {
@@ -26,7 +26,7 @@ public class OfferController {
     private final OfferService offerService;
 
     /* 댓글 등록 */
-    @PostMapping("/{hireSeq}/comment")
+    @PostMapping
     @Operation(summary = "게시글 댓글 등록", description = "게시글에 댓글을 등록한다.")
     public ResponseEntity<OfferResponse> createOffer(
             @PathVariable Long hireSeq,
@@ -39,7 +39,7 @@ public class OfferController {
     }
 
     /* 댓글 수정 */
-    @PutMapping("/{hireSeq}/comment/{offerSeq}")
+    @PutMapping("/{offerSeq}")
     @Operation(summary = "게시글 댓글 수정", description = "게시글의 특정 댓글을 수정한다.")
     public ResponseEntity<OfferResponse> updateOffer(
             @PathVariable Long hireSeq,
@@ -53,7 +53,7 @@ public class OfferController {
     }
 
     /* 댓글 삭제 */
-    @DeleteMapping("/{hireSeq}/comment/{offerSeq}")
+    @DeleteMapping("/{offerSeq}")
     @Operation(summary = "게시글 댓글 삭제", description = "게시글의 특정 댓글을 삭제한다.")
     public ResponseEntity<Void> deleteOffer( @PathVariable Long hireSeq,
                                              @PathVariable Long offerSeq) {
@@ -64,7 +64,7 @@ public class OfferController {
     }
 
     /* 댓글 조회 */
-    @GetMapping("/{hireSeq}/comment")
+    @GetMapping
     @Operation(summary = "게시글 댓글 조회", description = "특정 게시글의 댓글을 조회한다.")
     public ResponseEntity<Page<OfferResponse>> readOffer(
             @PathVariable Long hireSeq,
