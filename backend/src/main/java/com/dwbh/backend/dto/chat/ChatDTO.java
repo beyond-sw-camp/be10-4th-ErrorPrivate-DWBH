@@ -47,20 +47,31 @@ public class ChatDTO {
     }
 
     @Getter
+    @Setter
     public static class Response {
 
         private Long chatSeq;
-        private UserDTO sendUser;
-        private UserDTO receiveUser;
-        @Setter
-        private String lastMessage;
-        @Setter
-        private boolean showEvaluation = false;
-        @Setter
-        private YnType readYn = YnType.N;
+        private Long sendUserSeq;
+        private String sendUserNickname;
+        private Long receiveUserSeq;
+        private String receiveUserNickname;
+
         private LocalDateTime modDate;
         private LocalDateTime endDate;
 
+        private String lastMessage;
+        private boolean showEvaluation = false;
+        private YnType readYn = YnType.N;
+
+        public Response(Long chatSeq, Long sendUserSeq, String sendUserNickname, Long receiveUserSeq, String receiveUserNickname, LocalDateTime modDate, LocalDateTime endDate) {
+            this.chatSeq = chatSeq;
+            this.sendUserSeq = sendUserSeq;
+            this.sendUserNickname = sendUserNickname;
+            this.receiveUserSeq = receiveUserSeq;
+            this.receiveUserNickname = receiveUserNickname;
+            this.modDate = modDate;
+            this.endDate = endDate;
+        }
     }
 
 }

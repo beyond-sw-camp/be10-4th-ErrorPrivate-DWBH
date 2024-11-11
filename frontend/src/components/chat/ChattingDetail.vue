@@ -12,8 +12,8 @@ const messages = ref([]);
 const newMessage = ref('');
 const messagesContainer = ref(null);
 const stompClient = ref(null);
-const sendUsername = ref(props.chat.sendUser.userNickname);
-const receiveUsername = ref(props.chat.receiveUser.userNickname);
+const sendUsername = ref(props.chat.sendUserNickname);
+const receiveUsername = ref(props.chat.receiveUserSeq);
 const isConnected = ref(false);
 const emit = defineEmits(['goBack']);
 
@@ -38,7 +38,7 @@ async function loadChatHistory(chatId) {
       sendSeq: props.chat.sendUser.userSeq,
       receiveSeq: props.chat.receiveUser.userSeq,
       text: message.message,
-      type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername.value ? "sent" : "received", // ENTER 구분 추가
+      type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED", // ENTER 구분 추가
       regDate: message.regDate,
       readYn: message.readYn
     }));
