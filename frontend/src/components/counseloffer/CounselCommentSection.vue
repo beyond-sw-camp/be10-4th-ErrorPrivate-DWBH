@@ -5,6 +5,7 @@ import CommentList from '@/components/counseloffer/CommentList.vue';
 import CommentForm from '@/components/counseloffer/CommentForm.vue';
 import axios from "axios";
 import {useAuthStore} from "@/stores/auth.js";
+import Pagination from "@/components/common/Pagination.vue";
 
 const props = defineProps({
   hireSeq: {
@@ -19,12 +20,10 @@ const props = defineProps({
 
 const authStore = useAuthStore();
 const userSeq = authStore.userSeq;
-
 const currentPage = ref(1); // 현재 페이지 번호
-const pageSize = 5; // 한 페이지에 표시할 댓글 수
+const pageSize = ref(5); // 한 페이지에 표시할 댓글 수
 const sortOrder = ref("asc"); // 정렬 순서 (asc: 등록순, desc: 최신순)
-
-
+const totalCount = ref(0);
 const comments = ref([]); // 댓글 데이터 저장
 
 // 댓글 데이터를 백엔드 API에서 가져오는 함수
@@ -38,17 +37,23 @@ const fetchComments = async () => {
         currentUserSeq: userSeq || null, // 로그인한 사용자의 ID
         sortOrder: sortOrder.value,
         page: currentPage.value - 1, // Spring Pageable에서 0부터 시작
-        size: pageSize
+        size: pageSize.value
       }, headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
       }
     });
-
     comments.value = response.data.content; // Page 내용 부분만 저장
-    console.log(comments.value);
+    totalCount.value = response.data.totalElements;
   } catch (error) {
     console.error("댓글 정보를 불러오는 중 에러가 발생했습니다:", error);
   }
+};
+
+const receivePagination = (page) => {
+  currentPage.value = page.currentPage;
+  pageSize.value = page.pageSize;
+
+  fetchComments();
 };
 
 // 초기 페이지 로드
@@ -61,7 +66,10 @@ onMounted(() => {
   <div class="comment-section mt-4">
     <h4 class="section-title">따뜻한 손길 나눔</h4>
     <hr class="divider" />
-    <CommentList v-if="comments.length > 0" :comments="comments" :sendUserSeq="props.sendUserSeq"/>
+    <template v-if="comments.length > 0">
+      <CommentList :comments="comments" :sendUserSeq="props.sendUserSeq"/>
+      <Pagination :currentPage="currentPage" :pageSize="pageSize" :totalCount="totalCount" @sendPagination="receivePagination"/>
+    </template>
     <p v-else class="text-muted">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
     <CommentForm :hireSeq="props.hireSeq" />
   </div>
