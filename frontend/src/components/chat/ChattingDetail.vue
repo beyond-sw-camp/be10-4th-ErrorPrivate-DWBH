@@ -256,7 +256,7 @@ function formatDate(regDate) {
                     'sender-received': message.type == 'RECEIVED'
                   }"
               >
-              {{ message.type === 'SENT' ? receiveUsername : sendUsername  }}
+              {{ message.type === 'SENT' ? sendUsername : receiveUsername  }}
             </span><br />
             <span class="text">{{ message.text }}</span><br />
             <span class="date">{{ formatDate(message.regDate) }}</span><br />
