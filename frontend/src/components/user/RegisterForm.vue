@@ -17,6 +17,7 @@ const errorMessage = ref('');
 const verificationCode = ref(''); // 이메일 인증 코드
 const isClickNickName = ref(false);
 const isButtonDisabled = ref(false) // 이메일 발송 버튼 비활성화 여부
+const mpti = ["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"];
 
 // 비밀번호 일치 여부 확인
 const isPasswordMatch = computed(() => formData.value.userPassword === confirmPassword.value && formData.value.userPassword !== '');
@@ -247,13 +248,10 @@ const handleRegister = () => {
       <div class="field-group">
         <!-- 성별  -->
         <span>성별</span>
-        <InputBoxLong
-            class="input-box"
-            v-model="formData.userGender"
-            placeholder="male or female"
-            type="text"
-            required
-        />
+        <select class="input-box" v-model="formData.userGender" required>
+          <option>male</option>
+          <option>female</option>
+        </select>
       </div>
 
 
@@ -272,13 +270,9 @@ const handleRegister = () => {
       <div class="field-group">
         <!-- MBTI 필드 -->
         <span>MBTI</span>
-        <InputBoxLong
-            class="input-box"
-            v-model="formData.userMbti"
-            placeholder="MBTI를 입력해주세요"
-            type="text"
-            required
-        />
+        <select class="input-box" v-model="formData.userMbti" required>
+          <option v-for="(type, index) in mpti" :key="index" :value="type">{{ type }}</option>
+        </select>
       </div>
 
       <!-- 회원가입 버튼 -->
@@ -333,6 +327,7 @@ const handleRegister = () => {
 
 .input-box {
   width: 500px;
+  height: 40px;
 }
 
 .small-button {

@@ -165,6 +165,7 @@ const handleRegisterSubmit = async (formData) => {
 
 <style scoped>
 .register-view {
+  background-color: #f4f1ea;
   display: flex;
   align-items: center;
 }

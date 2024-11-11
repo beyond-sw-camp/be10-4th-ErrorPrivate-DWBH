@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ModifyUserRequest {
     private String userNickname;
-    // 10자 이상, 알파뱃 대소문자 포함, 특수문자(@$!%*?&_) 포함
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_])[A-Za-z\\d@$!%*?&_]{10,}$")
+    // 8자 이상, 알파뱃 대문자 또는 소문자 포함, 특수문자(@$!%*?&_) 포함
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&_])[A-Za-z\\d@$!%*?&_]{8,}$")
     private String userPassword;
     private String userGender;
     private LocalDate userBirthday;

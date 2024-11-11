@@ -1,7 +1,7 @@
 <script setup>
 
 import ButtonSmallColor from "@/components/common/ButtonSmallColor.vue";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import ModalSmall from "@/components/common/ModalSmall.vue";
 import InputBoxLong from "@/components/common/InputBoxLong.vue";
 
@@ -13,7 +13,7 @@ const props = defineProps({
   },
   duplicationNickname: {
     type: Boolean,
-    default: false
+    default: true
   }
 });
 
@@ -22,6 +22,13 @@ const emit = defineEmits(['nickname', 'cancel', 'save']);
 const errorMessage = ref('');
 const userPassword = ref('');
 const checkNickName = ref(false); // 닉네임 중복 체크 후 통과 시
+const beforeNickName = ref(props.userData.userNickname);
+const mpti = ["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"];
+
+// userData를 변경될 때마다 메시지 초기화
+watch(props.userData, () => {
+  errorMessage.value = '';
+}, {deep: true});
 
 // 저장 확인 모달창
 const isModalVisible = ref(false);
@@ -30,8 +37,7 @@ const isSave = () => {
 }
 const confirmModal = async () => {
   isModalVisible.value = false;
-
-  emit('save');
+  submitForm();
 }
 const closeModal = () => {
   isModalVisible.value = false;
@@ -39,17 +45,17 @@ const closeModal = () => {
 
 // 닉네임 중복 확인
 const checkNickname = async () => {
-  if (props.userData.userNickname === '' || props.userData.userNickname == null) {
+  if (props.userData.userNickname === '' || props.userData.userNickname == null || props.userData.userNickname === beforeNickName.value) {
     alert('닉네임을 다시 입력해주세요!!');
     return;
   }
 
   emit('nickname', props.userData.userNickname);
 
-  if (props.duplicationNickname) {
-    alert('닉네임이 중복됩니다!!');
-  }else{
-    isModalVisible.value = true;
+  if(props.duplicationNickname){
+    alert('닉네임을 다시 닉네임이 중복됩니다!!');
+  } else{
+    checkNickName.value = true;
     alert('사용가능한 닉네임입니다!!');
   }
 };
@@ -87,19 +93,18 @@ const submitForm = () => {
 };
 
 const handleModify = () => {
-  if (!formData.value.userEmail || !formData.value.userNickname ||
-      !formData.value.userPassword || !formData.value.userBirthday || !formData.value.userGender || !formData.value.userMbti
+  if (!props.userData.userNickname || !userPassword.value
+      || !props.userData.userBirthday || !props.userData.userGender || !props.userData.userMbti
   ) {
     errorMessage.value = '빠진 부분이 없는지 확인해주세요!';
   } else {
     errorMessage.value = '';
-    emit('submit', {
-      userEmail: formData.value.userEmail,
-      userNickname: formData.value.userNickname,
-      userPassword: formData.value.userPassword,
-      userBirthday: formData.value.userBirthday,
-      userGender: formData.value.userGender,
-      userMbti: formData.value.userMbti,
+    emit('save', {
+      userNickname: props.userData.userNickname,
+      userPassword: userPassword.value,
+      userBirthday: props.userData.userBirthday,
+      userGender: props.userData.userGender,
+      userMbti: props.userData.userMbti,
     })
   }
 };
@@ -108,7 +113,7 @@ const handleModify = () => {
 <template>
 
   <div class="user-header">
-    <span>내 정보</span>
+    <span>정보 수정</span>
   </div>
 
   <div class="user-field">
@@ -131,7 +136,7 @@ const handleModify = () => {
           type="text"
           required
       />
-      <ButtonSmallColor class="small-button" @click="checkNickname">확인</ButtonSmallColor>
+      <ButtonSmallColor class="btn" @click="checkNickname">확인</ButtonSmallColor>
     </div>
   </div>
 
@@ -144,7 +149,7 @@ const handleModify = () => {
           class="input-box"
           v-model="userPassword"
           placeholder="****"
-          type="text"
+          type="password"
           required
       />
     </div>
@@ -155,13 +160,10 @@ const handleModify = () => {
       <span>회원 성별 :</span>
     </div>
     <div class="user-value">
-      <InputBoxLong
-          class="input-box"
-          v-model="userData.userGender"
-          placeholder="male or female"
-          type="text"
-          required
-      />
+      <select class="input-box" v-model="userData.userGender" required>
+        <option>male</option>
+        <option>female</option>
+      </select>
     </div>
   </div>
 
@@ -184,12 +186,9 @@ const handleModify = () => {
       <span>회원 MBTI :</span>
     </div>
     <div class="user-value">
-      <InputBoxLong
-          class="input-box"
-          v-model="userData.userMbti"
-          type="text"
-          required
-      />
+      <select class="input-box" v-model="userData.userMbti" required>
+        <option v-for="(type, index) in mpti" :key="index" :value="type">{{ type }}</option>
+      </select>
     </div>
   </div>
 
@@ -198,7 +197,7 @@ const handleModify = () => {
       <span>회원 온도 :</span>
     </div>
     <div class="user-value">
-      <span>{{ userData.userTemperature }}</span>
+      <span>{{ userData.userTemperature }} 도</span>
     </div>
   </div>
 
@@ -207,20 +206,22 @@ const handleModify = () => {
       <span>회원 가입일 :</span>
     </div>
     <div class="user-value">
-      <span>{{ userData.userRegDate }}</span>
+      <span>{{ userData.regDate.split('T')[0] }}</span>
     </div>
   </div>
 
-  <!-- 오류 메시지 표시 영역 -->
-  <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-
-  <div class="user-delete">
-    <ButtonSmallColor class="btn-cancel" @click="isDelete">취소</ButtonSmallColor>
-    <ButtonSmallColor class="btn-confirm" @click="isDelete">저장</ButtonSmallColor>
+  <div class="user-field">
+    <!-- 오류 메시지 표시 영역 -->
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
 
-  <!-- 삭제 확인 모달창 -->
-  <ModalSmall :isVisible="isModalVisible" :message="'정말로 탈퇴하시겠습니까?'"
+  <div class="user-delete">
+    <ButtonSmallColor class="btn-cancel" @click="$emit('cancel')">취소</ButtonSmallColor>
+    <ButtonSmallColor class="btn-confirm" @click="isSave">저장</ButtonSmallColor>
+  </div>
+
+  <!-- 저장 확인 모달창 -->
+  <ModalSmall :isVisible="isModalVisible" :message="'저장하시겠습니까?'"
               @close="closeModal" @confirm="confirmModal"/>
 
 </template>
@@ -264,6 +265,11 @@ const handleModify = () => {
   padding: 10px;
 }
 
+.btn {
+  width: 100px;
+  height: 40px;
+}
+
 .btn-cancel {
   background-color: rgba(0, 0, 0, 0.39);
   color: white;
@@ -284,6 +290,11 @@ const handleModify = () => {
 .error {
   color: red;
   font-weight: bold;
+}
+
+.input-box{
+  width: 100%;
+  height: 40px;
 }
 
 </style>

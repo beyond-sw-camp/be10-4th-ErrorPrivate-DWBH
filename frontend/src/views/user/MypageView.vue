@@ -15,6 +15,10 @@ const authStore = useAuthStore();
 const route = useRoute();
 const isMypage = ref(false);  // 마이페이지인지 프로필 조회인지 체크
 const isModify = ref(false);  // 수정 선택 시
+const cancelModify = () => {
+  isModify.value = false;
+}
+const duplicationNickname = ref(false); // 중복 체크
 
 // 유저 정보 저장
 const userData = reactive({
@@ -33,7 +37,7 @@ const userModifyData = reactive({
   userBirthday: null,
   userMbti: null,
   userTemperature: null,
-  userRegDate: null,
+  regDate: null,
 });
 
 // 유저 조회
@@ -60,7 +64,6 @@ const readUser = async () => {
 // 유저 정보 수정 조회
 const readModifyUser = async () => {
   try {
-    const userSeq = authStore.userSeq;
     const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}/modify`, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
@@ -72,7 +75,7 @@ const readModifyUser = async () => {
     userModifyData.userBirthday = response.data.userBirthday;
     userModifyData.userMbti = response.data.userMbti;
     userModifyData.userTemperature = response.data.userTemperature;
-    userModifyData.userRegDate = response.data.userRegDate;
+    userModifyData.regDate = response.data.regDate;
     isModify.value = true;
     console.log(response.data);
   } catch (error) {
@@ -80,15 +83,54 @@ const readModifyUser = async () => {
   }
 };
 
-// 유저 수정
-const updateUser = async () => {
+// 닉네임 중복 체크
+const checkDuplicationNickname = async (nickname) => {
   try {
-    const response = await axios.put(`http://localhost:8089/api/v1/user`, {
+
+    if (nickname) {
+      const response = await axios.get(`http://localhost:8089/api/v1/user/nickname-check/${nickname}`, {});
+
+      // 닉네임 중복일 경우
+      if (response.data === true) {
+        duplicationNickname.value = true;
+      } else {
+        duplicationNickname.value = false;
+      }
+
+    }
+  } catch (error) {
+    // 서버에서 전송된 에러 메세지 추출
+    if (error.response.data.message) {
+      alert('정확한 닉네임을 입력해주세요');
+    } else {
+      alert('정확한 닉네임을 입력해주세요');
+    }
+  }
+};
+
+// 유저 수정
+const updateUser = async (userData) => {
+  try {
+    const formData = new FormData();
+    formData.append('modifyUserRequest', new Blob([JSON.stringify({
+      userNickname: userData.userNickname,
+      userPassword: userData.userPassword,
+      userBirthday: userData.userBirthday,
+      userGender: userData.userGender,
+      userMbti: userData.userMbti,
+    })], { type: 'application/json' }));
+
+    const response = await axios.put(`http://localhost:8089/api/v1/user`, formData, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
+        "Content-Type": 'multipart/form-data',
       },
     });
+    isModify.value = false;
 
+    alert("수정 성공!!!");
+    // '/' 경로로 이동하면서 새로고침 -> 헤더 갱신을 위해
+    window.location.href = "/";
   } catch (error) {
     console.error("유저 수정 실패:", error);
   }
@@ -128,14 +170,6 @@ const fetchCounselList = async () => {
     console.error("해당 사용자가 작성한 게시글 리스트 불러오기 실패 :", error);
   }
 }
-onMounted(() => {
-  if (route.params.userSeq == authStore.userSeq) {
-    isMypage.value = true;
-  }
-  readUser();
-  fetchCounselList();
-  fetchOfferList();
-});
 
 const hireTotalCount = ref(0); // 전체 개수
 const hireCurrentPage = ref(1); // 현재 페이지
@@ -188,6 +222,16 @@ const fetchOfferList = async () => {
     console.error("해당 사용자가 작성한 댓글 리스트 불러오기 실패 :", error);
   }
 }
+
+onMounted(() => {
+  if (route.params.userSeq == authStore.userSeq) {
+    isMypage.value = true;
+  }
+  readUser();
+  fetchCounselList();
+  fetchOfferList();
+});
+
 </script>
 
 <template>
@@ -200,22 +244,30 @@ const fetchOfferList = async () => {
       <div class="main-layout">
 
         <div class="user-info-form">
-          <UserInfo :userData="userData" @update="updateUser" @delete="deleteUser"/>
+          <UserInfo :userData="userData" @update="readModifyUser" @delete="deleteUser"/>
         </div>
         <div class="right-section">
-          <div class="bridge-of-heart">
-            <CounselList :counselHires="paginationCounselList" :currentPage="hireCurrentPage" :pageSize="hirePageSize"
-                         :totalCount="hireTotalCount"/>
+          <template v-if="!isModify">
+            <div class="bridge-of-heart">
+              <CounselList :counselHires="paginationCounselList" :currentPage="hireCurrentPage" :pageSize="hirePageSize"
+                           :totalCount="hireTotalCount"/>
 
-            <Pagination :totalCount="hireTotalCount" :pageSize="hirePageSize" :currentPage="hireCurrentPage"
-                        @sendPagination="hireReceivePagination"/>
-          </div>
-          <div class="warm-hand-sharing">
-            <CounselOffer :offerList="offerList" :currentPage="offerCurrentPage" :pageSize="offerPageSize"
-                          :totalCount="offerTotalCount"/>
-            <Pagination :totalCount="offerTotalCount" :pageSize="offerPageSize" :currentPage="offerCurrentPage"
-                        @sendPagination="offerReceivePagination"/>
-          </div>
+              <Pagination :totalCount="hireTotalCount" :pageSize="hirePageSize" :currentPage="hireCurrentPage"
+                          @sendPagination="hireReceivePagination"/>
+            </div>
+            <div class="warm-hand-sharing">
+              <CounselOffer :offerList="offerList" :currentPage="offerCurrentPage" :pageSize="offerPageSize"
+                            :totalCount="offerTotalCount"/>
+              <Pagination :totalCount="offerTotalCount" :pageSize="offerPageSize" :currentPage="offerCurrentPage"
+                          @sendPagination="offerReceivePagination"/>
+            </div>
+          </template>
+          <template v-else>
+            <div class="bridge-of-heart">
+              <UserModifyForm :userData="userModifyData" :duplicationNickname="duplicationNickname"
+              @nickname="checkDuplicationNickname" @cancel="cancelModify" @save="updateUser"/>
+            </div>
+          </template>
         </div>
       </div>
     </div>

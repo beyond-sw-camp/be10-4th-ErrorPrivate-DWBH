@@ -119,6 +119,7 @@ const confirmModal = () => {
   color: white;
   border: none;
   padding: 10px 20px;
+  margin: 10px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -132,6 +133,7 @@ const confirmModal = () => {
   color: white;
   border: none;
   padding: 10px 20px;
+  margin: 10px;
   border-radius: 5px;
   cursor: pointer;
 }
