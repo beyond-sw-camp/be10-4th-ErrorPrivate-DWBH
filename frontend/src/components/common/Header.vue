@@ -322,6 +322,7 @@ img {
 
 /* 모달 스타일 */
 .modal-overlay {
+  z-index: 1000;
   position: fixed;
   top: 0;
   left: 0;
