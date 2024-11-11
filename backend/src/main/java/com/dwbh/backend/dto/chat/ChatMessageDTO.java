@@ -20,6 +20,7 @@ public class ChatMessageDTO {
         private String sendSeq;
         private String senderNickName;
         private String receiveSeq;
+        private String readYn;
         @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
         private LocalDateTime regDate = LocalDateTime.now();
 
