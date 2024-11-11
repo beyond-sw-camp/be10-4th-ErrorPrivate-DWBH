@@ -4,12 +4,10 @@ import {computed, onBeforeUnmount, onMounted, onUnmounted, reactive, ref} from "
 import ButtonSmallColor from "@/components/common/ButtonSmallColor.vue";
 import router from "@/router/index.js";
 import SideNotificationBar from "@/components/common/SideNotificationBar.vue";
-import {useAuthStore} from "@/stores/auth.js";
 import ChatList from '@/components/chat/ChattingList.vue';
 import ChatDetail from '@/components/chat/ChattingDetail.vue';
 import axios from "axios";
 
-const authStore = useAuthStore();
 const isSideNotificationBarOn = ref(false); // 기본 off 상태
 const isModalOpen = ref(false);
 const isDetailOpen = ref(false);
@@ -27,7 +25,7 @@ const readNotificationList = async () => {
   try {
     const response = await axios.get('http://localhost:8089/api/v1/notification', {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
     });
     state.notificationList = response.data.notifications;
@@ -43,7 +41,7 @@ const readNotification = async (notificationSeq) => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/notification/${notificationSeq}`, {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
     });
     chat.value = response.data
@@ -64,7 +62,7 @@ const readUser = async () => {
     const userSeq = authStore.userSeq;
     const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
       headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
     });
     console.log(response.data);
@@ -76,7 +74,7 @@ const readUser = async () => {
 };
 
 // accessToken 이 있으면 로그인한 상태
-const isLoggedIn = computed(() => !!authStore.accessToken);
+const isLoggedIn = computed(() => !!localStorage.getItem('authToken'));
 const handleLogout = () => {
   authStore.logout();
   router.push("/login");
