@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 
 // 어디서든 사용할 수 있는 useAuthStore
 export const useAuthStore = defineStore('auth', () => {
-    const accessToken = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMUBuYXZlci5jb20iLCJzZXEiOjQsImF1dGgiOltdLCJleHAiOjE3MzEyMjU3MzB9.Ttcb46si_YVvJJ6sqIParqPTSmCixQVHaak9SpSOnIk1p6yiq7-2dweQKeRq7WyW-k-qXuOJOYx_VEbRaU_OBA');
+    const accessToken = ref('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMUBuYXZlci5jb20iLCJzZXEiOjQsImF1dGgiOltdLCJleHAiOjE3MzEzNDA2OTl9.JAfCfiYfHzWGCYTNoFyC5uZRoWgH9K1Ozs6_FmK5m1H_XlAppeVeWeuwLNBikNVQsszHUiWfKUgGGDlj5J8g5A');
     const userRole = ref(null);
     const userEmail = ref(null);
 

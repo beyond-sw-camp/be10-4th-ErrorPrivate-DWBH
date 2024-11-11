@@ -1,12 +1,10 @@
 <script setup>
+import {computed, defineProps} from 'vue';
+
 const props = defineProps({
   author: {
     type: String,
     required: true
-  },
-  authorImage: {
-    type: String,
-    default: ''
   },
   ageGroup: {
     type: String,
@@ -26,35 +24,77 @@ const props = defineProps({
   },
   isPrivate: {
     type: String,
-    default: false
+    required: true
+  },
+  authorImage: {
+    type: String,
+    required: true
   },
   attachedImage: {
     type: String,
-    default: null // 첨부 이미지 URL
+    required: false
   }
 });
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+};
+
+
+// 이미지 경로가 'uploads/' 하위에 있을 경우 상대 경로를 구성하는 헬퍼 함수
+// const getImagePath = (path) => {
+//   return path ? `../../../../uploads/${path}` : '';
+// };
+
+const formattedDate = computed(() => formatDate(props.date));
+const authorImagePath = computed(() => getImagePath(props.authorImage));
+const attachedImagePath = computed(() => getImagePath(props.attachedImage));
 </script>
 
 <template>
-  <div class="comment-item">
+<!--  <div class="comment-item">-->
+<!--    &lt;!&ndash; 작성자 정보 &ndash;&gt;-->
+<!--    <div class="comment-header">-->
+<!--      <img :src="authorImage" alt="작성자 프로필" class="profile-image" />-->
+<!--      <p class="author-info">-->
+<!--        <strong>{{ author }}</strong> - {{ ageGroup }} {{ gender }}-->
+<!--      </p>-->
+<!--      <p class="comment-date">{{ date }}</p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; 댓글 내용 &ndash;&gt;-->
+<!--    <p v-if="isPrivate" class="private-comment">비밀 댓글입니다.</p>-->
+<!--    <p v-else class="comment-content">{{ content }}</p>-->
+
+<!--    &lt;!&ndash; 첨부 이미지 &ndash;&gt;-->
+<!--    <div v-if="attachedImage" class="attached-image">-->
+<!--      <img :src="attachedImage" alt="첨부 이미지" />-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <li class="comment-item">
     <!-- 작성자 정보 -->
     <div class="comment-header">
-      <img :src="authorImage" alt="작성자 프로필" class="profile-image" />
+      <img :src="authorImagePath" alt="작성자 프로필" class="profile-image" />
       <p class="author-info">
         <strong>{{ author }}</strong> - {{ ageGroup }} {{ gender }}
       </p>
-      <p class="comment-date">{{ date }}</p>
+      <p class="comment-date">{{ formattedDate }}</p>
     </div>
 
     <!-- 댓글 내용 -->
-    <p v-if="isPrivate" class="private-comment">비밀 댓글입니다.</p>
+    <p v-if="isPrivate === 'Y'" class="private-comment">비밀 댓글입니다.</p>
     <p v-else class="comment-content">{{ content }}</p>
 
     <!-- 첨부 이미지 -->
     <div v-if="attachedImage" class="attached-image">
-      <img :src="attachedImage" alt="첨부 이미지" />
+      <img :src="attachedImagePath" alt="첨부 이미지" />
     </div>
-  </div>
+  </li>
 </template>
 
 <style scoped>
@@ -93,5 +133,11 @@ const props = defineProps({
 
 .comment-content {
   white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+.attached-image img {
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 </style>

@@ -1,43 +1,40 @@
 <script setup>
 import { defineComponent, ref } from 'vue';
+import { defineProps } from 'vue';
 import CommentList from '@/components/counseloffer/CommentList.vue';
 import CommentForm from '@/components/counseloffer/CommentForm.vue';
+import {useRoute} from "vue-router";
 
-// export default defineComponent({
-//   components: { CommentList, CommentForm },
-//   setup() {
-//     const comments = ref([
-//       // 예시 데이터
-//       { author: '김유지', ageGroup: '20대', gender: '여자', date: '2024.10.22', content: '예시 댓글 내용', isPrivate: false },
-//       // 추가 댓글들...
-//     ]);
-//
-//     const addComment = (newComment) => {
-//       comments.value.push({
-//         author: '익명', // 사용자 정보가 없으므로 익명 처리
-//         ageGroup: '30대', // 예시 정보
-//         gender: '여자',
-//         date: new Date().toLocaleString(),
-//         content: newComment.content,
-//         isPrivate: newComment.isPrivate
-//       });
-//     };
-//
-//     return {
-//       comments,
-//       addComment
-//     };
-//   }
-// });
+// const route = useRoute();
+// const hireSeq = Number(route.params.hireSeq); // URL 파라미터로부터 hireSeq를 가져옴
+const props = defineProps({
+  hireSeq: {
+    type: Number,
+    required: true
+  }
+});
 </script>
 
 <template>
+<!--  <div class="comment-section">-->
+<!--    <CommentList :comments="comments" />-->
+<!--&lt;!&ndash;    <CommentForm @submit-comment="addComment" />&ndash;&gt;-->
+<!--  </div>-->
   <div class="comment-section">
-    <CommentList :comments="comments" />
-<!--    <CommentForm @submit-comment="addComment" />-->
+    <h2>댓글 섹션</h2>
+    <CommentList :hireSeq="props.hireSeq" />
+    <CommentForm :hireSeq="props.hireSeq" />
   </div>
 </template>
 
 <style scoped>
+.comment-section {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+  width: 800px;
+  background-color: white;
+}
 
 </style>

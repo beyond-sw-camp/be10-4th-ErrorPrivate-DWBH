@@ -30,12 +30,12 @@ const routes = [
         name: 'CounselDetail',
         component: () => import("@/views/counsel/CounselDetailView.vue")
     },
-    {
-        /* 댓글 확인용 임시 경로 */
-        path: '/counsel/comment',
-        name: 'CounselComment',
-        component: () => import("@/views/counsel/CounselCommentSection.vue")
-    },
+    // {
+    //     /* 댓글 확인용 임시 경로 */
+    //     path: '/counsel/comment',
+    //     name: 'CounselComment',
+    //     component: () => import("@/views/counsel/CounselCommentSection.vue")
+    // },
     {
         path: '/chat/:chatSeq/evaluation/',
         name: 'Evaluation',
