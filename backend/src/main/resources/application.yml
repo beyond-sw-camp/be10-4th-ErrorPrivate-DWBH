@@ -13,9 +13,9 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:log4jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:log4jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/${MARIADB_DATABASE}?serverTimezone=Asia/Seoul
+    username: ${MARIADB_USER}
+    password: ${MARIADB_PASSWORD}
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
   jpa:
     show-sql: true
@@ -26,7 +26,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.dialect: org.hibernate.dialect.MariaDBDialect
   servlet:
     multipart:
       enabled: true
@@ -64,8 +64,6 @@ springdoc:
     doc-expansion: none
 
 logging:
-  file:
-    path: C:/logs/dwbh/backend
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     org.springframework.data.mongodb.core.MongoDbUtils: DEBUG
@@ -79,8 +77,8 @@ logging:
 
 
 token:
-  secret: KPNYWGkEcXk9j4VJs6YlatJN0R7HT8QNJKbv61SkoDSCfLegTcNZy4S0Vkzt5YfBDU4b8UJtaJIMg3kSVzahow==
-  expiration_time : 43200000
+  secret: ${TOKEN_SECRET}
+  expiration_time : ${TOKEN_EXPIRATION_TIME}
 
 chatSuggest:
   url: ${GOOGLE_GEMINI_API_URL}

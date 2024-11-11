@@ -28,11 +28,9 @@ public class DateTimeUtil {
     }
 
     /* 오늘이 몇 주 전인지 구함 - week가 2일 경우 오늘이 startDate로부터 2주 전인지 */
-    public static boolean isBeforeWeek(String startDate, int week) {
-        LocalDateTime startDateParse = parse(startDate, "yyyy-MM-dd HH:mm:ss");
-
+    public static boolean isBeforeWeek(LocalDateTime startDate, int week) {
         LocalDateTime nowDate = LocalDateTime.now();
-        LocalDateTime endDate = startDateParse.plusWeeks(week);
+        LocalDateTime endDate = startDate.plusWeeks(week);
 
         return nowDate.isBefore(endDate);
     }

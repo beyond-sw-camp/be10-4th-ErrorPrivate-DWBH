@@ -1,18 +1,77 @@
 <script setup>
 import {RouterLink} from "vue-router";
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, onUnmounted, reactive, ref} from "vue";
 import ButtonSmallColor from "@/components/common/ButtonSmallColor.vue";
 import router from "@/router/index.js";
 import SideNotificationBar from "@/components/common/SideNotificationBar.vue";
-import {useAuthStore} from "@/stores/auth.js";
 import ChatList from '@/components/chat/ChattingList.vue';
 import ChatDetail from '@/components/chat/ChattingDetail.vue';
+import axios from "axios";
+import {useAuthStore} from "@/stores/auth.js";
 
 const authStore = useAuthStore();
+
 const isSideNotificationBarOn = ref(false); // 기본 off 상태
 const isModalOpen = ref(false);
 const isDetailOpen = ref(false);
 const selectedChat = ref(null);
+
+const chat = ref(null);
+const userNickname = ref(null);
+const state = reactive({
+  notificationList: [],
+  isConfirmation: true,
+});
+
+// 알림 조회
+const readNotificationList = async () => {
+  try {
+    const response = await axios.get('http://localhost:8089/api/v1/notification', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    });
+    state.notificationList = response.data.notifications;
+    state.isConfirmation = response.data.isConfirmation;
+  } catch (error) {
+    console.error("알림 가져오기 실패:", error);
+  }
+};
+
+// 알림 상세 조회 (채팅방 입장)
+const readNotification = async (notificationSeq) => {
+  try {
+    const response = await axios.get(`http://localhost:8089/api/v1/notification/${notificationSeq}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    });
+    chat.value = response.data
+    console.log(chat.value);
+  } catch (error) {
+    console.error("알림 상세 조회 (채팅방 입장) 가져오기 실패:", error);
+  }
+
+  await readNotificationList(); // 알림 새로 조회
+  isSideNotificationBarOn.value = !isSideNotificationBarOn.value; // 알림 창 닫기
+  isModalOpen.value = true; // 채팅방으로 이동
+  openChatDetail(chat.value);
+};
+
+// 유저 조회
+const readUser = async () => {
+  try {
+    const userSeq = authStore.userSeq;
+    const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    });
+    userNickname.value = response.data.userNickname;
+  } catch (error) {
+    console.error("알림 가져오기 실패:", error);
+  }
+};
 
 // accessToken 이 있으면 로그인한 상태
 const isLoggedIn = computed(() => !!authStore.accessToken);
@@ -37,8 +96,12 @@ const handleClickOutside = (event) => {
   }
 };
 
-onMounted(() => {
+onMounted( async () => {
   document.addEventListener('click', handleClickOutside);
+  if (isLoggedIn.value) {
+    await readNotificationList();
+    await readUser();
+  }
 });
 
 onBeforeUnmount(() => {
@@ -62,6 +125,7 @@ function openChatDetail(chat) {
 
 function goBackToList() {
   isDetailOpen.value = false;
+  selectedChat.value = null;
 }
 
 </script>
@@ -102,31 +166,21 @@ function goBackToList() {
               />
             </button>
             <!-- 사이드 알림바 토글 버튼-->
-            <img
-                src="@/images/notification.png"
-                alt="side menubar icon"
-                class="side-menubar"
-                @click.stop="toggleSideNotificationBar"
-            />
+            <button @click.stop="toggleSideNotificationBar" class="side-menubar-button">
+              <img
+                  src="@/images/notification.png"
+                  alt="side menubar icon"
+                  class="side-menubar"
+              />
+              <span v-if="!state.isConfirmation" class="notification-badge"></span>
+            </button>
+
             <ButtonSmallColor @click="handleLogout">Log Out</ButtonSmallColor>
           </template>
         </div>
       </nav>
     </header>
 
-    <!-- ChatView 모달 -->
-    <transition>
-      <div
-          v-if="isModalOpen"
-          class="modal-overlay"
-          @click="closeModal"
-      >
-        <div class="modal-content" @click.stop>
-          <button class="close-button" @click="closeModal">X</button>
-          <ChatView />
-        </div>
-      </div>
-    </transition>
 
     <!-- 사이드 알림바 -->
     <transition name="slide">
@@ -135,7 +189,8 @@ function goBackToList() {
           class="side-menubar-container"
           @click.stop
       >
-        <SideNotificationBar @close="toggleSideNotificationBar"/>
+        <SideNotificationBar :notifications="state.notificationList" :userNickname="userNickname"
+                             @close="toggleSideNotificationBar" @selectChat="readNotification"/>
       </div>
     </transition>
   </div>
@@ -144,16 +199,16 @@ function goBackToList() {
   <!-- 채팅방 모달 -->
   <div v-if="isModalOpen" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
-      <button class="close-button" @click="closeModal">X</button>
+      <button class="close-button" @click="closeModal">{{ selectedChat ? '' : 'X'}}</button>
 
       <!-- 목록 또는 상세 화면 표시 -->
       <template v-if="!isDetailOpen">
         <!-- 채팅 목록 화면 -->
-        <ChatList @selectChat="openChatDetail" />
+        <ChatList @selectChat="openChatDetail"/>
       </template>
       <template v-else>
         <!-- 대화 상세 화면 -->
-        <ChatDetail v-if="selectedChat" :chat="selectedChat" @goBack="goBackToList" />
+        <ChatDetail v-if="selectedChat" :chat="selectedChat" @goBack="goBackToList"/>
       </template>
     </div>
   </div>
@@ -215,6 +270,16 @@ img {
   cursor: pointer;
 }
 
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+}
+
 /* 반응형으로 조절하고 싶을 경우 */
 .side-menubar {
   max-width: 100%; /* 부모 요소에 맞춰 최대 크기를 설정 */
@@ -236,10 +301,11 @@ img {
 }
 
 .side-menubar-button {
-  background: none;   /* 배경 제거 */
-  border: none;       /* 테두리 제거 */
-  padding: 0;         /* 기본 패딩 제거 */
-  cursor: pointer;    /* 마우스 포인터 커서 설정 */
+  background: none; /* 배경 제거 */
+  border: none; /* 테두리 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+  cursor: pointer; /* 마우스 포인터 커서 설정 */
+  position: relative;
 }
 
 .side-menubar {
@@ -254,6 +320,7 @@ img {
 
 /* 모달 스타일 */
 .modal-overlay {
+  z-index: 1000;
   position: fixed;
   top: 0;
   left: 0;

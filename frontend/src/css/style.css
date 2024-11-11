@@ -6,6 +6,7 @@
     padding: 20px;
     width: 100%; /* 전체 너비로 설정 */
 }
+
 .content {
     display: flex;
     align-items: center;
@@ -71,4 +72,25 @@ button {
     font-weight: bold;
     text-align: left;
     color: #333;
+}
+
+.responsive-container {
+    width: 100vw; /* 화면 너비의 90% */
+    height: 100vh; /* 화면 높이의 70% */
+    max-width: 1600px; /* 너무 커지지 않도록 최대 크기 제한 */
+    margin: 0 auto; /* 중앙 정렬 */
+    padding: 20px; /* 내부 여백 */
+    background-color: #ffffff; /* 배경색 */
+    border-radius: 10px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+
+.detail-container {
+    background-color: #ffffff;
+}
+
+.detail-title {
+    font-size: 30px;
+    color: #333;
+    font-weight: bold;
 }

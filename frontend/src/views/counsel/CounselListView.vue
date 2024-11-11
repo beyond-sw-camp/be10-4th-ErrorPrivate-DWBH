@@ -1,12 +1,14 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import dayjs from "dayjs";
-import "@/css/style.css"
+import "@/css/style.css";
 import Pagination from "@/components/common/Pagination.vue";
 import router from "@/router/index.js";
+import CounselList from "@/components/counsel/CounselList.vue";
 
 const counselHires = ref([]);
+const paginationCounselHires = ref([]);
 const counselTypes = ref([]);
 const counselAgeRanges = ref([]);
 const hopeAgeSeq = ref(0);
@@ -16,7 +18,7 @@ const searchTitle = ref("");
 
 const totalCount = ref(0); // 전체 개수
 const currentPage = ref(1); // 현재 페이지
-const pageSize = ref(11); // 페이지당 항목 수
+const pageSize = ref(10); // 페이지당 항목 수
 
 const fetchCounselHires = async () => {
   try {
@@ -35,41 +37,53 @@ const fetchCounselHires = async () => {
     totalCount.value = counselHires.value.length;
     counselTypes.value = response.data.counselorTypeList;
     counselAgeRanges.value = response.data.counselorAgeList;
+
+    paginate();
   } catch (error) {
-    console.error('게시판 목록을 가져오는 중 오류 발생', error)
+    console.error('게시판 목록을 가져오는 중 오류 발생', error);
   }
-}
+};
+
+// 현재 페이지에 따라 데이터 나누기
+const paginate = () => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  console.log(start, end);
+  paginationCounselHires.value = counselHires.value.slice(start, end);
+};
 
 const receivePagination = (page) => {
   currentPage.value = page.currentPage;
   pageSize.value = page.pageSize;
 
   fetchCounselHires();
-}
+};
 
-const goCounselHireDetail = (counselSeq) => {
-  router.push(`/counsel/${counselSeq}`);
+const goCounselHireCreate = () => {
+  router.push("/counsel/counselCreate"); // 등록 페이지로 이동
 };
 
 onMounted(() => {
-  fetchCounselHires()
-})
+  fetchCounselHires();
+});
 </script>
 
 <template>
   <div class="container content">
     <div class="responsive-container mt-4">
-      <!-- 제목 -->
-      <div class="title-container">
+      <!-- 제목 및 목록 버튼 -->
+      <div class="title-container d-flex justify-content-between align-items-center">
         <h2 class="title-text">마음을 이어주는 다리</h2>
+        <button class="btn btn-dark" @click="goCounselHireCreate">글쓰기</button>
       </div>
+
       <!-- 테이블 -->
       <div class="table-container">
         <!-- 필터 및 검색 -->
         <div class="filter-container row mb-3 justify-content-end">
           <div class="col-md-2">
             <select class="form-select" v-model="hopeAgeSeq">
-              <option value=0 selected>희망 나이대</option>
+              <option value="0" selected>희망 나이대</option>
               <option v-for="(counselAgeRange, index) in counselAgeRanges" :key="index" :value="counselAgeRange.counselorAgeRangeSeq">
                 {{ counselAgeRange.counselorAgeRange }}
               </option>
@@ -84,7 +98,7 @@ onMounted(() => {
           </div>
           <div class="col-md-2">
             <select class="form-select" v-model="hopeTypeSeq">
-              <option value=0 selected>희망 조언 유형</option>
+              <option value="0" selected>희망 조언 유형</option>
               <option v-for="(counselorType, index) in counselTypes" :key="index" :value="counselorType.counselorTypeSeq">
                 {{ counselorType.counselorType }}
               </option>
@@ -99,70 +113,14 @@ onMounted(() => {
             </div>
           </div>
         </div>
-
-        <div class="table-wrapper">
-          <table class="table table-bordered text-center align-middle">
-            <thead class="table-light">
-            <tr>
-              <th>No.</th>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>희망 성별</th>
-              <th>희망 나이대</th>
-              <th>희망 조언 유형</th>
-              <th>작성일</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(counselHire, index) in counselHires" :key="index">
-              <td>{{ index + 1 }}</td>
-              <td style="cursor:pointer;" @click="goCounselHireDetail(counselHire.hireSeq)">{{ counselHire.hireTitle }}</td>
-              <td>{{ counselHire.userNickname }}</td>
-              <td>{{ counselHire.hireGender === "male" ? "남성" : "여성" }}</td>
-              <td>
-                <template v-if="counselHire.ageRanges.length === 0">
-                  무관
-                </template>
-                <template v-else>
-                  <template v-for="(ageRange, index) in counselHire.ageRanges" :key="index">
-                    {{ ageRange.counselorAgeRange }}&nbsp;
-                  </template>
-                </template>
-              </td>
-              <td>
-                <template v-if="counselHire.types.length === 0">
-                  무관
-                </template>
-                <template v-else>
-                  <template v-for="(type, index) in counselHire.types" :key="index">
-                    {{ type.counselorType }}&nbsp;
-                  </template>
-                </template>
-              </td>
-              <td>{{ dayjs(counselHire.regDate).format("YYYY-MM-DD HH:mm:ss") }}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        <CounselList :counselHires="paginationCounselHires" :currentPage="currentPage" :pageSize="pageSize" :totalCount="totalCount"/>
       </div>
       <Pagination :totalCount="totalCount" @sendPagination="receivePagination"/>
     </div>
   </div>
-
 </template>
 
 <style scoped>
-.responsive-container {
-  width: 90vw; /* 화면 너비의 90% */
-  height: 100vh; /* 화면 높이의 70% */
-  max-width: 1600px; /* 너무 커지지 않도록 최대 크기 제한 */
-  margin: 0 auto; /* 중앙 정렬 */
-  padding: 20px; /* 내부 여백 */
-  background-color: #ffffff; /* 배경색 */
-  border-radius: 10px; /* 모서리 둥글게 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-}
-
 .filter-container {
   margin-bottom: 20px;
 }
@@ -173,6 +131,7 @@ onMounted(() => {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
   border: 2px solid #ccc;
+  margin-bottom: 0;
 }
 
 .table-wrapper {
@@ -195,5 +154,11 @@ onMounted(() => {
 .table th {
   background: #ffffff;
   font-weight: bold;
+}
+
+.btn.btn-dark {
+  background-color: #333;
+  color: #fff;
+  border: none;
 }
 </style>
