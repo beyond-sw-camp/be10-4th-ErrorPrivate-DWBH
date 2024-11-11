@@ -18,6 +18,21 @@ const receiveUsername = ref(props.chat.receiveUserNickname);
 const isConnected = ref(false);
 const emit = defineEmits(['goBack']);
 const currentUserSeq = useAuthStore().userSeq;
+const userNickname = ref(null);
+
+const readUser = async () => {
+  try {
+    const userSeq = authStore.userSeq;
+    const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    });
+    userNickname.value = response.data.userNickname;
+  } catch (error) {
+    console.error("유저 정보 가져오기 실패:", error);
+  }
+};
 
 onMounted(async () => {
   await loadChatHistory(props.chat.chatSeq);
@@ -69,7 +84,7 @@ function connectWebSocket() {
       suggestMessage.value = content.suggestMessage;
 
       let msgType;
-      if (content.message.includes("입장")) {
+      if (content.message.includes("생성")) {
         msgType = "ENTER";
       } else {
         msgType = currentUserSeq == content.sendSeq ? "SENT" : "RECEIVED";
@@ -94,22 +109,19 @@ function connectWebSocket() {
         });
       }
 
-      if (content.message.includes("나가셨습니다.")) {
-        disconnect();
-      }
-
       scrollToBottom();
     });
 
     //퇴장 메세지 전송
     stompClient.value.subscribe(`/sub/chat/exit/${props.chat.chatSeq}`, (message) => {
+      const content = JSON.parse(message.body);
       messages.value.push({
-        chatMessageSeq: message.chatMessageSeq,
+        chatMessageSeq: content.chatMessageSeq,
         chatRoomSeq: props.chat.chatSeq,
-        senderNickName: sendUsername.value,
-        sendSeq: currentUserSeq,
-        receiveSeq: currentUserSeq==message.receiveSeq ? message.receiveSeq : message.sendSeq,
-        text: " 님과의 대화가 종료되었습니다.",
+        senderNickName: content.senderNickName,
+        sendSeq: content.sendSeq,
+        receiveSeq: content.receiveSeq,
+        text: content.message,
         type: "EXIT"
       });
     });
@@ -166,11 +178,6 @@ function sendMessage() {
 
 function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
-    stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify({
-      roomId: props.chat.chatSeq,
-      text: `${sendUsername.value}: 님이 방을 나가셨습니다.`,
-      writer: sendUsername.value
-    }));
     stompClient.value.disconnect();
     isConnected.value = false;
   }
@@ -179,18 +186,26 @@ function disconnect() {
 async function disconnectEvent() {
   if(confirm("채팅을 종료하시겠습니까?")) {
     try {
-      await axios.put(`http://localhost:8089/api/v1/user/chat/message/${props.chat.chatSeq}/endDate`,
-          {
-        chatSeq: props.chat.chatSeq,
-        modDate: new Date(),
-        endDate: new Date()
-      },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            },
-          }
-      );
+      const endMessage = {
+        chatMessageSeq: uuidv4(),
+        chatRoomSeq: props.chat.chatSeq,
+        senderNickName: sendUsername.value,
+        sendSeq: currentUserSeq,
+        receiveSeq: currentUserSeq==props.chat.sendUserSeq ? props.chat.receiveUserSeq : props.chat.sendUserSeq,
+        message: '',
+        type: "EXIT",
+      };
+      stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify(endMessage));
+      messages.value.push({
+        chatMessageSeq: endMessage.chatMessageSeq,
+        chatRoomSeq: endMessage.chatRoomSeq,
+        senderNickName: endMessage.senderNickName,
+        sendSeq: endMessage.sendSeq,
+        receiveSeq: endMessage.receiveSeq,
+        text: endMessage.message,
+        type: "EXIT",
+      });
+
       disconnect();
       emit("goBack");
 
@@ -263,7 +278,7 @@ function setInputMessage(message) {
                     'sender-received': message.type == 'RECEIVED'
                   }"
               >
-              {{ message.type === 'SENT' ? sendUsername : receiveUsername  }}
+              {{ message.type === 'SENT' ? receiveUsername : sendUsername }}
             </span><br />
             <span class="text">{{ message.text }}</span><br />
             <span class="date">{{ formatDate(message.regDate) }}</span><br />
@@ -419,6 +434,17 @@ function setInputMessage(message) {
 
 /* 입장 메시지 스타일 (가운데 정렬) */
 .message.ENTER {
+  align-self: center;
+  text-align: center;
+  color: #333333;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background-color: lightgrey;
+  margin-bottom: 20px;
+}
+
+.exit-message {
   align-self: center;
   text-align: center;
   color: #333333;

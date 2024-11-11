@@ -44,6 +44,19 @@ public class ChatMessageDTO {
     }
 
     @Getter
+    public static class End {
+
+        private String chatMessageSeq;
+        private String message;
+        private String sendSeq;
+        private String senderNickName;
+        private String receiveSeq;
+        @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
+        private LocalDateTime regDate = LocalDateTime.now();
+
+    }
+
+    @Getter
     @Setter
     public static class Response {
 
