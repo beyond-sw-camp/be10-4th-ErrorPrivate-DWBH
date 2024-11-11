@@ -28,8 +28,8 @@ public class CustomUserRepository {
                         user.userGender,
                         user.userTemperature))
                 .from(user)
-                .join(userProfileFile).on(user.userSeq.eq(userProfileFile.userSeq))
-                .join(file).on(userProfileFile.fileSeq.eq(file.fileSeq))
+                .leftJoin(userProfileFile).on(user.userSeq.eq(userProfileFile.userSeq))
+                .leftJoin(file).on(userProfileFile.fileSeq.eq(file.fileSeq))
                 .where(user.userSeq.eq(userSeq))
                 .fetchOne();
     }

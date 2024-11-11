@@ -4,7 +4,9 @@ import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import {useAuthStore} from "@/stores/auth.js";
 
+const token = useAuthStore().accessToken;
 const props = defineProps({
   chat: Object
 });
@@ -25,7 +27,11 @@ onMounted(async () => {
 
 async function loadChatHistory(chatId) {
   try {
-    const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`);
+    const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const data = await response.json();
     messages.value = data.map((message) => ({
       chatMessageSeq: message.chatMessageSeq,
@@ -164,11 +170,18 @@ function disconnect() {
 async function disconnectEvent() {
   if(confirm("채팅을 종료하시겠습니까?")) {
     try {
-      await axios.put(`http://localhost:8089/api/v1/user/chat/message/${props.chat.chatSeq}/endDate`, {
+      await axios.put(`http://localhost:8089/api/v1/user/chat/message/${props.chat.chatSeq}/endDate`,
+          {
         chatSeq: props.chat.chatSeq,
         modDate: new Date(),
         endDate: new Date()
-      });
+      },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+      );
       disconnect();
       emit("goBack");
 
@@ -295,7 +308,7 @@ function formatDate(regDate) {
 }
 
 .chat-room-button.disconn {
-  width: 92px;
+  width: 100px;
   height: 38px;
   background-color: #262627;
   color: #ffffff;
@@ -314,7 +327,7 @@ function formatDate(regDate) {
 }
 
 .chat-room-button.submit-btn {
-  width: 65px;
+  width: 70px;
   height: 40px;
   background-color: #CCB997;
   color: #262627;
