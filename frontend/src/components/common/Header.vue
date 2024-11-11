@@ -32,7 +32,6 @@ const readNotificationList = async () => {
     });
     state.notificationList = response.data.notifications;
     state.isConfirmation = response.data.isConfirmation;
-    console.log(state);
   } catch (error) {
     console.error("알림 가져오기 실패:", error);
   }
@@ -67,7 +66,6 @@ const readUser = async () => {
         Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
-    console.log(response.data);
     userNickname.value = response.data.userNickname;
     console.log(userNickname.value);
   } catch (error) {

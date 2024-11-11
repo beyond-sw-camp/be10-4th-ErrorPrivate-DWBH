@@ -139,7 +139,7 @@ onMounted(async () => {
   <div v-if="isLoading">
     <h1>로딩중.....</h1>
   </div>
-  <div v-else>
+  <div v-else class="content">
     <div class="evaluation-container">
       <!-- Header 정보 -->
       <div class="header">
@@ -257,10 +257,24 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 500px;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
 .evaluation-container {
   font-family: Arial, sans-serif;
   background-color: #f5f4ef;
+  max-height: 100vh; /* 모달 높이를 화면 높이의 80%로 제한 */
   padding: 20px;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+  flex-grow: 1;
 }
 
 .header {
