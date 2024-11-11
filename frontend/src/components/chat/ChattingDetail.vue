@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import {useAuthStore} from "@/stores/auth.js";
 
 const props = defineProps({
   chat: Object
@@ -16,6 +17,7 @@ const sendUsername = ref(props.chat.sendUserNickname);
 const receiveUsername = ref(props.chat.receiveUserNickname);
 const isConnected = ref(false);
 const emit = defineEmits(['goBack']);
+const currentUserSeq = useAuthStore().userSeq;
 
 onMounted(async () => {
   await loadChatHistory(props.chat.chatSeq);
@@ -34,11 +36,11 @@ async function loadChatHistory(chatId) {
     messages.value = data.map((message) => ({
       chatMessageSeq: message.chatMessageSeq,
       chatRoomSeq: message.chatRoomSeq,
-      senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUserSeq,
-      receiveSeq: props.chat.receiveUserSeq,
+      senderNickName: message.senderNickName,
+      sendSeq: message.sendSeq,
+      receiveSeq: message.receiveSeq,
       text: message.message,
-      type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED", // ENTER 구분 추가
+      type: message.type == "ENTER" ? "ENTER" : currentUserSeq  == message.sendSeq ? "SENT" : "RECEIVED",
       regDate: message.regDate,
       readYn: message.readYn
     }));
@@ -67,16 +69,21 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = content.senderNickName == sendUsername.value ? "SENT" : "RECEIVED";
+        msgType = currentUserSeq == content.sendSeq ? "SENT" : "RECEIVED";
       }
 
-      if(content.senderNickName != sendUsername.value) {
+      // 이미 큐에 들어있는 메세지인지 확인
+      const isDuplicate = messages.value.some(
+          (msg) => msg.chatMessageSeq === content.chatMessageSeq
+      );
+
+      if(!isDuplicate) {
         messages.value.push({
           chatMessageSeq: content.chatMessageSeq,
-          chatRoomSeq: props.chat.chatSeq,
-          senderNickName: sendUsername.value,
-          sendSeq: props.chat.sendUserSeq,
-          receiveSeq: props.chat.receiveUserSeq,
+          chatRoomSeq: props.chatRoomSeq,
+          senderNickName: content.senderNickName,
+          sendSeq: content.sendSeq,
+          receiveSeq: content.receiveSeq,
           text: content.message,
           type: msgType,
           regDate: new Date(),
@@ -97,8 +104,8 @@ function connectWebSocket() {
         chatMessageSeq: message.chatMessageSeq,
         chatRoomSeq: props.chat.chatSeq,
         senderNickName: sendUsername.value,
-        sendSeq: message.sendSeq,
-        receiveSeq: message.receiveSeq,
+        sendSeq: currentUserSeq,
+        receiveSeq: currentUserSeq==message.receiveSeq ? message.receiveSeq : message.sendSeq,
         text: " 님과의 대화가 종료되었습니다.",
         type: "EXIT"
       });
@@ -126,8 +133,8 @@ function sendMessage() {
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
       senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUserSeq,
-      receiveSeq: props.chat.receiveUserSeq,
+      sendSeq: currentUserSeq,
+      receiveSeq: currentUserSeq==props.chat.sendUserSeq ? props.chat.receiveUserSeq : props.chat.sendUserSeq,
       message: newMessage.value,
       type: "TALK",
       readYn: "N",
@@ -136,12 +143,12 @@ function sendMessage() {
     try {
       stompClient.value.send(`/pub/chat/talk/${props.chat.chatSeq}`, {}, JSON.stringify(payload));
       messages.value.push({
-        chatMessageSeq: uuidv4(),
-        chatRoomSeq: props.chat.chatSeq,
-        senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUserSeq,
-        receiveSeq: props.chat.receiveUserSeq,
-        text: newMessage.value,
+        chatMessageSeq: payload.chatMessageSeq,
+        chatRoomSeq: payload.chatRoomSeq,
+        senderNickName: payload.senderNickName,
+        sendSeq: payload.sendSeq,
+        receiveSeq: payload.receiveSeq,
+        text: payload.message,
         type: "SENT",
         regDate: new Date(),
         readYn: "N"
@@ -234,7 +241,7 @@ function formatDate(regDate) {
           <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
 
           <template v-else>
-            <div class="message-content" :class="{ 'sent-message': message.type === 'SENT' }">
+            <div class="message-content" :class="{ 'sent-message': message.type == 'SENT' }">
               <img
                   class="profile-image"
                   src="@/images/profile-image.jpg"
@@ -242,14 +249,14 @@ function formatDate(regDate) {
                   :style="message.type == 'SENT' ? 'margin-left: 10px;' : 'margin-right: 10px;'"
               />
               <div class="message-details">
-            <span
-                class="sender"
-                :class="{
-                  'sender-sent': message.type == 'SENT',
-                  'sender-received': message.type == 'RECEIVED'
-                }"
-            >
-            {{ message.senderNickName }}
+              <span
+                  class="sender"
+                  :class="{
+                    'sender-sent': message.type == 'SENT',
+                    'sender-received': message.type == 'RECEIVED'
+                  }"
+              >
+              {{ message.type === 'SENT' ? receiveUsername : sendUsername  }}
             </span><br />
             <span class="text">{{ message.text }}</span><br />
             <span class="date">{{ formatDate(message.regDate) }}</span><br />
