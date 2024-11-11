@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.dwbh.backend.entity.QCounselOffer.counselOffer;
-import static com.dwbh.backend.entity.QCounselOfferFile.counselOfferFile;
+import static com.dwbh.backend.entity.QCounselorHire.counselorHire;
+import static com.dwbh.backend.entity.QFile.file;
 import static com.dwbh.backend.entity.QUser.user;
 import static com.dwbh.backend.entity.QUserProfileFile.userProfileFile;
 
@@ -28,9 +29,6 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
 
     @Override
     public Page<OfferResponse> findOffersWithFilter(Long hireSeq, Pageable pageable, String sortOrder, Long currentUserSeq) {
-
-        QFile offerFile = new QFile("offerFile");
-        QFile userProfile = new QFile("userProfile");
 
         // 정렬 조건
         OrderSpecifier<?> orderBy = sortOrder.equalsIgnoreCase("asc")
@@ -44,20 +42,18 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
                         counselOffer.user.userSeq,
                         counselOffer.offerContent,
                         counselOffer.offerPrivateYn,
-                        offerFile.filePath.as("offerFilePath"),
+                        file.filePath.as("offerFilePath"),
                         counselOffer.regDate,
                         counselOffer.modDate,
                         user.userNickname,
                         user.userGender,
                         user.userBirthday,
                         user.userStatus,
-                        userProfile.filePath.as("userProfilePath")))
+                        file.filePath.as("userProfilePath")))
                 .from(counselOffer)
                 .join(counselOffer.user, user)
-                .leftJoin(counselOfferFile).on(counselOffer.offerSeq.eq(counselOfferFile.counselOffer.offerSeq))
-                .leftJoin(offerFile).on(counselOfferFile.file.fileSeq.eq(offerFile.fileSeq))
                 .leftJoin(userProfileFile).on(user.userSeq.eq(userProfileFile.userSeq))
-                .leftJoin(userProfile).on(userProfileFile.fileSeq.eq(userProfile.fileSeq))
+                .leftJoin(file).on(userProfileFile.fileSeq.eq(file.fileSeq))
                 .where(counselOffer.delDate.isNull() // 필터조건
                         .and(counselOffer.hire.hireSeq.eq(hireSeq))
                         .and(filterPrivateComments(counselOffer, currentUserSeq))) // 비밀 댓글 필터링

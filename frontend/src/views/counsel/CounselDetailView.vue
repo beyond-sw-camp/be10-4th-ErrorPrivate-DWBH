@@ -96,7 +96,7 @@ const goToList = () => {
       </div>
 
       <!-- 댓글 -->
-      <CounselCommentSection :hireSeq="hireSeq" />
+      <CounselCommentSection :hireSeq="Number(hireSeq)" />
     </div>
   </div>
 </template>
