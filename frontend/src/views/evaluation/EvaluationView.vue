@@ -8,9 +8,7 @@ import {
   deleteEvaluationData,
   readEvaluationData, readEvaluationCommentData,
   updateEvaluationData
-} from "@/util/evaluationApi.js";
-import {useAuthStore} from "@/stores/auth.js";
-
+} from "@/util/evaluationApi.js"
 
 // 상태 관리를 위한 반응형 객체 생성
 const state = reactive({
@@ -18,7 +16,6 @@ const state = reactive({
   comment: [],
 });
 
-const authStore = useAuthStore();
 const isLoading = ref(true); // 로딩 상태 플래그 추가
 
 const router = useRouter();
@@ -72,7 +69,7 @@ const showData = computed(() =>
 const saveEvaluation = async () => {
   // 실제 저장 로직 구현
   // 창닫기 & api 호출
-  await createEvaluationData(authStore.accessToken,
+  await createEvaluationData(localStorage.getItem('authToken'),
       {
         chatSeq: chatSeq,
         evaluationSatisfaction: evaluationItems.value[0].rating,     // 만족도 평점 (예: 1 ~ 5 점)
@@ -94,7 +91,7 @@ const exitEvaluation = () => {
 // 평가를 수정하는 함수
 const updateEvaluation = async () => {
   // 창닫기 & api 호출
-  await updateEvaluationData(authStore.accessToken, state.evaluation.evaluationSeq,
+  await updateEvaluationData(localStorage.getItem('authToken'), state.evaluation.evaluationSeq,
       {
         chatSeq: chatSeq,
         evaluationSatisfaction: evaluationItems.value[0].rating,     // 만족도 평점 (예: 1 ~ 5 점)
@@ -109,7 +106,7 @@ const updateEvaluation = async () => {
 // 평가를 삭제하는 함수
 const deleteEvaluation = async () => {
   // 창닫기 & api 호출
-  await deleteEvaluationData(authStore.accessToken, chatSeq, state.evaluation.evaluationSeq)
+  await deleteEvaluationData(localStorage.getItem('authToken'), chatSeq, state.evaluation.evaluationSeq)
   // 현재 창 닫기
   window.close();
 };
@@ -118,11 +115,9 @@ const deleteEvaluation = async () => {
 const loadEvaluationData = async () => {
   try {
     // 데이터를 비동기로 로드하고 evaluationCommentData에 저장
-    state.evaluation = await readEvaluationData(authStore.accessToken, chatSeq);
-    state.comment = await readEvaluationCommentData(authStore.accessToken, chatSeq);
+    state.evaluation = await readEvaluationData(localStorage.getItem('authToken'), chatSeq);
+    state.comment = await readEvaluationCommentData(localStorage.getItem('authToken'), chatSeq);
     updateRatings(); // 데이터 업데이트
-    console.log(state.evaluation);
-    console.log(state.comment);
   } catch (error) {
     console.error('데이터 로드 실패:', error);
   } finally {
@@ -139,7 +134,7 @@ onMounted(async () => {
   <div v-if="isLoading">
     <h1>로딩중.....</h1>
   </div>
-  <div v-else>
+  <div v-else class="content">
     <div class="evaluation-container">
       <!-- Header 정보 -->
       <div class="header">
@@ -257,10 +252,24 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 500px;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
 .evaluation-container {
   font-family: Arial, sans-serif;
   background-color: #f5f4ef;
+  max-height: 100vh; /* 모달 높이를 화면 높이의 80%로 제한 */
   padding: 20px;
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+  flex-grow: 1;
 }
 
 .header {

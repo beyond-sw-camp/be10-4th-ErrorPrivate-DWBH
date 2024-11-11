@@ -12,8 +12,6 @@ const authStore = useAuthStore();
 
 const handleLoginSubmit = async (email, password) => {
   try {
-    console.log('handleLoginSubmit 실행');
-
     const response = await axios.post('http://localhost:8089/api/v1/login', {
       email: email,
       password: password
@@ -24,8 +22,6 @@ const handleLoginSubmit = async (email, password) => {
     if (response.status === 200) {
       // 헤더에서 토큰 추출
       authStore.login(response.headers.token);
-      console.log('response.headers.token:', response.headers.token);
-      console.log('authStore.login 실행');
 
       router.push('/'); // 로그인 성공 시 홈 화면으로 이동
 
