@@ -84,21 +84,13 @@ public class ChatService {
     }
 
     public List<ChatDTO.Response> readChatList() {
-        List<ChatDTO.Response> chatResponseList = null;
         Long userSeq = userService.getUserSeq(AuthUtil.getAuthUser());
-
+        List<ChatDTO.Response> chatList;
         try {
-            List<Chat> chatList = chatRepository.findAll()
-                    .stream().filter(chat -> Objects.equals(chat.getSendUser().getUserSeq(), userSeq)
-                            || Objects.equals(chat.getReceiveUser().getUserSeq(), userSeq))
-                    .toList();
-
-            chatResponseList = chatList.stream()
-                    .map(chat -> modelMapper.map(chat, ChatDTO.Response.class))
-                    .collect(Collectors.toList());
+             chatList = chatRepository.findByUserSeq(userSeq);
 
             // 마지막 메세지와 읽음 여부 반환
-            for (ChatDTO.Response response : chatResponseList) {
+            for (ChatDTO.Response response : chatList) {
                 checkChatLastMessage(response);
                 checkEvaluationPeriod(response);
             }
@@ -108,7 +100,7 @@ public class ChatService {
             throw new CustomException(ErrorCodeType.CHAT_NOT_FOUND);
         }
 
-        return chatResponseList;
+        return chatList;
     }
 
     public void checkChatLastMessage(ChatDTO.Response response) {
