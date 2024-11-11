@@ -9,11 +9,9 @@ const props = defineProps({
     required: true
   }
 });
-console.log("Received hireSeq:", props.hireSeq);
 
 const authStore = useAuthStore();
 const userSeq = authStore.userSeq;
-console.log("userSeq:" ,userSeq);
 
 const newComment = ref({
   offerContent: '',
@@ -29,7 +27,6 @@ const handleFileSelect = (event) => {
 // 비밀 댓글 여부 토글
 const togglePrivateComment = () => {
   newComment.value.offerPrivateYn = !newComment.value.offerPrivateYn;
-  console.log(newComment.value.offerPrivateYn)
 };
 
 // const emit = defineEmits(['comment-submitted']);
@@ -69,8 +66,6 @@ const submitComment = async () => {
       },
 
     });
-
-    console.log('댓글 작성 완료', formData)
 
     // 댓글 작성이 성공적으로 완료된 후 이벤트 발생
     // emit('comment-submitted');

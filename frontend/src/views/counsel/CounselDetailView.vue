@@ -19,7 +19,7 @@ const counselorTypes = ref([]);
 const fetchCounselHires = async () => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/${hireSeq}`);
-    console.log(response);
+
     counselHire.value = response.data;
     counselorAgeRanges.value = response.data.counselorAgeRanges;
     counselorTypes.value = response.data.counselorTypes;

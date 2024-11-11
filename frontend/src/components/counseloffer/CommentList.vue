@@ -43,8 +43,6 @@ const fetchComments = async () => {
       headers: headers // 헤더에 Authorization 추가 또는 빈 헤더 전달
     });
 
-    console.log("Comments response:", response.data.content);
-
     // API 응답 데이터가 있을 경우, DTO에 맞게 매핑하여 댓글 데이터 업데이트
     if (response.data) {
       comments.value = response.data.content; // Page 내용 부분만 저장
@@ -58,7 +56,6 @@ const fetchComments = async () => {
 
 // 초기 페이지 로드
 onMounted(() => {
-  console.log("Component mounted, fetching comments...");
   fetchComments();
 });
 

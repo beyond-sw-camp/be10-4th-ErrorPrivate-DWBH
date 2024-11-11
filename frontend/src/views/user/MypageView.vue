@@ -32,7 +32,6 @@ const readUser = async () => {
     userData.userMbti = response.data.userMbti;
     userData.userNickname = response.data.userNickname;
     userData.userTemperature = response.data.userTemperature;
-    console.log(response.data);
   } catch (error) {
     console.error("유저 정보 가져오기 실패:", error);
   }
