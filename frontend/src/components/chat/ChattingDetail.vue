@@ -13,7 +13,7 @@ const newMessage = ref('');
 const messagesContainer = ref(null);
 const stompClient = ref(null);
 const sendUsername = ref(props.chat.sendUserNickname);
-const receiveUsername = ref(props.chat.receiveUserSeq);
+const receiveUsername = ref(props.chat.receiveUserNickname);
 const isConnected = ref(false);
 const emit = defineEmits(['goBack']);
 
@@ -35,8 +35,8 @@ async function loadChatHistory(chatId) {
       chatMessageSeq: message.chatMessageSeq,
       chatRoomSeq: message.chatRoomSeq,
       senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUser.userSeq,
-      receiveSeq: props.chat.receiveUser.userSeq,
+      sendSeq: props.chat.sendUserSeq,
+      receiveSeq: props.chat.receiveUserSeq,
       text: message.message,
       type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED", // ENTER 구분 추가
       regDate: message.regDate,
@@ -74,8 +74,8 @@ function connectWebSocket() {
         chatMessageSeq: content.chatMessageSeq,
         chatRoomSeq: props.chat.chatSeq,
         senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUser.userSeq,
-        receiveSeq: props.chat.receiveUser.userSeq,
+        sendSeq: props.chat.sendUserSeq,
+        receiveSeq: props.chat.receiveUserSeq,
         message: content.message,
         type: msgType,
         regDate: new Date(),
@@ -124,8 +124,8 @@ function sendMessage() {
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
       senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUser.userSeq,
-      receiveSeq: props.chat.receiveUser.userSeq,
+      sendSeq: props.chat.sendUserSeq,
+      receiveSeq: props.chat.receiveUserSeq,
       message: newMessage.value,
       type: "talk",
       readYn: "N",
@@ -137,8 +137,8 @@ function sendMessage() {
         chatMessageSeq: uuidv4(),
         chatRoomSeq: props.chat.chatSeq,
         senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUser.userSeq,
-        receiveSeq: props.chat.receiveUser.userSeq,
+        sendSeq: props.chat.sendUserSeq,
+        receiveSeq: props.chat.receiveUserSeq,
         message: newMessage.value,
         type: "sent",
         regDate: new Date(),
@@ -176,7 +176,7 @@ async function disconnectEvent() {
       },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             },
           }
       );
