@@ -2,6 +2,7 @@ services:
   mariadb:
     image: mariadb:latest
     container_name: mariadb_dwbh
+    restart: always
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_DATABASE: ${MARIADB_DATABASE}
@@ -13,5 +14,6 @@ services:
   mongo:
     image: mongo:latest
     container_name: mongo_dwbh
+    restart: always
     ports:
       - '${MONGO_PORT}:27017'
