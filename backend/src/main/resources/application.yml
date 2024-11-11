@@ -11,7 +11,9 @@ spring:
   application:
     name: dwbh
   config:
-    import: optional:file:.env[.properties]
+    import:
+      optional:file:.env[.properties],
+      optional:file:/mnt/env[.properties]
   datasource:
     url: jdbc:log4jdbc:mariadb://${MARIADB_HOST}:${MARIADB_PORT}/${MARIADB_DATABASE}?serverTimezone=Asia/Seoul
     username: ${MARIADB_USER}
