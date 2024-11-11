@@ -7,6 +7,9 @@ import SideNotificationBar from "@/components/common/SideNotificationBar.vue";
 import ChatList from '@/components/chat/ChattingList.vue';
 import ChatDetail from '@/components/chat/ChattingDetail.vue';
 import axios from "axios";
+import {useAuthStore} from "@/stores/auth.js";
+
+const authStore = useAuthStore();
 
 const isSideNotificationBarOn = ref(false); // 기본 off 상태
 const isModalOpen = ref(false);
@@ -25,7 +28,7 @@ const readNotificationList = async () => {
   try {
     const response = await axios.get('http://localhost:8089/api/v1/notification', {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
     state.notificationList = response.data.notifications;
@@ -40,7 +43,7 @@ const readNotification = async (notificationSeq) => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/notification/${notificationSeq}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
     chat.value = response.data
@@ -61,7 +64,7 @@ const readUser = async () => {
     const userSeq = authStore.userSeq;
     const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
     userNickname.value = response.data.userNickname;
@@ -71,7 +74,7 @@ const readUser = async () => {
 };
 
 // accessToken 이 있으면 로그인한 상태
-const isLoggedIn = computed(() => !!localStorage.getItem('authToken'));
+const isLoggedIn = computed(() => !!authStore.accessToken);
 const handleLogout = () => {
   authStore.logout();
   router.push("/login");
