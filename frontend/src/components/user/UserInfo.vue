@@ -135,7 +135,6 @@ const closeModal = () => {
 
 .user-img img {
   width: 50%;
-  height: 50%;
 }
 
 .user-age {

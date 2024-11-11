@@ -80,4 +80,13 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.OK).body(offerList);
     }
 
+    /* 댓글 조회 */
+    @GetMapping("/user/comment/{userSeq}")
+    @Operation(summary = "유저가 작성한 게시글 댓글 조회", description = "해당 유저가 작성한 댓글을 조회한다.")
+    public ResponseEntity<Page<OfferResponse>> readUserOffer(@PathVariable Long userSeq, Pageable pageable) {
+
+        Page<OfferResponse> offerList = offerService.readOffersByUserSeq(userSeq, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(offerList);
+    }
 }
