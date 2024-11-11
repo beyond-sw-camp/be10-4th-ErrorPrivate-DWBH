@@ -47,20 +47,22 @@ public class ChatDTO {
     }
 
     @Getter
-    @Setter
     public static class Response {
 
-        private Long chatSeq;
-        private Long sendUserSeq;
-        private String sendUserNickname;
-        private Long receiveUserSeq;
-        private String receiveUserNickname;
+        private final Long chatSeq;
+        private final Long sendUserSeq;
+        private final String sendUserNickname;
+        private final Long receiveUserSeq;
+        private final String receiveUserNickname;
 
-        private LocalDateTime modDate;
-        private LocalDateTime endDate;
+        private final LocalDateTime modDate;
+        private final LocalDateTime endDate;
 
-        private String lastMessage;
+        @Setter
+        private  String lastMessage;
+        @Setter
         private boolean showEvaluation = false;
+        @Setter
         private YnType readYn = YnType.N;
 
         public Response(Long chatSeq, Long sendUserSeq, String sendUserNickname, Long receiveUserSeq, String receiveUserNickname, LocalDateTime modDate, LocalDateTime endDate) {
