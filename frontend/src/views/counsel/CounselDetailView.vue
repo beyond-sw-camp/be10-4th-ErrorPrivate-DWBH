@@ -4,7 +4,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "@/css/style.css"
 import {useRoute, useRouter} from "vue-router";
-import CounselCommentSection from "@/views/counsel/CounselCommentSection.vue";
+import CounselCommentSection from "@/components/counseloffer/CounselCommentSection.vue";
 
 const router = useRouter();
 // 라우터로 온 데이터 받기
@@ -96,7 +96,7 @@ const goToList = () => {
       </div>
 
       <!-- 댓글 -->
-      <CounselCommentSection :hireSeq="hireSeq" />
+      <CounselCommentSection :hireSeq="Number(hireSeq)" />
     </div>
   </div>
 </template>

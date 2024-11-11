@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import {useAuthStore} from "@/stores/auth.js";
 
 const props = defineProps({
   hireSeq: {
@@ -10,18 +11,19 @@ const props = defineProps({
 });
 console.log("Received hireSeq:", props.hireSeq);
 
-
-// console.log("userSeq:" ,userSeq);
+const authStore = useAuthStore();
+const userSeq = authStore.userSeq;
+console.log("userSeq:" ,userSeq);
 
 const newComment = ref({
   offerContent: '',
   offerPrivateYn: false
 });
-const offerFile = ref(null); // 첨부 파일
+const offerFilePath = ref(null); // 첨부 파일
 
 // 사진 첨부 버튼 클릭 시 파일 선택
 const handleFileSelect = (event) => {
-  offerFile.value = event.target.files[0];
+  offerFilePath.value = event.target.files[0];
 };
 
 // 비밀 댓글 여부 토글
@@ -30,36 +32,67 @@ const togglePrivateComment = () => {
   console.log(newComment.value.offerPrivateYn)
 };
 
+// const emit = defineEmits(['comment-submitted']);
+
 const submitComment = async () => {
   try {
-    const token = localStorage.getItem('token');
+    // const formData = new FormData();
+    // formData.append("userSeq", userSeq);
+    // formData.append("offerContent", newComment.value.offerContent);
+    // formData.append("offerPrivateYn", newComment.value.offerPrivateYn ? 'Y' : 'N');
 
     const formData = new FormData();
-    formData.append("offerContent", newComment.value.offerContent);
-    formData.append("offerPrivateYn", newComment.value.offerPrivateYn ? 'Y' : 'N');
+    const requestData = {
+      userSeq: userSeq,
+      offerContent: newComment.value.offerContent,
+      offerPrivateYn: newComment.value.offerPrivateYn ? 'Y' : 'N'
+    };
 
-    if (offerFile.value) {
-      formData.append("file", offerFile.value);
+    // request 파트 추가 - JSON 직렬화 후 append
+    formData.append("request", new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
+
+    if (offerFilePath.value) {
+      formData.append("file", offerFilePath.value);
     }
 
     // hireSeq를 URL에 포함하여 POST 요청
-    await axios.post(`/api/v1/hire-post/${props.hireSeq}/comment`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data', // 파일 업로드 시 Content-Type 설정
+    // const response =
+        await axios.post(`http://localhost:8089/api/v1/hire-post/${props.hireSeq}/comment`, formData, {
+      // userSeq: userSeq,
+      // offerContent: newComment.value.offerContent,
+      // offerPrivateYn: newComment.value.offerPrivateYn ? 'Y' : 'N',
+      // }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          'Content-Type': 'multipart/form-data', // 파일 업로드 시 Content-Type 설정
+          // 'Content-Type': 'application/json', // 파일 업로드 시 Content-Type 설정
       },
+
     });
+
+    console.log('댓글 작성 완료', formData)
+
+    // 댓글 작성이 성공적으로 완료된 후 이벤트 발생
+    // emit('comment-submitted');
+    window.location.reload();
 
     // 댓글 제출 후 폼 초기화
     newComment.value.offerContent = '';
     newComment.value.offerPrivateYn = false;
-    offerFile.value = null;
 
-    // 댓글 목록 새로고침 로직 추가 필요
+    offerFilePath.value = null;
 
 
   } catch (error) {
     console.error("댓글 작성 중 오류 발생:", error);
+    if (error.response.status === 409) {
+      // 서버에서 ALREADY_COMMENTED(HttpStatus.CONFLICT, "OFFER_ERROR_003") 반환한 경우
+      alert('이미 댓글을 작성하였습니다. 한 게시글에는 한 개의 댓글만 작성할 수 있습니다.');
+    } else if (error.response.status === 400) {
+      alert('이미지 사진만 첨부할 수 있습니다');
+    } else if (error.response.status === 403) {
+      alert('자신의 글에는 댓글을 작성할 수 없습니다');
+    }
   }
 };
 </script>
