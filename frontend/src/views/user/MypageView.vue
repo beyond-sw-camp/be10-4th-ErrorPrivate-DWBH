@@ -41,7 +41,7 @@ const userModifyData = reactive({
 });
 
 // 유저 조회
-const userSeq = authStore.userSeq;
+const userSeq = route.params.userSeq;
 
 const readUser = async () => {
   try {
