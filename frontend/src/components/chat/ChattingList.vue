@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import "@/stores/auth.js"
 import axios from 'axios';
 
 const chats = ref([]);
@@ -10,7 +11,7 @@ const fetchChats = async () => {
     const response = await axios.get('http://localhost:8089/api/v1/user/chat',
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         });
     chats.value = response.data;
