@@ -10,6 +10,10 @@ const props = defineProps({
   hireSeq: {
     type: Number,
     required: true
+  },
+  sendUserSeq: {
+    type: Number,
+    required: true
   }
 });
 
@@ -57,7 +61,7 @@ onMounted(() => {
   <div class="comment-section mt-4">
     <h4 class="section-title">따뜻한 손길 나눔</h4>
     <hr class="divider" />
-    <CommentList v-if="comments.length > 0" :comments="comments" />
+    <CommentList v-if="comments.length > 0" :comments="comments" :sendUserSeq="props.sendUserSeq"/>
     <p v-else class="text-muted">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
     <CommentForm :hireSeq="props.hireSeq" />
   </div>

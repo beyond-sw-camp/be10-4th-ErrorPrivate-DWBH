@@ -10,6 +10,10 @@ const props = defineProps({
   comments: {
     type: Array,
     required: true
+  },
+  sendUserSeq: {
+    type: Number,
+    required: true
   }
 });
 
@@ -121,6 +125,27 @@ const saveEdit = async (comment) => {
     alert("댓글 수정에 실패했습니다.");
   }
 }
+
+const createChatRoom = async (comment) => {
+  try {
+    console.log(comment);
+    await axios.post('http://localhost:8089/api/v1/user/chat', {
+      counselOfferSeq: comment.offerSeq,
+      sendSeq: props.sendUserSeq,
+      receiveSeq: comment.userSeq
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    });
+    alert("채팅방이 생성되었습니다.");
+    isModalVisible.value = false;
+    window.location.reload();
+  } catch (error) {
+    console.error("채팅방 생성 중 오류 발생:", error);
+    alert("채팅방 생성에 실패했습니다.");
+  }
+}
 </script>
 
 <template>
@@ -162,6 +187,7 @@ const saveEdit = async (comment) => {
           <img :src="comment.offerFilePath" alt="첨부 이미지" class="img-fluid rounded" />
         </div>
         <div class="comment-actions text-end">
+          <button v-if="comment.hireSeq===userSeq" class="btn btn-sm btn-outline-secondary me-2 submit-button" @click="createChatRoom(comment)">채팅생성</button>
           <button v-if="comment.userSeq===userSeq" class="btn btn-sm btn-outline-secondary me-2" @click="editComment(comment)">수정</button>
           <button v-if="comment.userSeq===userSeq" class="btn btn-sm btn-outline-danger" @click="isDelete(comment.offerSeq, comment.hireSeq)">삭제</button>
         </div>
@@ -208,5 +234,9 @@ const saveEdit = async (comment) => {
 
 .comment-input textarea {
   resize: none;
+}
+
+.submit-button {
+  background-color: #d3b18a;
 }
 </style>
