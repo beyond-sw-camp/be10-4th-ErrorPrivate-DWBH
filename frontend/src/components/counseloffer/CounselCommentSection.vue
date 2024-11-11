@@ -1,47 +1,93 @@
 <script setup>
-import { defineComponent, ref } from 'vue';
-import { defineProps } from 'vue';
+import "@/css/style.css"
+import {defineProps, onMounted, ref} from 'vue';
 import CommentList from '@/components/counseloffer/CommentList.vue';
 import CommentForm from '@/components/counseloffer/CommentForm.vue';
-import {useRoute} from "vue-router";
+import axios from "axios";
+import {useAuthStore} from "@/stores/auth.js";
+import Pagination from "@/components/common/Pagination.vue";
 
-// const route = useRoute();
-// const hireSeq = Number(route.params.hireSeq); // URL 파라미터로부터 hireSeq를 가져옴
 const props = defineProps({
   hireSeq: {
+    type: Number,
+    required: true
+  },
+  sendUserSeq: {
     type: Number,
     required: true
   }
 });
 
-// 댓글 작성 후 CommentList에 새로고침 요청하는 핸들러
-// const handleCommentSubmitted = () => {
-//   // CommentList 컴포넌트에 새로고침 요청을 전달
-//   comments.value = [...comments.value]; // 이 방법으로 상태가 변경되었다고 알림
-// };
+const authStore = useAuthStore();
+const userSeq = authStore.userSeq;
+const currentPage = ref(1); // 현재 페이지 번호
+const pageSize = ref(5); // 한 페이지에 표시할 댓글 수
+const sortOrder = ref("asc"); // 정렬 순서 (asc: 등록순, desc: 최신순)
+const totalCount = ref(0);
+const comments = ref([]); // 댓글 데이터 저장
+
+// 댓글 데이터를 백엔드 API에서 가져오는 함수
+const fetchComments = async () => {
+  try {
+
+    // API 요청을 보낼 때 현재 페이지, 정렬 순서, 로그인 사용자 ID를 함께 보냄
+    const response = await axios.get(`http://localhost:8089/api/v1/hire-post/${props.hireSeq}/comment`, {
+      params: {
+        // currentUserSeq: localStorage.getItem("userSeq"), // 로그인한 사용자의 ID
+        currentUserSeq: userSeq || null, // 로그인한 사용자의 ID
+        sortOrder: sortOrder.value,
+        page: currentPage.value - 1, // Spring Pageable에서 0부터 시작
+        size: pageSize.value
+      }, headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      }
+    });
+    comments.value = response.data.content; // Page 내용 부분만 저장
+    totalCount.value = response.data.totalElements;
+  } catch (error) {
+    console.error("댓글 정보를 불러오는 중 에러가 발생했습니다:", error);
+  }
+};
+
+const receivePagination = (page) => {
+  currentPage.value = page.currentPage;
+  pageSize.value = page.pageSize;
+
+  fetchComments();
+};
+
+// 초기 페이지 로드
+onMounted(() => {
+  fetchComments();
+});
 </script>
 
 <template>
-<!--  <div class="comment-section">-->
-<!--    <CommentList :comments="comments" />-->
-<!--&lt;!&ndash;    <CommentForm @submit-comment="addComment" />&ndash;&gt;-->
-<!--  </div>-->
-  <div class="comment-section">
-    <h2>댓글 섹션</h2>
-    <CommentList :hireSeq="Number(props.hireSeq)" />
-<!--    <CommentForm :hireSeq="Number(props.hireSeq)" @comment-submitted="handleCommentSubmitted" />-->
-    <CommentForm :hireSeq="Number(props.hireSeq)" />
+  <div class="comment-section mt-4">
+    <h4 class="section-title">따뜻한 손길 나눔</h4>
+    <hr class="divider" />
+    <template v-if="comments.length > 0">
+      <CommentList :comments="comments" :sendUserSeq="props.sendUserSeq"/>
+      <Pagination :currentPage="currentPage" :pageSize="pageSize" :totalCount="totalCount" @sendPagination="receivePagination"/>
+    </template>
+    <p v-else class="text-muted">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
+    <CommentForm :hireSeq="props.hireSeq" />
   </div>
 </template>
 
 <style scoped>
 .comment-section {
+  background-color: #ffffff;
   padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-top: 20px;
-  width: 800px;
-  background-color: white;
+  border-radius: 8px;
 }
 
+.section-title {
+  font-weight: bold;
+}
+
+.divider {
+  margin: 10px 0;
+}
 </style>

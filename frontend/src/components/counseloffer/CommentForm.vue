@@ -22,6 +22,10 @@ const offerFilePath = ref(null); // 첨부 파일
 // 사진 첨부 버튼 클릭 시 파일 선택
 const handleFileSelect = (event) => {
   offerFilePath.value = event.target.files[0];
+  if (offerFilePath.value) {
+    imageFile.value = offerFilePath.value;
+    previewImage.value = URL.createObjectURL(offerFilePath.value);
+  }
 };
 
 // 비밀 댓글 여부 토글
@@ -29,14 +33,8 @@ const togglePrivateComment = () => {
   newComment.value.offerPrivateYn = !newComment.value.offerPrivateYn;
 };
 
-// const emit = defineEmits(['comment-submitted']);
-
 const submitComment = async () => {
   try {
-    // const formData = new FormData();
-    // formData.append("userSeq", userSeq);
-    // formData.append("offerContent", newComment.value.offerContent);
-    // formData.append("offerPrivateYn", newComment.value.offerPrivateYn ? 'Y' : 'N');
 
     const formData = new FormData();
     const requestData = {
@@ -53,22 +51,13 @@ const submitComment = async () => {
     }
 
     // hireSeq를 URL에 포함하여 POST 요청
-    // const response =
-        await axios.post(`http://localhost:8089/api/v1/hire-post/${props.hireSeq}/comment`, formData, {
-      // userSeq: userSeq,
-      // offerContent: newComment.value.offerContent,
-      // offerPrivateYn: newComment.value.offerPrivateYn ? 'Y' : 'N',
-      // }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          'Content-Type': 'multipart/form-data', // 파일 업로드 시 Content-Type 설정
-          // 'Content-Type': 'application/json', // 파일 업로드 시 Content-Type 설정
+      await axios.post(`http://localhost:8089/api/v1/hire-post/${props.hireSeq}/comment`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        'Content-Type': 'multipart/form-data', // 파일 업로드 시 Content-Type 설정
       },
-
     });
 
-    // 댓글 작성이 성공적으로 완료된 후 이벤트 발생
-    // emit('comment-submitted');
     window.location.reload();
 
     // 댓글 제출 후 폼 초기화
@@ -76,7 +65,6 @@ const submitComment = async () => {
     newComment.value.offerPrivateYn = false;
 
     offerFilePath.value = null;
-
 
   } catch (error) {
     console.error("댓글 작성 중 오류 발생:", error);
@@ -90,26 +78,22 @@ const submitComment = async () => {
     }
   }
 };
+
+const imageFile = ref(null);
+const previewImage = ref(null);
 </script>
 
 <template>
   <div class="comment-form">
     <div class="comment-input-wrapper">
-      <!-- contenteditable div를 textarea처럼 사용 -->
-<!--      <div-->
-<!--          contenteditable="true"-->
-<!--          class="comment-textarea"-->
-<!--          @input="(e) => newComment.value.offerContent = e.target.innerText"-->
-<!--          aria-placeholder="따뜻한 손길을 나눌 내용을 입력해 주세요"-->
-<!--      ></div>-->
     <textarea v-model="newComment.offerContent"
               placeholder="따뜻한 손길 나눔 내용을 입력해 주세요."
               class="comment-textarea"></textarea>
-<!--    <label>-->
-<!--      <input type="checkbox" v-model="newComment.offerPrivateYn" /> 비밀 댓글로 작성-->
-<!--    </label>-->
-<!--    <div class="comment-options">-->
-      <!-- 사진 첨부 아이콘 -->
+      <div class="image-upload mt-2">
+        <div v-if="previewImage" class="preview-image mt-2">
+          <img :src="previewImage" alt="미리보기" class="img-fluid rounded" />
+        </div>
+      </div>
       <label>
         <input type="file" @change="handleFileSelect" accept="image/*" style="display: none" />
         <span class="icon-camera">📷</span>
@@ -119,8 +103,6 @@ const submitComment = async () => {
       <span class="icon-lock" @click="togglePrivateComment">
           🔒 <span v-if="newComment.offerPrivateYn">(비밀 댓글)</span>
       </span>
-<!--      </div>-->
-
       <button @click="submitComment" class="submit-button">입력</button>
     </div>
   </div>

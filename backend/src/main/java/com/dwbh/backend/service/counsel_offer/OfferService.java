@@ -123,7 +123,6 @@ public class OfferService {
                 .orElseThrow(() ->  new CustomException(ErrorCodeType.USER_NOT_FOUND));
         CounselorHire hire = hireRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
-
         CounselOffer offer = counselOfferRepository.findById(offerSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
 
@@ -229,6 +228,7 @@ public class OfferService {
 
         // 현재 로그인한 사용자와 요청의 사용자 검증
         if (!currentUserSeq.equals(userSeq)) {
+            log.info("@@");
             throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
         }
     }

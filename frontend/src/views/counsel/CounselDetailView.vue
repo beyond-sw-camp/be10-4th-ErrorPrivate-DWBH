@@ -15,11 +15,12 @@ const hireSeq = route.params.hireSeq;
 const counselHire = ref([]);
 const counselorAgeRanges = ref([]);
 const counselorTypes = ref([]);
-
+const sendUserSeq = ref(0);
 const fetchCounselHires = async () => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/${hireSeq}`);
 
+    sendUserSeq.value = response.data.userSeq;
     counselHire.value = response.data;
     counselorAgeRanges.value = response.data.counselorAgeRanges;
     counselorTypes.value = response.data.counselorTypes;
@@ -96,7 +97,7 @@ const goToList = () => {
       </div>
 
       <!-- 댓글 -->
-      <CounselCommentSection :hireSeq="Number(hireSeq)" />
+      <CounselCommentSection :hireSeq="hireSeq" :sendUserSeq="sendUserSeq" />
     </div>
   </div>
 </template>

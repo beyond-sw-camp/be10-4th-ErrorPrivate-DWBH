@@ -1,12 +1,17 @@
-
 <script setup>
-import {ref, onMounted, watch} from 'vue';
-import axios from 'axios';
-import CommentItem from './CommentItem.vue';
 import {useAuthStore} from "@/stores/auth.js";
+import dayjs from "dayjs";
+import router from "@/router/index.js";
+import axios from "axios";
+import ModalSmall from "@/components/common/ModalSmall.vue";
+import {ref} from "vue";
 
 const props = defineProps({
-  hireSeq: {
+  comments: {
+    type: Array,
+    required: true
+  },
+  sendUserSeq: {
     type: Number,
     required: true
   }
@@ -14,137 +19,224 @@ const props = defineProps({
 
 const authStore = useAuthStore();
 const userSeq = authStore.userSeq;
+const editHireSeq = ref(0);
+const editOfferSeq = ref(0); // 현재 수정 중인 댓글 ID
+const editedContent = ref(''); // 수정 중인 댓글 내용
+const isModalVisible = ref(false);
+const deleteOfferSeq = ref(0);
+const deleteHireSeq = ref(0);
+const imageFile = ref(null);
+const previewImage = ref(null);
+const offerFilePath = ref(null);
 
-const comments = ref([]); // 댓글 데이터 저장
-const currentPage = ref(1); // 현재 페이지 번호
-const pageSize = 10; // 한 페이지에 표시할 댓글 수
-const sortOrder = ref("asc"); // 정렬 순서 (asc: 등록순, desc: 최신순)
+const goToMyPage = (userSeq) => {
+  router.push(`/user/${userSeq}/mypage`);
+};
 
-// 댓글 데이터를 백엔드 API에서 가져오는 함수
-const fetchComments = async () => {
+const confirmModal = async () => {
+  isModalVisible.value = false;
+
+  await deleteComment();
+}
+
+const closeModal = () => {
+  isModalVisible.value = false;
+}
+
+const isDelete = (offerSeq, hireSeq) => {
+  isModalVisible.value = true;
+  deleteOfferSeq.value = offerSeq;
+  deleteHireSeq.value = hireSeq;
+}
+
+// 댓글 삭제 요청
+const deleteComment = async () => {
+  try {
+    console.log(deleteOfferSeq.value);
+    const token = localStorage.getItem('accessToken');
+    await axios.delete(`http://localhost:8089/api/v1/hire-post/${deleteHireSeq.value}/comment/${deleteOfferSeq.value}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    alert("댓글이 삭제되었습니다.");
+    isModalVisible.value = false;
+    window.location.reload();
+  } catch (error) {
+    console.error("댓글 삭제 중 오류 발생:", error);
+    if (error.response.status === 404) {
+      alert('이미 삭제된 댓글이거나 삭제된 글의 댓글입니다.');
+    }
+    alert("댓글 삭제에 실패했습니다.");
+  }
+};
+
+// 사진 첨부 버튼 클릭 시 파일 선택
+const handleFileSelect = (event) => {
+  offerFilePath.value = event.target.files[0];
+  if (offerFilePath.value) {
+    imageFile.value = offerFilePath.value;
+    previewImage.value = URL.createObjectURL(offerFilePath.value);
+  }
+};
+
+function editComment(comment) {
+  editHireSeq.value = comment.hireSeq;
+  editOfferSeq.value = comment.offerSeq;
+  editedContent.value = comment.offerContent;
+}
+
+function cancelEdit() {
+  editOfferSeq.value = 0;
+}
+
+const saveEdit = async (comment) => {
   try {
 
-    // 토큰을 확인하여 로그인한 사용자라면 헤더에 추가
-    const token = localStorage.getItem("accessToken");
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const formData = new FormData();
+    const requestData = {
+      userSeq: userSeq,
+      offerContent: editedContent.value,
+      offerPrivateYn: comment.offerPrivateYn
+    };
 
-    // API 요청을 보낼 때 현재 페이지, 정렬 순서, 로그인 사용자 ID를 함께 보냄
-    const response = await axios.get(`http://localhost:8089/api/v1/hire-post/${props.hireSeq}/comment`, {
-      params: {
-        // currentUserSeq: localStorage.getItem("userSeq"), // 로그인한 사용자의 ID
-        currentUserSeq: userSeq || null, // 로그인한 사용자의 ID
-        sortOrder: sortOrder.value,
-        page: currentPage.value - 1, // Spring Pageable에서 0부터 시작
-        size: pageSize
-      },
-      // headers: {
-      //   Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-      // }
-      headers: headers // 헤더에 Authorization 추가 또는 빈 헤더 전달
-    });
-
-    // API 응답 데이터가 있을 경우, DTO에 맞게 매핑하여 댓글 데이터 업데이트
-    if (response.data) {
-      comments.value = response.data.content; // Page 내용 부분만 저장
-    } else {
-      console.error("댓글 데이터를 찾을 수 없습니다.");
+    formData.append("request", new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
+    if (offerFilePath.value) {
+      formData.append("file", offerFilePath.value);
     }
+
+    // 요청 보내기
+    await axios.put(
+        `http://localhost:8089/api/v1/hire-post/${editHireSeq.value}/comment/${editOfferSeq.value}`,
+        formData, // 두 번째 인자로 formData 전달
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'multipart/form-data', // Content-Type 설정
+          },
+        }
+    );
+
+    alert("댓글이 수정되었습니다.");
+    window.location.reload();
   } catch (error) {
-    console.error("댓글 정보를 불러오는 중 에러가 발생했습니다:", error);
+    console.error("댓글 수정 중 오류 발생:", error);
+
+    alert("댓글 수정에 실패했습니다.");
   }
-};
+}
 
-// 초기 페이지 로드
-onMounted(() => {
-  fetchComments();
-});
-
-watch(
-    [() => props.hireSeq, () => localStorage.getItem("userSeq")],
-    ([newHireSeq, newUserSeq]) => {
-      if (newHireSeq && newUserSeq) {
-        fetchComments();
-      }
-    },
-    { immediate: true }
-);
-
-// 이전 페이지 버튼
-const fetchPreviousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-    fetchComments();
+const createChatRoom = async (comment) => {
+  try {
+    console.log(comment);
+    await axios.post('http://localhost:8089/api/v1/user/chat', {
+      counselOfferSeq: comment.offerSeq,
+      sendSeq: props.sendUserSeq,
+      receiveSeq: comment.userSeq
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      },
+    });
+    alert("채팅방이 생성되었습니다.");
+    isModalVisible.value = false;
+    window.location.reload();
+  } catch (error) {
+    console.error("채팅방 생성 중 오류 발생:", error);
+    alert("채팅방 생성에 실패했습니다.");
   }
-};
-
-// 다음 페이지 버튼
-const fetchNextPage = () => {
-  currentPage.value++;
-  fetchComments();
-};
-
-const handleCommentDeleted = (deletedOfferSeq) => {
-  // 삭제된 댓글을 comments 배열에서 제거합니다.
-  comments.value = comments.value.filter(comment => comment.key !== deletedOfferSeq);
-};
+}
 </script>
 
 <template>
-  <div class="comment-list-container">
-    <ul class="comment-list" v-if="comments.length > 0">
-<!--    <ul class="comment-list" v-if="comments!=null">-->
-      <CommentItem
-          v-for="comment in comments"
-          :key="comment.offerSeq"
-          :offerSeq="comment.offerSeq"
-          :hireSeq="comment.hireSeq"
-          :userSeq="comment.userSeq"
-          :offerContent="comment.offerContent"
-          :offerPrivateYn="comment.offerPrivateYn"
-          :offerFilePath="comment.offerFilePath"
-          :regDate="comment.regDate"
-          :modDate="comment.modDate"
-          :userNickname="comment.userNickname || '알 수 없는 닉네임'"
-          :userGender="comment.userGender || '알 수 없는 성별'"
-          :userBirthday="comment.userBirthday"
-          :userStatus="comment.userStatus"
-          :userProfilePath="comment.userProfilePath"
-          :postOwnerSeq="comment.postOwnerSeq"
-          @commentDeleted="handleCommentDeleted"
-      />
-    </ul>
-<!--    <p v-else>댓글이 없습니다.</p>-->
+  <!-- 댓글 리스트 -->
+  <div class="comment-list">
+    <div v-for="(comment, index) in comments" :key="index" class="comment-item border-bottom pb-3 mb-3">
+      <div class="d-flex align-items-center">
+        <img class="profile-img rounded-circle me-3" :src="comment.userProfilePath || '/default-profile.png'" alt="프로필"  @click="goToMyPage(comment.userSeq)" />
+<!--        <img class="profile-img rounded-circle me-3" src="@/images/uploads/profile1.png" alt="프로필" />-->
+        <div>
+          <p @click="goToMyPage" class="username mb-1">{{ comment.userNickname }}</p>
+          <p class="text-muted small">{{ dayjs(comment.regDate).format('YYYY-MM-DD HH:mm:ss') }}</p>
+        </div>
+      </div>
+      <template v-if="editOfferSeq == comment.offerSeq">
+        <div class="comment-input-wrapper">
+          <textarea v-model="editedContent" class="form-control mt-2" rows="2"></textarea>
+          <div class="image-upload mt-2">
+            <div v-if="previewImage" class="preview-image mt-2">
+              <img :src="previewImage" alt="미리보기" class="img-fluid rounded" />
+            </div>
+          </div>
+          <label>
+            <input type="file" @change="handleFileSelect" accept="image/*" style="display: none" />
+            <span class="icon-camera">📷</span>
+          </label>
+          <!-- 비밀 댓글 토글 아이콘 -->
+          <span class="icon-lock" @click="togglePrivateComment">🔒</span>
+        </div>
 
-    <!-- 페이지네이션 버튼 -->
-    <div class="pagination">
-      <button @click="fetchPreviousPage" :disabled="currentPage.value === 1">이전</button>
-      <button @click="fetchNextPage" :disabled="comments.length < pageSize">다음</button>
+        <div class="text-end mt-2">
+          <button class="btn btn-sm btn-outline-secondary me-2" @click="saveEdit(comment)">저장</button>
+          <button class="btn btn-sm btn-outline-danger" @click="cancelEdit">취소</button>
+        </div>
+      </template>
+      <template v-else>
+        <p class="comment-content mt-2">{{ comment.offerContent }}</p>
+        <div v-if="comment.offerFilePath" class="comment-image mt-2">
+          <img :src="comment.offerFilePath" alt="첨부 이미지" class="img-fluid rounded" />
+        </div>
+        <div class="comment-actions text-end">
+          <button v-if="comment.hireSeq===userSeq" class="btn btn-sm btn-outline-secondary me-2 submit-button" @click="createChatRoom(comment)">채팅생성</button>
+          <button v-if="comment.userSeq===userSeq" class="btn btn-sm btn-outline-secondary me-2" @click="editComment(comment)">수정</button>
+          <button v-if="comment.userSeq===userSeq" class="btn btn-sm btn-outline-danger" @click="isDelete(comment.offerSeq, comment.hireSeq)">삭제</button>
+        </div>
+      </template>
+      <!-- 삭제 확인 모달창 -->
+      <ModalSmall :isVisible="isModalVisible" :message="'정말로 삭제하시겠습니까?'"
+                  @close="closeModal" @confirm="confirmModal"/>
     </div>
   </div>
 </template>
 
 <style scoped>
-.comment-list-container {
+.comment-input-wrapper {
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  background-color: #f9f9f9;
+  position: relative;
+}
+.comment-list {
   max-height: 300px;
   overflow-y: auto;
 }
 
-.comment-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.comment-item {
+  padding: 10px 0;
 }
 
-.comment-list-container::-webkit-scrollbar {
-  width: 8px;
+.profile-img {
+  width: 40px;
+  height: 40px;
 }
 
-.comment-list-container::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 4px;
+.username {
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.comment-list-container::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
+.comment-content {
+  font-size: 14px;
+}
+
+.comment-input textarea {
+  resize: none;
+}
+
+.submit-button {
+  background-color: #d3b18a;
 }
 </style>
