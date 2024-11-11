@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue';
 import "@/stores/auth.js"
 import axios from 'axios';
+import {useAuthStore} from "@/stores/auth.js";
 
+const authStore = useAuthStore();
 const chats = ref([]);
 const emit = defineEmits(['selectChat']);
 
@@ -54,7 +56,7 @@ onMounted(fetchChats);
               alt="프로필 이미지"
           />
           <div class="chat-details">
-            <span class="chat-title">{{ chat.receiveUserNickname }}</span>
+            <span class="chat-title">{{ chat.sendUserSeq == authStore.userSeq ? chat.receiveUserNickname : chat.sendUserNickname }}</span>
             <span v-if="!chat.showEvaluation" class="last-message">{{ truncateMessage(chat.lastMessage) }}</span>
             <span v-else class="last-message">종료된 채팅방 입니다.</span>
             </div>

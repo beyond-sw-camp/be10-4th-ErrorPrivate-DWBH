@@ -48,9 +48,10 @@ public class ChatMessageDTO {
         private String chatRoomSeq;
         private String type;
         private String message;
-        private String sendSeq;
-        private String senderNickName;
-        private String receiveSeq;
+        private Long sendUserSeq;
+        private String sendUserNickname;
+        private Long receiveUserSeq;
+        private String receiveUserNickname;
         private LocalDateTime regDate;
         private LocalDateTime modDate;
         private String readYn;

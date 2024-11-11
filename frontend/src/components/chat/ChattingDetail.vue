@@ -13,7 +13,7 @@ const newMessage = ref('');
 const messagesContainer = ref(null);
 const stompClient = ref(null);
 const sendUsername = ref(props.chat.sendUserNickname);
-const receiveUsername = ref(props.chat.receiveUserSeq);
+const receiveUsername = ref(props.chat.receiveUserNickname);
 const isConnected = ref(false);
 const emit = defineEmits(['goBack']);
 
@@ -67,7 +67,7 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = message.senderNickName == sendUsername.value ? "sent" : "received";
+        msgType = message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED";
       }
 
       messages.value.push({
@@ -92,11 +92,11 @@ function connectWebSocket() {
     //퇴장 메세지 전송
     stompClient.value.subscribe(`/sub/chat/exit/${props.chat.chatSeq}`, (message) => {
       messages.value.push({
-        chatMessageSeq: message.chatMessageSeq,
+        chatMessageSeq: uuidv4(),
         chatRoomSeq: props.chat.chatSeq,
         senderNickName: sendUsername.value,
-        sendSeq: message.sendSeq,
-        receiveSeq: message.receiveSeq,
+        sendSeq: props.chat.sendUserSeq,
+        receiveSeq: props.chat.receiveUserSeq,
         message: " 님과의 대화가 종료되었습니다.",
         type: "EXIT"
       });
@@ -124,10 +124,10 @@ function sendMessage() {
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
       senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUser.userSeq,
-      receiveSeq: props.chat.receiveUser.userSeq,
+      sendSeq: props.chat.sendUserSeq,
+      receiveSeq: props.chat.receiveUserSeq,
       message: newMessage.value,
-      type: "talk",
+      type: "TALK",
       readYn: "N",
     };
 
@@ -140,7 +140,7 @@ function sendMessage() {
         sendSeq: props.chat.sendUser.userSeq,
         receiveSeq: props.chat.receiveUser.userSeq,
         message: newMessage.value,
-        type: "sent",
+        type: "SENT",
         regDate: new Date(),
         readYn: "N"
       });
@@ -155,9 +155,12 @@ function sendMessage() {
 function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
     stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify({
-      roomId: props.chat.chatSeq,
-      message: `${sendUsername.value}: 님이 방을 나가셨습니다.`,
-      writer: sendUsername.value
+      chatMessageSeq: uuidv4(),
+      chatRoomSeq: props.chat.chatSeq,
+      senderNickName: sendUsername.value,
+      sendSeq: props.chat.sendUserSeq,
+      receiveSeq: props.chat.receiveUserSeq,
+      type: "EXIT"
     }));
     stompClient.value.disconnect();
     isConnected.value = false;
@@ -232,19 +235,19 @@ function formatDate(regDate) {
           <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
 
           <template v-else>
-            <div class="message-content" :class="{ 'sent-message': message.type === 'sent' }">
+            <div class="message-content" :class="{ 'sent-message': message.type === 'SENT' }">
               <img
                   class="profile-image"
                   src="@/images/profile-image.jpg"
                   alt="프로필 이미지"
-                  :style="message.type === 'sent' ? 'margin-left: 10px;' : 'margin-right: 10px;'"
+                  :style="message.type === 'SENT' ? 'margin-left: 10px;' : 'margin-right: 10px;'"
               />
               <div class="message-details">
             <span
                 class="sender"
                 :class="{
-                  'sender-sent': message.type === 'sent',
-                  'sender-received': message.type === 'received'
+                  'sender-sent': message.type === 'SENT',
+                  'sender-received': message.type === 'RECEIVED'
                 }"
             >
             {{ message.senderNickName }}
