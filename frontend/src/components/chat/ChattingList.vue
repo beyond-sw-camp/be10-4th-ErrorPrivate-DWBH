@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue';
 import "@/stores/auth.js"
 import axios from 'axios';
+import {useAuthStore} from "@/stores/auth.js";
 
+const userSeq = useAuthStore().userSeq;
 const chats = ref([]);
 const emit = defineEmits(['selectChat']);
 
@@ -15,7 +17,6 @@ const fetchChats = async () => {
           },
         });
     chats.value = response.data;
-    console.log(chats.value);
   } catch (error) {
     console.error('채팅 목록을 가져오는 중 오류 발생:', error);
   }
@@ -23,7 +24,6 @@ const fetchChats = async () => {
 
 const evaluateChat = (chatSeq, event) => {
   event.preventDefault();
-  console.log(`Evaluating chat with seq: ${chatSeq}`);
   // 새로운 창에서 경로 열기
   const url = `/chat/${chatSeq}/evaluation/`;
   window.open(url, '_blank'); // 새 창에서 열기
@@ -54,7 +54,7 @@ onMounted(fetchChats);
               alt="프로필 이미지"
           />
           <div class="chat-details">
-            <span class="chat-title">{{ chat.receiveUserNickname }}</span>
+            <span class="chat-title">{{ userSeq==chat.sendUserSeq ? chat.receiveUserNickname : chat.sendUserNickname }}</span>
             <span v-if="!chat.showEvaluation" class="last-message">{{ truncateMessage(chat.lastMessage) }}</span>
             <span v-else class="last-message">종료된 채팅방 입니다.</span>
             </div>

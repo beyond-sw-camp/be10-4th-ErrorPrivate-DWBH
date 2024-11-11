@@ -49,8 +49,13 @@ public class OfferService {
     public OfferResponse createOffer(Long hireSeq, CreateOrUpdateOfferRequest request, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
 
+        // 현재 로그인한 사용자 seq 가져오기
+        Long currentUserSeq = userService.getUserSeq(AuthUtil.getAuthUser());
+        request.setUserSeq(currentUserSeq);
+
         // 요청한 사용자가 현재 로그인한 사용자인지 검증
-        checkUserAccess(request.getUserSeq());
+//        checkUserAccess(request.getUserSeq());
+        checkUserAccess(currentUserSeq);
 
         // 1. 필요한 연관 관계 데이터 가져오기
         User user = userRepository.findById(request.getUserSeq())
@@ -118,7 +123,6 @@ public class OfferService {
                 .orElseThrow(() ->  new CustomException(ErrorCodeType.USER_NOT_FOUND));
         CounselorHire hire = hireRepository.findById(hireSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.POST_NOT_FOUND));
-
         CounselOffer offer = counselOfferRepository.findById(offerSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.COMMENT_NOT_FOUND));
 
@@ -224,9 +228,13 @@ public class OfferService {
 
         // 현재 로그인한 사용자와 요청의 사용자 검증
         if (!currentUserSeq.equals(userSeq)) {
+            log.info("@@");
             throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
         }
     }
 
 
+    public Page<OfferResponse> readOffersByUserSeq(Long userSeq, Pageable pageable) {
+        return counselOfferRepository.findOffersByUserSeq(userSeq, pageable);
+    }
 }

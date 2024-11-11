@@ -4,6 +4,7 @@ import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.common.util.JwtUtil;
 import com.dwbh.backend.dto.CreateUserRequest;
 import com.dwbh.backend.dto.UserDetailResponse;
+import com.dwbh.backend.dto.user.ModifyUserPasswordRequest;
 import com.dwbh.backend.dto.user.ModifyUserRequest;
 import com.dwbh.backend.dto.user.SendEmailRequest;
 import com.dwbh.backend.dto.user.UserModifyResponse;
@@ -122,5 +123,23 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header("verifyToken", emailService.verifyEmailCode(email, code))
                 .build();
+    }
+
+    @PutMapping("/user/password")
+    @Operation(summary = "회원 패스워드 변경")
+    public ResponseEntity<Void> updateUserPassword(
+            HttpServletRequest request,
+            @Valid @RequestBody ModifyUserPasswordRequest modifyUserPasswordRequest) {
+
+        String emailHeader = request.getHeader("Email-Verify-Header");
+
+        if (jwtUtil.validateToken(emailHeader) &&
+                emailService.verifyEmail(jwtUtil.parseClaims(emailHeader).get("email").toString())) {
+
+            userService.updateUserPassword(modifyUserPasswordRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            throw new CustomException(ErrorCodeType.USER_EMAIL_TOKEN_ERROR);
+        }
     }
 }

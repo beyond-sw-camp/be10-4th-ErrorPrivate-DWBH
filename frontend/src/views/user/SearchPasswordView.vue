@@ -1,30 +1,29 @@
 <script setup>
-import axios from "axios";
+import SearchForm from "@/components/user/SearchForm.vue";
 import {useRouter} from "vue-router";
-import {ref} from "vue";
 import {useAuthStore} from "@/stores/auth.js";
-import RegisterForm from "@/components/user/RegisterForm.vue";
+import {ref} from "vue";
+import axios from "axios";
 
 const router = useRouter();
-const LoadingState = ref(false);
 const authStore = useAuthStore();
 
-const errorMessage = ref('');
 const sendEmail = ref(false);
-const duplicationEmail = ref(false);
-const duplicationNickname = ref(false);
+const haveEmail = ref(false);
 const emailVerified = ref(false);
 const emailToken = ref(null);
 
-// 이메일 중복 체크
+// 이메일 체크
 const checkDuplicationEmail = async (email) => {
   try {
     if (email) {
       const response = await axios.get(`http://localhost:8089/api/v1/user/email-check/${email}`, {});
 
-      // 이메일 중복일 경우
+      // 이메일이 존재할 경우
       if (response.data === true) {
-        duplicationEmail.value = true;
+        haveEmail.value = true;
+      } else{
+        alert('없는 계정입니다!!');
       }
 
     }
@@ -59,8 +58,9 @@ const sendVerificationCode = async (email) => {
 };
 
 const checkEmail = async (email) => {
+  haveEmail.value = false;
   await checkDuplicationEmail(email);
-  if (!duplicationEmail.value)
+  if (haveEmail.value)
     await sendVerificationCode(email);
 }
 
@@ -68,7 +68,6 @@ const checkEmail = async (email) => {
 const verifyEmailCode = async (email, code) => {
   try {
     if (code === '' || code == null) {
-      errorMessage.value = '인증코드를 입력해 주세요';
       return;
     }
 
@@ -92,40 +91,12 @@ const verifyEmailCode = async (email, code) => {
   }
 };
 
-// 닉네임 중복 체크
-const checkDuplicationNickname = async (nickname) => {
+const handlePasswordChange = async (formData) => {
   try {
-    if (nickname) {
-      const response = await axios.get(`http://localhost:8089/api/v1/user/nickname-check/${nickname}`, {});
-
-      // 이메일 중복일 경우
-      if (response.data === true) {
-        duplicationNickname.value = true;
-      }
-
-    }
-  } catch (error) {
-    // 서버에서 전송된 에러 메세지 추출
-    if (error.response.data.message) {
-      alert('정확한 닉네임을 입력해주세요');
-    } else {
-      alert('정확한 닉네임을 입력해주세요');
-    }
-  }
-};
-
-const handleRegisterSubmit = async (formData) => {
-  // 백엔드 요청 보낼 때 로딩 시작
-  LoadingState.value = true;
-  try {
-    // 백엔드 서버로 회원가입 데이터 전달
-    const response = await axios.post('http://localhost:8089/api/v1/user', {
+    // 백엔드 서버로 비밀번호 데이터 전달
+    const response = await axios.put('http://localhost:8089/api/v1/user/password', {
           userEmail: formData.userEmail,
-          userNickname: formData.userNickname,
           userPassword: formData.userPassword,
-          userBirthday: formData.userBirthday,
-          userGender: formData.userGender,
-          userMbti: formData.userMbti,
         }, {
           headers: {
             'Email-Verify-Header': emailToken.value,  // 헤더에 토큰 추가
@@ -133,51 +104,32 @@ const handleRegisterSubmit = async (formData) => {
         }
     );
 
-    if (response.status === 201) {
-      // 회원가입 성공 시 Pinia 스토어에 해당 이메일 저장
-      authStore.registerEmail(formData.userEmail);
+    alert(`비밀번호 변경 성공!!!`);
+    await router.push('/');
 
-      await router.push('/');
-    }
   } catch (error) {
     // 서버에서 전송된 에러 메세지 추출
     if (error.response.data.message) {
-      alert(`회원가입에 실패했습니다. 다시 시도해주세요`);
+      alert(`비밀번호 변경에 실패했습니다. 다시 시도해주세요`);
     } else {
-      alert(`회원가입에 실패했습니다. 다시 시도해주세요`);
+      alert(`비밀번호 변경에 실패했습니다. 다시 시도해주세요`);
     }
-  } finally {
-    LoadingState.value = false;  // 로딩 종료
   }
 };
+
 </script>
 
 <template>
-  <div class="register-view">
-    <div v-if="LoadingState" class="loading-spinner">잠시만 기다려 주세요...</div>
-    <RegisterForm v-else @submit="handleRegisterSubmit" @email="checkEmail" @confirm="verifyEmailCode"
-                  @nickname="checkDuplicationNickname"
-                  :errorMessage="errorMessage" :sendEmail="sendEmail" :emailVerified="emailVerified"
-                  :duplicationEmail="duplicationEmail" :duplicationNickname="duplicationNickname"/>
+  <div class="search-view">
+    <SearchForm @change="handlePasswordChange" @email="checkEmail" @confirm="verifyEmailCode"
+                  :sendEmail="sendEmail" :emailVerified="emailVerified" :haveEmail="haveEmail" />
   </div>
 </template>
 
 <style scoped>
-.register-view {
+.search-view {
   background-color: #f4f1ea;
   display: flex;
   align-items: center;
 }
-
-.loading-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #666;
-}
-
 </style>

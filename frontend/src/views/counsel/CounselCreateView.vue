@@ -101,8 +101,6 @@ const handleSubmit = () => {
     hopeGender: hopeGender.value,
     hopeTypeSeq: hopeTypeSeq.value,
   };
-  // 폼 데이터를 서버로 전송하는 코드 추가
-  console.log("Form submitted", formData);
 };
 </script>
 

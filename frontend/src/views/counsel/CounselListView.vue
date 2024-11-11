@@ -48,7 +48,6 @@ const fetchCounselHires = async () => {
 const paginate = () => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  console.log(start, end);
   paginationCounselHires.value = counselHires.value.slice(start, end);
 };
 
@@ -115,7 +114,7 @@ onMounted(() => {
         </div>
         <CounselList :counselHires="paginationCounselHires" :currentPage="currentPage" :pageSize="pageSize" :totalCount="totalCount"/>
       </div>
-      <Pagination :totalCount="totalCount" @sendPagination="receivePagination"/>
+      <Pagination :totalCount="totalCount" :pageSize="pageSize" :currentPage="currentPage" @sendPagination="receivePagination"/>
     </div>
   </div>
 </template>
@@ -161,4 +160,5 @@ onMounted(() => {
   color: #fff;
   border: none;
 }
+
 </style>

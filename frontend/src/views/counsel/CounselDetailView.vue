@@ -4,6 +4,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "@/css/style.css"
 import {useRoute, useRouter} from "vue-router";
+import CounselCommentSection from "@/components/counseloffer/CounselCommentSection.vue";
 
 const router = useRouter();
 // 라우터로 온 데이터 받기
@@ -14,11 +15,12 @@ const hireSeq = route.params.hireSeq;
 const counselHire = ref([]);
 const counselorAgeRanges = ref([]);
 const counselorTypes = ref([]);
-
+const sendUserSeq = ref(0);
 const fetchCounselHires = async () => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/${hireSeq}`);
-    console.log(response);
+
+    sendUserSeq.value = response.data.userSeq;
     counselHire.value = response.data;
     counselorAgeRanges.value = response.data.counselorAgeRanges;
     counselorTypes.value = response.data.counselorTypes;
@@ -93,6 +95,9 @@ const goToList = () => {
           </tbody>
         </table>
       </div>
+
+      <!-- 댓글 -->
+      <CounselCommentSection :hireSeq="hireSeq" :sendUserSeq="sendUserSeq" />
     </div>
   </div>
 </template>

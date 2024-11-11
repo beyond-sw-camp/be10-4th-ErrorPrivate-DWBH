@@ -30,7 +30,6 @@ const handleLoginSubmit = async (email, password) => {
     // 서버에서 전송된 에러 메세지 추출
     if (error.response.data.message) {
       alert(`로그인 정보가 올바르지 않습니다.`);
-      location.reload();  // 새로고침
     } else {
       alert(`로그인 정보가 올바르지 않습니다.`);
     }
@@ -48,6 +47,7 @@ const handleLoginSubmit = async (email, password) => {
 <style scoped>
 
 .login-view {
+  background-color: #f4f1ea;
   display: flex;
   align-items: center;
 }

@@ -47,7 +47,6 @@ const readNotification = async (notificationSeq) => {
       },
     });
     chat.value = response.data
-    console.log(chat.value);
   } catch (error) {
     console.error("알림 상세 조회 (채팅방 입장) 가져오기 실패:", error);
   }
@@ -69,7 +68,7 @@ const readUser = async () => {
     });
     userNickname.value = response.data.userNickname;
   } catch (error) {
-    console.error("알림 가져오기 실패:", error);
+    console.error("유저 정보 가져오기 실패:", error);
   }
 };
 
@@ -77,7 +76,7 @@ const readUser = async () => {
 const isLoggedIn = computed(() => !!authStore.accessToken);
 const handleLogout = () => {
   authStore.logout();
-  router.push("/login");
+  router.push("/");
 };
 
 // 사이드 알림바의 토글을 작동시키는 메소드
@@ -155,7 +154,7 @@ function goBackToList() {
           </template>
 
           <template v-if="isLoggedIn">
-            <RouterLink to="/mypage" active-class="active" replace>
+            <RouterLink :to="{ name: 'Mypage', params: { userSeq: authStore.userSeq} }" active-class="active" replace>
               My Page
             </RouterLink>
             <button @click="openModal" class="side-menubar-button">

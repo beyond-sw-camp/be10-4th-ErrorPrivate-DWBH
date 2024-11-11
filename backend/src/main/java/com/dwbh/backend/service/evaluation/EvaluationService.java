@@ -11,17 +11,18 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.EvaluationMapper;
 import com.dwbh.backend.repository.chat.ChatRepository;
-import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
 import com.dwbh.backend.repository.evaluation.EvaluationRepository;
 import com.dwbh.backend.repository.user.CustomUserRepository;
 import com.dwbh.backend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Period;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EvaluationService {
@@ -29,7 +30,6 @@ public class EvaluationService {
     private final EvaluationRepository evaluationRepository;
     private final ChatRepository chatRepository;
     private final CustomUserRepository customUserRepository;
-    private final CounselOfferRepository counselOfferRepository;
     private final EvaluationMapper evaluationMapper;
     private final UserRepository userRepository;
 

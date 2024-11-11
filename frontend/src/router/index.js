@@ -16,9 +16,14 @@ const routes = [
         component: () => import("@/views/user/LoginView.vue")
     },
     {
-        path: '/mypage',
+        path: '/user/:userSeq/mypage',
         name: 'Mypage',
         component: () => import("@/views/user/MypageView.vue")
+    },
+    {
+        path: '/user/password',
+        name: 'SearchPassword',
+        component: () => import("@/views/user/SearchPasswordView.vue")
     },
     {
         path: '/counsel',

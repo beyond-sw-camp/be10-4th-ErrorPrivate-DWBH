@@ -15,5 +15,5 @@ public class UserModifyResponse {
     private LocalDate userBirthday;
     private String userMbti;
     private BigDecimal userTemperature;
-    private LocalDateTime userRegDate;
+    private LocalDateTime regDate;
 }
