@@ -15,8 +15,6 @@ import java.util.List;
 @Document(collection = "chat_message_suggest")
 public class ChatMessageSuggest {
     @Id
-    private String id;  // MongoDB의 ID 필드
-    @Field("chatRoomSeq")
     private String chatRoomSeq;
     private List<Content> contents;
 

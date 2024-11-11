@@ -26,16 +26,17 @@ public class ChatMessageComponent {
         }
     }
 
-    public String chatMessageSuggest(String text, String chatRoomSeq) {
-        ChatMessageSuggest chatMessageSuggest = chatMessageSuggestRepository.findByChatRoomSeq(chatRoomSeq);
-        log.info("chatMessageSuggest : {}", chatMessageSuggest);
-        ChatSuggestRequest request = new ChatSuggestRequest(text, "user", chatMessageSuggest.getContents());
+    public String chatMessageSuggest(String text, String chatRoomSeq) throws Exception {
+        try {
+            ChatMessageSuggest chatMessageSuggest = chatMessageSuggestRepository.findByChatRoomSeq(chatRoomSeq);
+            log.info("chatMessageSuggest : {}", chatMessageSuggest);
+            ChatSuggestRequest request = new ChatSuggestRequest(text, "user", chatMessageSuggest.getContents());
 
-        chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq, request.getContents()));
+            chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq, request.getContents()));
 
-        ChatSuggestResponse response = httpRequest(request);
-        if(response != null) {
-             String suggestMessage = response.getCandidates()
+            ChatSuggestResponse response = httpRequest(request);
+
+            String suggestMessage = response.getCandidates()
                     .stream()
                     .findFirst()
                     .flatMap(candidate -> candidate.getContent().getParts()
@@ -44,9 +45,11 @@ public class ChatMessageComponent {
                             .map(ChatSuggestResponse.TextPart::getText))
                     .orElseThrow();
 
-             return suggestMessage;
-        } else {
+            return suggestMessage;
+        } catch (Exception e) {
+            log.error("Exception : ", e);
             return null;
         }
+
     }
 }
