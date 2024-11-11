@@ -134,7 +134,6 @@ const handleRegisterSubmit = async (formData) => {
     );
 
     if (response.status === 201) {
-      console.log('회원가입 성공');
       // 회원가입 성공 시 Pinia 스토어에 해당 이메일 저장
       authStore.registerEmail(formData.userEmail);
 

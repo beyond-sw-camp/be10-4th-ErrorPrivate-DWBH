@@ -17,7 +17,6 @@ const fetchChats = async () => {
           },
         });
     chats.value = response.data;
-    console.log(chats.value);
   } catch (error) {
     console.error('채팅 목록을 가져오는 중 오류 발생:', error);
   }
@@ -25,7 +24,6 @@ const fetchChats = async () => {
 
 const evaluateChat = (chatSeq, event) => {
   event.preventDefault();
-  console.log(`Evaluating chat with seq: ${chatSeq}`);
   // 새로운 창에서 경로 열기
   const url = `/chat/${chatSeq}/evaluation/`;
   window.open(url, '_blank'); // 새 창에서 열기

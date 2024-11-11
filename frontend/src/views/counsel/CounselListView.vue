@@ -48,7 +48,6 @@ const fetchCounselHires = async () => {
 const paginate = () => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  console.log(start, end);
   paginationCounselHires.value = counselHires.value.slice(start, end);
 };
 

@@ -26,11 +26,12 @@ public class ChatMessageComponent {
         }
     }
 
-    public String chatMessageSuggest(String text, String chatRoomSeq) throws Exception {
+    public String chatMessageSuggest(String text, String userYn, String chatRoomSeq) throws Exception {
         try {
             ChatMessageSuggest chatMessageSuggest = chatMessageSuggestRepository.findByChatRoomSeq(chatRoomSeq);
-            log.info("chatMessageSuggest : {}", chatMessageSuggest);
-            ChatSuggestRequest request = new ChatSuggestRequest(text, "user", chatMessageSuggest.getContents());
+
+            String role = userYn.equals("Y") ? "user" : "model";
+            ChatSuggestRequest request = new ChatSuggestRequest(text, role, chatMessageSuggest.getContents());
 
             chatMessageSuggestRepository.save(new ChatMessageSuggest(chatRoomSeq, request.getContents()));
 

@@ -21,6 +21,7 @@ public class ChatMessageDTO {
         private String senderNickName;
         private String receiveSeq;
         private String readYn;
+        private String userYn;
         @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
         private LocalDateTime regDate = LocalDateTime.now();
 
@@ -56,6 +57,7 @@ public class ChatMessageDTO {
     }
 
     @Getter
+    @Setter
     public static class Response {
 
         private String chatMessageSeq;
@@ -69,6 +71,7 @@ public class ChatMessageDTO {
         private LocalDateTime modDate;
         private String readYn;
 
+        private String suggestMessage;
     }
 
 }

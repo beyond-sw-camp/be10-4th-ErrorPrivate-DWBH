@@ -69,17 +69,20 @@ onBeforeUnmount(() => {
   disconnect();
 });
 
+const suggestMessage = ref("");
+
 function connectWebSocket() {
   const websocket = new WebSocket("ws://localhost:8089/stomp/chat");
   stompClient.value = Stomp.over(websocket);
 
   stompClient.value.connect({}, (frame) => {
     isConnected.value = true;
-    console.log("STOMP Connection established");
 
     // 메시지 수신
     stompClient.value.subscribe(`/sub/chat/talk/${props.chat.chatSeq}`, (message) => {
       const content = JSON.parse(message.body);
+      suggestMessage.value = content.suggestMessage;
+
       let msgType;
       if (content.message.includes("생성")) {
         msgType = "ENTER";
@@ -134,7 +137,6 @@ function connectWebSocket() {
 
   stompClient.value.onclose = () => {
     isConnected.value = false;
-    console.log("WebSocket is closed.");
   };
 }
 
@@ -150,6 +152,7 @@ function sendMessage() {
       message: newMessage.value,
       type: "TALK",
       readYn: "N",
+      userYn: props.chat.receiveUserSeq==currentUserSeq ? "Y" : "N"
     };
 
     try {
@@ -177,7 +180,6 @@ function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
     stompClient.value.disconnect();
     isConnected.value = false;
-    console.log("Disconnected from STOMP server");
   }
 }
 
@@ -235,6 +237,11 @@ function formatDate(regDate) {
   return dayjs(regDate).format('YYYY-MM-DD HH:mm'); // 원하는 형식으로 변환
 }
 
+function setInputMessage(message) {
+  console.log(message);
+  newMessage.value = message;
+}
+
 </script>
 
 <template>
@@ -280,6 +287,14 @@ function formatDate(regDate) {
         </template>
       </div>
     </div>
+
+    <!-- 추천 메시지 -->
+    <div v-if="suggestMessage !== null && suggestMessage !== '' && chat.receiveUserSeq==currentUserSeq" class="recommended-messages">
+      <button class="recommended-message" @click="setInputMessage(suggestMessage)">
+        {{ suggestMessage }}
+      </button>
+    </div>
+
     <div class="input-area">
       <input v-if="!chat.showEvaluation" class="sendMessage-area"
           v-model="newMessage"
@@ -296,6 +311,34 @@ function formatDate(regDate) {
 </template>
 
 <style scoped>
+/* 추천 메시지 영역 */
+.recommended-messages {
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  gap: 10px; /* 버튼 간 간격 */
+  padding: 10px 0;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+  overflow-x: auto; /* 버튼이 많을 때 가로 스크롤 가능 */
+}
+
+/* 추천 메시지 버튼 */
+.recommended-message {
+  cursor: pointer;
+  padding: 8px 12px;
+  background-color: #e6e6e6;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  transition: background-color 0.2s ease;
+}
+
+.recommended-message:hover {
+  background-color: #dcdcdc;
+}
 .message-content {
   display: flex;
   align-items: flex-start;
