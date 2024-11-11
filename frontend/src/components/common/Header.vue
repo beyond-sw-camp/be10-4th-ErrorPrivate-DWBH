@@ -67,7 +67,6 @@ const readUser = async () => {
       },
     });
     userNickname.value = response.data.userNickname;
-    console.log(userNickname.value);
   } catch (error) {
     console.error("알림 가져오기 실패:", error);
   }
@@ -189,7 +188,7 @@ function goBackToList() {
           class="side-menubar-container"
           @click.stop
       >
-        <SideNotificationBar :notifications="state.notificationList"
+        <SideNotificationBar :notifications="state.notificationList" :userNickname="userNickname"
                              @close="toggleSideNotificationBar" @selectChat="readNotification"/>
       </div>
     </transition>
