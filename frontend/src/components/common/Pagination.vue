@@ -6,27 +6,33 @@ const props = defineProps({
   totalCount: { // 전체 개수
     type: Number,
     required: true,
+  },
+  pageSize: { // 페이지 당 개수
+    type: Number,
+    required: true,
+  },
+  currentPage: { // 페이지 당 개수
+    type: Number,
+    required: true,
   }
 });
 
 const emit = defineEmits(['sendPagination']);
 
-const currentPage = ref(1); // 현재 페이지
-const pageSize = ref(10); // 페이지당 항목 수
 // 총 페이지 수 계산
 const totalPages = computed(() => {
-  return Math.ceil(props.totalCount / pageSize.value);
+  return Math.ceil(props.totalCount / props.pageSize);
 });
-
+const localCurrentPage = ref(0);
 // 페이지 이동 함수
 const goToPage = (page) => {
   if (page > 0 && page <= totalPages.value) {
-    currentPage.value = page;
+    localCurrentPage.value = page;
   }
 
   const pagination = {
-    currentPage: currentPage.value,
-    pageSize: pageSize.value
+    currentPage: localCurrentPage.value,
+    pageSize: props.pageSize
   }
 
   emit('sendPagination', pagination); // 이벤트와 데이터를 emit

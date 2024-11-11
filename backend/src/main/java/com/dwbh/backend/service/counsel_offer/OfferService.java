@@ -234,4 +234,7 @@ public class OfferService {
     }
 
 
+    public Page<OfferResponse> readOffersByUserSeq(Long userSeq, Pageable pageable) {
+        return counselOfferRepository.findOffersByUserSeq(userSeq, pageable);
+    }
 }

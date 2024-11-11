@@ -48,6 +48,7 @@ const handleLoginSubmit = async (email, password) => {
 <style scoped>
 
 .login-view {
+  background-color: #f4f1ea;
   display: flex;
   align-items: center;
 }
