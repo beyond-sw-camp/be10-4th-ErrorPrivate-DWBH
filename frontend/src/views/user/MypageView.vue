@@ -126,7 +126,6 @@ const updateUser = async (userData) => {
         "Content-Type": 'multipart/form-data',
       },
     });
-    isModify.value = false;
 
     alert("수정 성공!!!");
     // '/' 경로로 이동하면서 새로고침 -> 헤더 갱신을 위해
