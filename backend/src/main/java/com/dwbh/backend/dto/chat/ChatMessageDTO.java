@@ -17,9 +17,9 @@ public class ChatMessageDTO {
         private String chatRoomSeq;
         private String type;
         private String message;
-        private String sendSeq;
-        private String senderNickName;
-        private String receiveSeq;
+        private String sendUserSeq;
+        private String sendUserNickname;
+        private String receiveUserSeq;
         @JsonDeserialize(using = CustomLocalDateTimeDeserializer.class)
         private LocalDateTime regDate = LocalDateTime.now();
 

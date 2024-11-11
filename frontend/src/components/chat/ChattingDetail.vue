@@ -34,9 +34,9 @@ async function loadChatHistory(chatId) {
     messages.value = data.map((message) => ({
       chatMessageSeq: message.chatMessageSeq,
       chatRoomSeq: message.chatRoomSeq,
-      senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUser.userSeq,
-      receiveSeq: props.chat.receiveUser.userSeq,
+      sendUserNickname: sendUsername.value,
+      sendUserSeq: props.chat.sendUserSeq,
+      receiveUserSeq: props.chat.receiveUserSeq,
       text: message.message,
       type: message.type == "ENTER" ? "ENTER" : message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED", // ENTER 구분 추가
       regDate: message.regDate,
@@ -73,9 +73,9 @@ function connectWebSocket() {
       messages.value.push({
         chatMessageSeq: content.chatMessageSeq,
         chatRoomSeq: props.chat.chatSeq,
-        senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUser.userSeq,
-        receiveSeq: props.chat.receiveUser.userSeq,
+        sendUserNickname: sendUsername.value,
+        sendUserSeq: props.chat.sendUserSeq,
+        receiveUserSeq: props.chat.receiveUserSeq,
         message: content.message,
         type: msgType,
         regDate: new Date(),
@@ -94,9 +94,9 @@ function connectWebSocket() {
       messages.value.push({
         chatMessageSeq: uuidv4(),
         chatRoomSeq: props.chat.chatSeq,
-        senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUserSeq,
-        receiveSeq: props.chat.receiveUserSeq,
+        sendUserNickname: sendUsername.value,
+        sendUserSeq: props.chat.sendUserSeq,
+        receiveUserSeq: props.chat.receiveUserSeq,
         message: " 님과의 대화가 종료되었습니다.",
         type: "EXIT"
       });
@@ -106,7 +106,7 @@ function connectWebSocket() {
     stompClient.value.send(`/pub/chat/enter/${props.chat.chatSeq}`, {}, JSON.stringify({
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      senderNickName: receiveUsername.value
+      sendUserNickname: receiveUsername.value
     }));
 
   });
@@ -123,9 +123,9 @@ function sendMessage() {
     const payload = {
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUserSeq,
-      receiveSeq: props.chat.receiveUserSeq,
+      sendUserNickname: sendUsername.value,
+      sendUserSeq: props.chat.sendUserSeq,
+      receiveUserSeq: props.chat.receiveUserSeq,
       message: newMessage.value,
       type: "TALK",
       readYn: "N",
@@ -137,8 +137,8 @@ function sendMessage() {
         chatMessageSeq: uuidv4(),
         chatRoomSeq: props.chat.chatSeq,
         senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUser.userSeq,
-        receiveSeq: props.chat.receiveUser.userSeq,
+        sendUserSeq: props.chat.sendUserSeq,
+        receiveUserSeq: props.chat.receiveUserSeq,
         message: newMessage.value,
         type: "SENT",
         regDate: new Date(),
@@ -157,9 +157,9 @@ function disconnect() {
     stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify({
       chatMessageSeq: uuidv4(),
       chatRoomSeq: props.chat.chatSeq,
-      senderNickName: sendUsername.value,
-      sendSeq: props.chat.sendUserSeq,
-      receiveSeq: props.chat.receiveUserSeq,
+      sendUserNickname: sendUsername.value,
+      sendUserSeq: props.chat.sendUserSeq,
+      receiveUserSeq: props.chat.receiveUserSeq,
       type: "EXIT"
     }));
     stompClient.value.disconnect();
@@ -173,7 +173,7 @@ async function disconnectEvent() {
     try {
       await axios.put(`http://localhost:8089/api/v1/user/chat/message/${props.chat.chatSeq}/endDate`,
           {
-        chatSeq: props.chat.chatSeq,
+        chatRoomSeq: props.chat.chatSeq,
         modDate: new Date(),
         endDate: new Date()
       },
