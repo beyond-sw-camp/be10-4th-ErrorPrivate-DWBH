@@ -281,6 +281,7 @@ function formatDate(regDate) {
 }
 
 .sent-message {
+  text-align: right;
   flex-direction: row-reverse;
 }
 
@@ -296,9 +297,6 @@ function formatDate(regDate) {
   max-width: 70%; /* 메시지 내용 너비 제한 */
 }
 
-.message-details {
-  flex: 1;
-}
 .chat-room-button.back {
   all: unset;
   height: 38px;
@@ -339,7 +337,7 @@ function formatDate(regDate) {
   float : right;
 }
 .chat-room-button.un-submit-btn {
-  width: 65px;
+  width: 70px;
   height: 40px;
   background-color: lightgrey;
   border: none;
