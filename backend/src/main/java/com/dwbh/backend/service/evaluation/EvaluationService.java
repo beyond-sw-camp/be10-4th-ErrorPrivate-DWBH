@@ -1,5 +1,6 @@
 package com.dwbh.backend.service.evaluation;
 
+import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.dto.UserDetailResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationCommentResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
@@ -16,12 +17,17 @@ import com.dwbh.backend.repository.evaluation.EvaluationRepository;
 import com.dwbh.backend.repository.user.CustomUserRepository;
 import com.dwbh.backend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EvaluationService {
@@ -29,9 +35,11 @@ public class EvaluationService {
     private final EvaluationRepository evaluationRepository;
     private final ChatRepository chatRepository;
     private final CustomUserRepository customUserRepository;
-    private final CounselOfferRepository counselOfferRepository;
     private final EvaluationMapper evaluationMapper;
     private final UserRepository userRepository;
+
+    // 온도 갱신 (1시간)
+    private static final long TEMPERATURE_MS = 3600000L;
 
     // 채팅방번호에 해당하는 평가 조회
     @Transactional
@@ -148,5 +156,20 @@ public class EvaluationService {
         if(!chat.getReceiveUser().getUserSeq().equals(user.getUserSeq())) {
             throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
         }
+    }
+
+    // userTemperature 스케줄링
+    @Scheduled(fixedDelay = TEMPERATURE_MS)
+    @Transactional
+    public void renewalTemperature() {
+        log.info("온도 정보 갱신");
+
+        User user = userRepository.findByUserEmail(AuthUtil.getAuthUser()).orElseThrow();
+        List<Double> temperatureList = evaluationRepository.findTemperatureByUserSeq(user.getUserSeq());
+        BigDecimal sum = temperatureList.stream()
+                .map(BigDecimal::valueOf)  // Double 값을 BigDecimal로 변환
+                .reduce(BigDecimal.ZERO, BigDecimal::add);  // 합계 계산
+
+        user.modifyTemperature(sum);
     }
 }

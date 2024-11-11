@@ -69,7 +69,7 @@ const showData = computed(() =>
 const saveEvaluation = async () => {
   // 실제 저장 로직 구현
   // 창닫기 & api 호출
-  await createEvaluationData(localStorage.getItem('authToken'),
+  await createEvaluationData(localStorage.getItem('accessToken'),
       {
         chatSeq: chatSeq,
         evaluationSatisfaction: evaluationItems.value[0].rating,     // 만족도 평점 (예: 1 ~ 5 점)
@@ -91,7 +91,7 @@ const exitEvaluation = () => {
 // 평가를 수정하는 함수
 const updateEvaluation = async () => {
   // 창닫기 & api 호출
-  await updateEvaluationData(localStorage.getItem('authToken'), state.evaluation.evaluationSeq,
+  await updateEvaluationData(localStorage.getItem('accessToken'), state.evaluation.evaluationSeq,
       {
         chatSeq: chatSeq,
         evaluationSatisfaction: evaluationItems.value[0].rating,     // 만족도 평점 (예: 1 ~ 5 점)
@@ -106,7 +106,7 @@ const updateEvaluation = async () => {
 // 평가를 삭제하는 함수
 const deleteEvaluation = async () => {
   // 창닫기 & api 호출
-  await deleteEvaluationData(localStorage.getItem('authToken'), chatSeq, state.evaluation.evaluationSeq)
+  await deleteEvaluationData(localStorage.getItem('accessToken'), chatSeq, state.evaluation.evaluationSeq)
   // 현재 창 닫기
   window.close();
 };
@@ -115,8 +115,8 @@ const deleteEvaluation = async () => {
 const loadEvaluationData = async () => {
   try {
     // 데이터를 비동기로 로드하고 evaluationCommentData에 저장
-    state.evaluation = await readEvaluationData(localStorage.getItem('authToken'), chatSeq);
-    state.comment = await readEvaluationCommentData(localStorage.getItem('authToken'), chatSeq);
+    state.evaluation = await readEvaluationData(localStorage.getItem('accessToken'), chatSeq);
+    state.comment = await readEvaluationCommentData(localStorage.getItem('accessToken'), chatSeq);
     updateRatings(); // 데이터 업데이트
   } catch (error) {
     console.error('데이터 로드 실패:', error);

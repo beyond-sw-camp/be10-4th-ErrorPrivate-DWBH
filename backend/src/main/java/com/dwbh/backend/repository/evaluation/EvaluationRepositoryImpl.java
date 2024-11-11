@@ -5,8 +5,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static com.dwbh.backend.entity.QChat.chat;
 import static com.dwbh.backend.entity.QEvaluation.evaluation;
+import static com.dwbh.backend.entity.QNotification.notification;
+import static com.dwbh.backend.entity.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,5 +27,15 @@ public class EvaluationRepositoryImpl implements EvaluationCustomRepository {
                     .join(evaluation.chat, chat)
                     .where(chat.chatSeq.eq(chatSeq))
                     .fetchOne();
+    }
+
+    public List<Double> findTemperatureByUserSeq(Long userSeq) {
+        return jpaQueryFactory
+                .select(evaluation.evaluationScore)
+                .from(evaluation)
+                .join(evaluation.chat, chat)
+                .join(chat.sendUser, user)
+                .where(user.userSeq.eq(userSeq))
+                .fetch();
     }
 }
