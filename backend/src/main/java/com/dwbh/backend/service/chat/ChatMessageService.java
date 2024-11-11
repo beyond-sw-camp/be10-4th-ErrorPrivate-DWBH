@@ -62,11 +62,13 @@ public class ChatMessageService {
 
     @Transactional
     public ChatMessageDTO.Response saveMessage(ChatMessageDTO.Request request) {
-        ChatMessageDTO.Response response = new ChatMessageDTO.Response();
+        ChatMessageDTO.Response response;
         try {
 
             mongoTemplate.insert(request);
-            chatMessageComponent.chatMessageSuggest(request.getMessage(), request.getChatRoomSeq());
+            if(!request.getType().equals("EXIT") && !request.getType().equals("ENTER")) {
+                chatMessageComponent.chatMessageSuggest(request.getMessage(), request.getChatRoomSeq());
+            }
 
              if("EXIT".equals(request.getType())) {
                  ChatDTO.Update update = ChatDTO.Update.builder()
