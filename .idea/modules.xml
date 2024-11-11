@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/DWBH.iml" filepath="$PROJECT_DIR$/.idea/DWBH.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/DWBH.backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DWBH.backend.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.dwbh.backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.dwbh.backend.main.iml" />
     </modules>
   </component>

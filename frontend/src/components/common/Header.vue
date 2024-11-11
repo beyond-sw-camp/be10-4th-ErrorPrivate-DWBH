@@ -47,7 +47,6 @@ const readNotification = async (notificationSeq) => {
       },
     });
     chat.value = response.data
-    console.log(chat.value);
   } catch (error) {
     console.error("알림 상세 조회 (채팅방 입장) 가져오기 실패:", error);
   }
