@@ -53,7 +53,7 @@ public class ChatMessageService {
 
         // 대화 내역 조회
         Query query = new Query(Criteria.where("chatRoomSeq").is(roomId).and("type").is("TALK"))
-                .with(Sort.by(Sort.Direction.ASC, "timestamp"));
+                .with(Sort.by(Sort.Direction.ASC, "regDate"));
         List<ChatMessageDTO.Response> talkResponses = mongoTemplate.find(query, ChatMessageDTO.Response.class, "request");
         responseList.addAll(talkResponses);
 
