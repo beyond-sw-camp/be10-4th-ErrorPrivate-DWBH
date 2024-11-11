@@ -15,6 +15,10 @@ const props = defineProps({
     type: Array,
     required: true
   },
+  userNickname:{
+    type: String,
+    required: true
+  }
 });
 
 // emit 정의
@@ -34,8 +38,8 @@ const selectChat = (notificationSeq) => {
 <template>
   <div class="side-menu-bar">
     <div class="user-info">
-<!--      <h3>{{ user.userNickname }} 님</h3>-->
-      <h3>{{ authStore.userEmail }}</h3>
+      <p>{{ userNickname }} 님</p>
+      <p>{{ authStore.userEmail }}</p>
     </div>
 
     <hr class="menu-divider"/>

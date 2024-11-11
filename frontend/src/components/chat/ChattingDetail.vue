@@ -4,9 +4,7 @@ import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
-import {useAuthStore} from "@/stores/auth.js";
 
-const token = useAuthStore().accessToken;
 const props = defineProps({
   chat: Object
 });
@@ -29,7 +27,7 @@ async function loadChatHistory(chatId) {
   try {
     const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
     });
     const data = await response.json();

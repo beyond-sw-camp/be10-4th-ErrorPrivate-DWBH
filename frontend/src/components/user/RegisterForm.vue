@@ -14,8 +14,9 @@ const formData = ref({
 
 const confirmPassword = ref('');
 const errorMessage = ref('');
-const verificationCode = ref(''); // 이메일 인증 코드\
+const verificationCode = ref(''); // 이메일 인증 코드
 const isClickNickName = ref(false);
+const isButtonDisabled = ref(false) // 이메일 발송 버튼 비활성화 여부
 
 // 비밀번호 일치 여부 확인
 const isPasswordMatch = computed(() => formData.value.userPassword === confirmPassword.value && formData.value.userPassword !== '');
@@ -53,6 +54,13 @@ watch(formData, () => {
 
 // 이메일 인증 코드 전송
 const sendVerificationCode = async () => {
+  isButtonDisabled.value = true; // 버튼 비활성화
+
+  // 5초 후에 버튼 활성화
+  setTimeout(() => {
+    isButtonDisabled.value = false;
+  }, 5000);
+
   if (formData.value.userEmail) {
     emit('email', formData.value.userEmail);
   } else {
@@ -92,6 +100,12 @@ const isGenderInvalid = computed(() => {
   return gender && gender !== 'male' && gender !== 'female';
 });
 
+// `formData.userNickname`이 변경될 때 `isClickNickName`을 false로 설정
+watch(() => formData.value.userNickname, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    isClickNickName.value = false;
+  }
+});
 
 // 폼 제출 핸들러
 const submitForm = () => {
@@ -163,7 +177,7 @@ const handleRegister = () => {
           <span v-if="sendEmail">인증 메일이 발송되었습니다.</span>
           <span v-if="duplicationEmail" class="error">이메일이 중복됩니다.</span>
         </div>
-        <ButtonSmallColor class="small-button" @click="sendVerificationCode">발송</ButtonSmallColor>
+        <ButtonSmallColor class="small-button" @click="sendVerificationCode" :disabled="isButtonDisabled" >발송</ButtonSmallColor>
       </div>
 
       <!-- 이메일 인증 필드 -->
