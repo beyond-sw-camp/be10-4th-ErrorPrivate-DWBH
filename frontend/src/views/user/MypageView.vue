@@ -5,6 +5,7 @@ import {onMounted, reactive, ref} from "vue";
 import axios from "axios";
 import router from "@/router/index.js";
 import CounselList from "@/components/counsel/CounselList.vue";
+import Pagination from "@/components/common/Pagination.vue";
 
 const authStore = useAuthStore();
 
@@ -19,9 +20,10 @@ const userData = reactive({
 });
 
 // 유저 조회
+const userSeq = authStore.userSeq;
+
 const readUser = async () => {
   try {
-    const userSeq = authStore.userSeq;
     const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
@@ -71,12 +73,49 @@ const deleteUser = async () => {
   }
 };
 
+const counselList = ref([]);
 const fetchCounselList = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/user/${userSeq}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    });
 
+    console.log(response.data);
+    counselList.value = response.data.counselorList.content;
+    hireTotalCount.value = counselList.value.length;
+    console.log("hireCurrentPage",hireCurrentPage.value)
+    counselListPaginate();
+  } catch (error) {
+    console.error("해당 사용자가 작성한 게시글 리스트 불러오기 실패 :", error);
+  }
 }
 onMounted(  () => {
   readUser();
+  fetchCounselList();
 });
+
+const hireTotalCount = ref(0); // 전체 개수
+const hireCurrentPage = ref(1); // 현재 페이지
+const hirePageSize = ref(5); // 페이지당 항목 수
+
+const receivePagination = (page) => {
+  console.log("page:",page);
+  hireCurrentPage.value = page.currentPage;
+  hirePageSize.value = page.pageSize;
+
+  fetchCounselList();
+};
+
+const paginationCounselList = ref([]);
+// 현재 페이지에 따라 데이터 나누기
+const counselListPaginate = () => {
+  const start = (hireCurrentPage.value - 1) * hirePageSize.value;
+  const end = start + hirePageSize.value;
+  console.log(start, end);
+  paginationCounselList.value = counselList.value.slice(start, end);
+};
 </script>
 
 <template>
@@ -92,7 +131,9 @@ onMounted(  () => {
         </div>
         <div class="right-section">
           <div class="bridge-of-heart">
-            <CounselList/>
+            <CounselList :counselHires="paginationCounselList" :currentPage="hireCurrentPage" :pageSize="hirePageSize" :totalCount="hireTotalCount"/>
+
+            <Pagination :totalCount="hireTotalCount" :pageSize="hirePageSize" :currentPage="hireCurrentPage" @sendPagination="receivePagination"/>
           </div>
           <div class="warm-hand-sharing">
             <CounselList/>

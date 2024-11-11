@@ -127,4 +127,11 @@ public class CounselorService {
 
         return counselorRepository.findCounselorHireDetail(hireSeq, currentUserSeq);
     }
+
+    // 모든 게시글 조회
+    public CounselorUserListResponse readUserCounselorList(Long userSeq, Pageable pageable) {
+        Page<CounselorDTO> counselorList = counselorRepository.findAllUserCounselListJoinUser(userSeq, pageable);
+
+        return new CounselorUserListResponse(counselorList);
+    }
 }

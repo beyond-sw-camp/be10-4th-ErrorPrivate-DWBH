@@ -12,4 +12,5 @@ public interface CounselorCustomRepository {
     List<CounselorTypeDTO> findCounselorTypeByCounselorHireSeq(Long counselorHireSeq);
     List<CounselorAgeDTO> findCounselorAgeByCounselorHireSeq(Long counselorHireSeq);
     Page<CounselorDTO> findAllJoinUser(ReadCounselorListRequest request, Pageable pageable);
+    Page<CounselorDTO> findAllUserCounselListJoinUser(Long userSeq, Pageable pageable);
 }
