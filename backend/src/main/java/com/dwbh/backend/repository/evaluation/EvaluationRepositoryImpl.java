@@ -28,14 +28,4 @@ public class EvaluationRepositoryImpl implements EvaluationCustomRepository {
                     .where(chat.chatSeq.eq(chatSeq))
                     .fetchOne();
     }
-
-    public List<Double> findTemperatureByUserSeq(Long userSeq) {
-        return jpaQueryFactory
-                .select(evaluation.evaluationScore)
-                .from(evaluation)
-                .join(evaluation.chat, chat)
-                .join(chat.sendUser, user)
-                .where(user.userSeq.eq(userSeq))
-                .fetch();
-    }
 }

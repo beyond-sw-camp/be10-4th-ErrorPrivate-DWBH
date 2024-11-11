@@ -38,9 +38,6 @@ public class EvaluationService {
     private final EvaluationMapper evaluationMapper;
     private final UserRepository userRepository;
 
-    // 온도 갱신 (1시간)
-    private static final long TEMPERATURE_MS = 3600000L;
-
     // 채팅방번호에 해당하는 평가 조회
     @Transactional
     public EvaluationResponse readEvaluation(Long chatSeq) {
@@ -156,20 +153,5 @@ public class EvaluationService {
         if(!chat.getReceiveUser().getUserSeq().equals(user.getUserSeq())) {
             throw new CustomException(ErrorCodeType.SECURITY_ACCESS_ERROR);
         }
-    }
-
-    // userTemperature 스케줄링
-    @Scheduled(fixedDelay = TEMPERATURE_MS)
-    @Transactional
-    public void renewalTemperature() {
-        log.info("온도 정보 갱신");
-
-        User user = userRepository.findByUserEmail(AuthUtil.getAuthUser()).orElseThrow();
-        List<Double> temperatureList = evaluationRepository.findTemperatureByUserSeq(user.getUserSeq());
-        BigDecimal sum = temperatureList.stream()
-                .map(BigDecimal::valueOf)  // Double 값을 BigDecimal로 변환
-                .reduce(BigDecimal.ZERO, BigDecimal::add);  // 합계 계산
-
-        user.modifyTemperature(sum);
     }
 }
