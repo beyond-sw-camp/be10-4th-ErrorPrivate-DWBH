@@ -16,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/user/chat/message/{roomId}")
+@RequestMapping("/api/v1/user/chat/message")
 @RequiredArgsConstructor
 @Tag(name = "Chatting Message API", description = "채팅방 API")
 public class ChatMessageController {
@@ -25,7 +25,7 @@ public class ChatMessageController {
 
 
     // 채팅방 대화내역
-    @GetMapping
+    @GetMapping("/{roomId}")
     public List<ChatMessageDTO.Response> getChatHistory(@PathVariable String roomId) {
         return chatMessageService.getChatHistory(roomId);
     }

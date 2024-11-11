@@ -66,11 +66,8 @@ public class ChatMessageService {
         try {
 
             mongoTemplate.insert(request);
-            if(!request.getType().equals("EXIT") && !request.getType().equals("ENTER")) {
-                chatMessageComponent.chatMessageSuggest(request.getMessage(), request.getChatRoomSeq());
-            }
 
-             if("EXIT".equals(request.getType())) {
+            if("EXIT".equals(request.getType())) {
                  ChatDTO.Update update = ChatDTO.Update.builder()
                          .chatSeq(Long.valueOf(request.getChatRoomSeq()))
                          .endDate(LocalDateTime.now())
@@ -80,6 +77,11 @@ public class ChatMessageService {
 
             Query queryLimit = new Query(Criteria.where("chatMessageSeq").is(request.getChatMessageSeq()));
             response = mongoTemplate.findOne(queryLimit, ChatMessageDTO.Response.class, "request");
+
+            if(!request.getType().equals("EXIT") && !request.getType().equals("ENTER")) {
+                String suggestMessage = chatMessageComponent.chatMessageSuggest(request.getMessage(), request.getUserYn(), request.getChatRoomSeq());
+                response.setSuggestMessage(suggestMessage);
+            }
 
         } catch (Exception e) {
             log.error("saveMessage Error : {}", e.getMessage());
