@@ -15,6 +15,11 @@ public class CounselorAgeDTO {
     private Long counselorAgeRangeSeq;
     private String counselorAgeRange;
 
+    // 문자열 인자를 받는 추가 생성자
+    public CounselorAgeDTO(String counselorAgeRange) {
+        this.counselorAgeRange = counselorAgeRange;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
