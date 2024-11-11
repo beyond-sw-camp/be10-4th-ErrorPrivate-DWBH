@@ -1,18 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import {useAuthStore} from "@/stores/auth.js";
 
 const chats = ref([]);
 const emit = defineEmits(['selectChat']);
-const token = useAuthStore().accessToken;
 
 const fetchChats = async () => {
   try {
     const response = await axios.get('http://localhost:8089/api/v1/user/chat',
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
     chats.value = response.data;
