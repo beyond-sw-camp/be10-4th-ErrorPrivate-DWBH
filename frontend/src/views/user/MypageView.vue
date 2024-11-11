@@ -6,6 +6,7 @@ import axios from "axios";
 import router from "@/router/index.js";
 import CounselList from "@/components/counsel/CounselList.vue";
 import Pagination from "@/components/common/Pagination.vue";
+import CounselOffer from "@/components/counsel/CounselOfferList.vue";
 
 const authStore = useAuthStore();
 
@@ -133,12 +134,16 @@ const offerReceivePagination = (page) => {
 const fetchOfferList = async () => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/hire-post/user/comment/${userSeq}`, {
-      headers: {
+      params: {
+        page: offerCurrentPage.value - 1, // Spring Boot Pageable의 page는 0부터 시작
+        size: offerPageSize.value
+      }, headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
       },
     });
+    console.log(response.data);
     offerList.value = response.data.content;
-    offerTotalCount.value = offerList.value.length;
+    offerTotalCount.value = response.data.totalElements;
 
   } catch (error) {
     console.error("해당 사용자가 작성한 댓글 리스트 불러오기 실패 :", error);
@@ -164,7 +169,7 @@ const fetchOfferList = async () => {
             <Pagination :totalCount="hireTotalCount" :pageSize="hirePageSize" :currentPage="hireCurrentPage" @sendPagination="hireReceivePagination"/>
           </div>
           <div class="warm-hand-sharing">
-            <CounselList/>
+            <CounselOffer :offerList="offerList" :currentPage="offerCurrentPage" :pageSize="offerPageSize" :totalCount="offerTotalCount"/>
             <Pagination :totalCount="offerTotalCount" :pageSize="offerPageSize" :currentPage="offerCurrentPage" @sendPagination="offerReceivePagination"/>
           </div>
         </div>

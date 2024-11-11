@@ -65,7 +65,14 @@ public class CounselOfferRepositoryImpl implements CounselOfferCustomRepository 
                 .limit(pageable.getPageSize()) // 페이징 limit
                 .fetchResults();
 
-        long total = results.getTotal();
+        Long count =  queryFactory
+                .select(counselOffer.count())
+                .from(counselOffer)
+                .join(counselOffer.user, user)
+                .where(counselOffer.delDate.isNull() // 필터조건
+                        .and(user.userSeq.eq(userSeq)))
+                .fetchOne();
+        long total = (count != null) ? count : 0L;
 
         return new PageImpl<>(results.getResults(), pageable, total);
     }
