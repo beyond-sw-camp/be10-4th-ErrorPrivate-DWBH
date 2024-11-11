@@ -21,4 +21,7 @@ public class CounselorHireAge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "counselor_hire_seq", nullable = false)
     private CounselorHire counselorHire;
+
+    public void setCounselorHire(CounselorHire counselorHire) {
+    }
 }
