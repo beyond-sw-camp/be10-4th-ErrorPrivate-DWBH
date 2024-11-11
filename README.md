@@ -3,12 +3,12 @@
 
 <table>
  <tr>
-    <td align="center"><a href="https://github.com/hcbak"><img src="https://avatars.githubusercontent.com/u/115945994?v=4" width="100px;" height=100px" ></a></td>
-    <td align="center"><a href="https://github.com/beanteacher"><img src="https://avatars.githubusercontent.com/u/99578261?v=4" width="100px;" height="100px" ></a></td>
-    <td align="center"><a href="https://github.com/dispear"><img src="https://avatars.githubusercontent.com/u/87793524?v=4" width="100px;" height="100px" ></a></td>
-    <td align="center"><a href="https://github.com/sung-mini"><img src="https://avatars.githubusercontent.com/u/174118592?v=4" width="100px;" height="100px" ></a></td>
-    <td align="center"><a href="https://github.com/catnine11"><img src="https://avatars.githubusercontent.com/u/134343781?v=4" width="100px;" height="100px" ></a></td>
-    <td align="center"><a href="https://github.com/AYeong-Jeon"><img src="https://avatars.githubusercontent.com/u/102805138?v=4" width="100px;" height="100px" ></a></td>
+    <td align="center"><a href="https://github.com/hcbak"><img src="https://avatars.githubusercontent.com/u/115945994"" ></a></td>
+    <td align="center"><a href="https://github.com/beanteacher"><img src="https://avatars.githubusercontent.com/u/99578261"></a></td>
+    <td align="center"><a href="https://github.com/dispear"><img src="https://avatars.githubusercontent.com/u/87793524"></a></td>
+    <td align="center"><a href="https://github.com/sung-mini"><img src="https://avatars.githubusercontent.com/u/174118592"></a></td>
+    <td align="center"><a href="https://github.com/catnine11"><img src="https://avatars.githubusercontent.com/u/134343781"></a></td>
+    <td align="center"><a href="https://github.com/AYeong-Jeon"><img src="https://avatars.githubusercontent.com/u/102805138"></a></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/hcbak"><b>박희찬</b></a></td>
