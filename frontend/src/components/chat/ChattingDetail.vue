@@ -24,6 +24,7 @@ onMounted(async () => {
 });
 
 async function loadChatHistory(chatId) {
+  console.log(chatId);
   try {
     const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`, {
       headers: {
