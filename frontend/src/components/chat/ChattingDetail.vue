@@ -24,6 +24,7 @@ onMounted(async () => {
 });
 
 async function loadChatHistory(chatId) {
+  console.log(chatId);
   try {
     const response = await fetch(`http://localhost:8089/api/v1/user/chat/message/${chatId}`, {
       headers: {
@@ -67,20 +68,22 @@ function connectWebSocket() {
       if (content.message.includes("입장")) {
         msgType = "ENTER";
       } else {
-        msgType = message.senderNickName == sendUsername.value ? "SENT" : "RECEIVED";
+        msgType = content.senderNickName == sendUsername.value ? "SENT" : "RECEIVED";
       }
 
-      messages.value.push({
-        chatMessageSeq: content.chatMessageSeq,
-        chatRoomSeq: props.chat.chatSeq,
-        senderNickName: sendUsername.value,
-        sendSeq: props.chat.sendUserSeq,
-        receiveSeq: props.chat.receiveUserSeq,
-        message: content.message,
-        type: msgType,
-        regDate: new Date(),
-        readYn: "N"
-      });
+      if(content.senderNickName != sendUsername.value) {
+        messages.value.push({
+          chatMessageSeq: content.chatMessageSeq,
+          chatRoomSeq: props.chat.chatSeq,
+          senderNickName: sendUsername.value,
+          sendSeq: props.chat.sendUserSeq,
+          receiveSeq: props.chat.receiveUserSeq,
+          text: content.message,
+          type: msgType,
+          regDate: new Date(),
+          readYn: "N"
+        });
+      }
 
       if (content.message.includes("나가셨습니다.")) {
         disconnect();
@@ -97,7 +100,7 @@ function connectWebSocket() {
         senderNickName: sendUsername.value,
         sendSeq: message.sendSeq,
         receiveSeq: message.receiveSeq,
-        message: " 님과의 대화가 종료되었습니다.",
+        text: " 님과의 대화가 종료되었습니다.",
         type: "EXIT"
       });
     });
@@ -139,7 +142,7 @@ function sendMessage() {
         senderNickName: sendUsername.value,
         sendSeq: props.chat.sendUserSeq,
         receiveSeq: props.chat.receiveUserSeq,
-        message: newMessage.value,
+        text: newMessage.value,
         type: "SENT",
         regDate: new Date(),
         readYn: "N"
@@ -156,7 +159,7 @@ function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
     stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify({
       roomId: props.chat.chatSeq,
-      message: `${sendUsername.value}: 님이 방을 나가셨습니다.`,
+      text: `${sendUsername.value}: 님이 방을 나가셨습니다.`,
       writer: sendUsername.value
     }));
     stompClient.value.disconnect();

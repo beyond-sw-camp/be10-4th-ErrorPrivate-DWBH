@@ -85,10 +85,14 @@ const confirmModal = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   margin-bottom: 10px;
 }
 
 .close-button {
+  position: absolute;
+  top: 0;
+  right: 0; /* X 버튼을 오른쪽 상단에 배치 */
   background: none;
   border: none;
   font-size: 20px;
@@ -105,10 +109,9 @@ const confirmModal = () => {
   color: #757575;
 }
 
-/* 모달 푸터 (액션 버튼들) */
 .modal-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .confirm-button {

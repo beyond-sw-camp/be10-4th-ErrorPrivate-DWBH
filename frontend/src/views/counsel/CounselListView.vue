@@ -115,7 +115,7 @@ onMounted(() => {
         </div>
         <CounselList :counselHires="paginationCounselHires" :currentPage="currentPage" :pageSize="pageSize" :totalCount="totalCount"/>
       </div>
-      <Pagination :totalCount="totalCount" @sendPagination="receivePagination"/>
+      <Pagination :totalCount="totalCount" :pageSize="pageSize" :currentPage="currentPage" @sendPagination="receivePagination"/>
     </div>
   </div>
 </template>
@@ -161,4 +161,5 @@ onMounted(() => {
   color: #fff;
   border: none;
 }
+
 </style>

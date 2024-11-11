@@ -25,6 +25,13 @@ public class CounselorController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "해당 유저가 작성한 게시글 조회", description = "전체 게시글 목록을 조회합니다.")
+    @GetMapping("/user/{userSeq}")
+    public ResponseEntity<CounselorUserListResponse> readUserCounselorList(@PathVariable Long userSeq, Pageable pageable) {
+        CounselorUserListResponse response = counselorService.readUserCounselorList(userSeq, pageable);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "게시글 등록", description = "게시글을 등록합니다.")
     @PostMapping
     public ResponseEntity<Void> createCounselor(@RequestBody CreateCounselorRequest request) {
