@@ -16,6 +16,7 @@ const isDetailOpen = ref(false);
 const selectedChat = ref(null);
 
 const chat = ref(null);
+const userNickname = ref(null);
 const state = reactive({
   notificationList: [],
   isConfirmation: true,
@@ -57,6 +58,23 @@ const readNotification = async (notificationSeq) => {
   openChatDetail(chat.value);
 };
 
+// 유저 조회
+const readUser = async () => {
+  try {
+    const userSeq = authStore.userSeq;
+    const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    });
+    console.log(response.data);
+    userNickname.value = response.data.userNickname;
+    console.log(userNickname.value);
+  } catch (error) {
+    console.error("알림 가져오기 실패:", error);
+  }
+};
+
 // accessToken 이 있으면 로그인한 상태
 const isLoggedIn = computed(() => !!authStore.accessToken);
 const handleLogout = () => {
@@ -80,12 +98,11 @@ const handleClickOutside = (event) => {
   }
 };
 
-onMounted(() => {
+onMounted( async () => {
   document.addEventListener('click', handleClickOutside);
-  readNotificationList();
   if (isLoggedIn.value) {
-    // console.log(authStore.userSeq);  // seq 정보 사용
-    // readUserInfo(authStore.userSeq);  // 유저 정보 받아올 예정
+    await readNotificationList();
+    await readUser();
   }
 });
 
