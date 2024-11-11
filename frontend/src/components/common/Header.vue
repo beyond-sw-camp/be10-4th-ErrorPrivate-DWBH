@@ -69,7 +69,7 @@ const readUser = async () => {
     });
     userNickname.value = response.data.userNickname;
   } catch (error) {
-    console.error("알림 가져오기 실패:", error);
+    console.error("유저 정보 가져오기 실패:", error);
   }
 };
 
@@ -155,7 +155,7 @@ function goBackToList() {
           </template>
 
           <template v-if="isLoggedIn">
-            <RouterLink to="/mypage" active-class="active" replace>
+            <RouterLink :to="{ name: 'Mypage', params: { userSeq: authStore.userSeq} }" active-class="active" replace>
               My Page
             </RouterLink>
             <button @click="openModal" class="side-menubar-button">
