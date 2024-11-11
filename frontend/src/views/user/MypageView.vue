@@ -94,14 +94,14 @@ const fetchCounselList = async () => {
 onMounted(  () => {
   readUser();
   fetchCounselList();
+  fetchOfferList();
 });
 
 const hireTotalCount = ref(0); // 전체 개수
 const hireCurrentPage = ref(1); // 현재 페이지
 const hirePageSize = ref(5); // 페이지당 항목 수
 
-const receivePagination = (page) => {
-  console.log("page:",page);
+const hireReceivePagination = (page) => {
   hireCurrentPage.value = page.currentPage;
   hirePageSize.value = page.pageSize;
 
@@ -116,6 +116,34 @@ const counselListPaginate = () => {
   console.log(start, end);
   paginationCounselList.value = counselList.value.slice(start, end);
 };
+
+
+const offerList = ref([]);
+const offerTotalCount = ref(0);
+const offerCurrentPage = ref(1);
+const offerPageSize = ref(5);
+
+const offerReceivePagination = (page) => {
+  offerCurrentPage.value = page.currentPage;
+  offerPageSize.value = page.pageSize;
+
+  fetchOfferList();
+};
+
+const fetchOfferList = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8089/api/v1/hire-post/user/comment/${userSeq}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    });
+    offerList.value = response.data.content;
+    offerTotalCount.value = offerList.value.length;
+
+  } catch (error) {
+    console.error("해당 사용자가 작성한 댓글 리스트 불러오기 실패 :", error);
+  }
+}
 </script>
 
 <template>
@@ -133,10 +161,11 @@ const counselListPaginate = () => {
           <div class="bridge-of-heart">
             <CounselList :counselHires="paginationCounselList" :currentPage="hireCurrentPage" :pageSize="hirePageSize" :totalCount="hireTotalCount"/>
 
-            <Pagination :totalCount="hireTotalCount" :pageSize="hirePageSize" :currentPage="hireCurrentPage" @sendPagination="receivePagination"/>
+            <Pagination :totalCount="hireTotalCount" :pageSize="hirePageSize" :currentPage="hireCurrentPage" @sendPagination="hireReceivePagination"/>
           </div>
           <div class="warm-hand-sharing">
             <CounselList/>
+            <Pagination :totalCount="offerTotalCount" :pageSize="offerPageSize" :currentPage="offerCurrentPage" @sendPagination="offerReceivePagination"/>
           </div>
         </div>
       </div>
