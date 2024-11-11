@@ -32,31 +32,32 @@ public class CounselorService {
     private final UserService userService;
 
     // 게시글 등록
-    @Transactional
-    public void savePost(CreateCounselorRequest request) {
-        Long loginUserId = 1L;  // 예시로 로그인된 사용자 ID 설정
-
-        User foundUser = userRepository.findById(loginUserId)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
-
-        // `CounselorAge`와 `CounselorType` 엔티티 조회
-//        CounselorAge counselorAge = counselorAgeRepository.findById(savePostReqDTO.getAgeRangeId())
-//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 나이대입니다."));
-//        CounselorType counselorType = counselorTypeRepository.findById(savePostReqDTO.getTypeId())
-//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 조건 유형입니다."));
-
-        // `CounselorHire` 엔티티 생성
+//    @Transactional
+//    public void createPost(CreateCounselorRequest request) {
+//        // User 조회
+//        User foundUser = userRepository.findById(request.getHireSeq())
+//                .orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
+//
+//        // CounselorType 엔티티 조회
+//        List<CounselorType> counselorTypes = counselorTypeRepository.findAllById(request.getTypeId());
+//
+//        // CounselorAge 엔티티 조회
+//        List<CounselorAge> counselorAges = counselorAgeRepository.findAllById(request.getAgeRangeId());
+//
+//        // CounselorHire 객체 생성
 //        CounselorHire saveCounselor = new CounselorHire(
-//                savePostReqDTO.getHireTitle(),
-//                savePostReqDTO.getHireContent(),
-//                savePostReqDTO.getHireGender(),
+//                request.getHireTitle(),
+//                request.getHireContent(),
+//                request.getHireGender(),
 //                foundUser,
-//                counselorAge,
-//                counselorType
+//                counselorAges,
+//                counselorTypes
 //        );
 //
+//        // 데이터베이스에 CounselorHire 객체 저장
 //        counselorRepository.save(saveCounselor);
-    }
+//    }
+
 
     // 모든 게시글 조회
     public CounselorListResponse readCounselorList(ReadCounselorListRequest request, Pageable pageable) {
@@ -126,5 +127,29 @@ public class CounselorService {
         }
 
         return counselorRepository.findCounselorHireDetail(hireSeq, currentUserSeq);
+    }
+
+    public CreateCounselorViewResponse createCounselorRequest() {
+
+        List<CounselorAge> counselorAges = counselorAgeRepository.findAll();
+        List<CounselorAgeDTO> counselorAgeList = counselorAges.stream().map(
+                counselorAge -> new CounselorAgeDTO(
+                        counselorAge.getCounselorAgeRangeSeq(),
+                        counselorAge.getCounselorAgeRange()
+                )
+        ).toList();
+
+        List<CounselorType> counselorTypes = counselorTypeRepository.findAll();
+        List<CounselorTypeDTO> counselorTypeList = counselorTypes.stream().map(
+                counselorType -> new CounselorTypeDTO(
+                        counselorType.getCounselorTypeSeq(),
+                        counselorType.getCounselorType()
+                )
+        ).toList();
+
+        return new CreateCounselorViewResponse(
+                counselorAgeList,
+                counselorTypeList
+        );
     }
 }

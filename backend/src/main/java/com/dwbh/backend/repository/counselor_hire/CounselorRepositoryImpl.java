@@ -68,8 +68,8 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
                         ))
                 .from(counselorHire)
                 .join(counselorHire.user, user)
-                .leftJoin(counselorHireFile).on(counselorHire.hireSeq.eq(counselorHireFile.hireSeq))
-                .leftJoin(file).on(counselorHireFile.fileSeq.eq(file.fileSeq))
+                .leftJoin(counselorHireFile).on(counselorHire.hireSeq.eq(counselorHireFile.counselorHire.hireSeq))
+                .leftJoin(file).on(counselorHireFile.file.fileSeq.eq(file.fileSeq))
                 .where(counselorHire.hireSeq.eq(hireSeq))
                 .fetchOne();
 

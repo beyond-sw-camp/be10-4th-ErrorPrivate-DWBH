@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +44,10 @@ public class CounselorHire extends BaseDateEntity {
     @Enumerated(EnumType.STRING)
     private Gender hireGender;
 
-    @OneToMany(mappedBy = "counselorHire")
+    @OneToMany(mappedBy = "counselorHire", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CounselorHireAge> hireAges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "counselorHire")
+    @OneToMany(mappedBy = "counselorHire", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CounselorHireType> hireTypes = new ArrayList<>();
 
     @Column(name = "counselor_hire_del_date")
@@ -58,19 +57,26 @@ public class CounselorHire extends BaseDateEntity {
     @OneToMany(mappedBy = "hire", cascade = CascadeType.REMOVE)
     private List<CounselOffer> offers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "counselorHire", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CounselorHireAge> counselorHireAges = new ArrayList<>();
+    @OneToOne(mappedBy = "counselorHire", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true, optional = true)
+    private CounselorHireFile counselorHireFile;
 
-    @OneToMany(mappedBy = "counselorHire", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CounselorHireType> counselorHireTypes = new ArrayList<>();
-
-    public void updateUser(User foundUser){
-        this.user = foundUser;
+    // 필수 필드를 포함한 생성자
+    public CounselorHire(String hireTitle, String hireContent, Gender hireGender, User user, List<CounselorAge> counselorAge, List<CounselorType> counselorType) {
+        this.hireTitle = hireTitle;
+        this.hireContent = hireContent;
+        this.hireGender = hireGender;
+        this.user = user;
     }
 
+    // 게시글 정보 업데이트 메서드
     public void updateCounselor(String counselorHireTitle, String counselorHireContent, Gender counselorHireCounselorGender) {
         this.hireTitle = counselorHireTitle;
         this.hireContent = counselorHireContent;
         this.hireGender = counselorHireCounselorGender;
+    }
+
+    // 삭제 날짜 설정 메서드 (논리 삭제)
+    public void setDelDate(LocalDateTime delDate) {
+        this.delDate = delDate;
     }
 }
