@@ -1,6 +1,5 @@
 package com.dwbh.backend.service.evaluation;
 
-import com.dwbh.backend.common.util.AuthUtil;
 import com.dwbh.backend.dto.UserDetailResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationCommentResponse;
 import com.dwbh.backend.dto.evaluation.EvaluationRequest;
@@ -12,20 +11,16 @@ import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.mapper.EvaluationMapper;
 import com.dwbh.backend.repository.chat.ChatRepository;
-import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
 import com.dwbh.backend.repository.evaluation.EvaluationRepository;
 import com.dwbh.backend.repository.user.CustomUserRepository;
 import com.dwbh.backend.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.List;
 
 @Slf4j
 @Service
