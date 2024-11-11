@@ -18,6 +18,7 @@ import com.dwbh.backend.repository.chat.ChatMessageSuggestRepository;
 import com.dwbh.backend.repository.chat.ChatRepository;
 import com.dwbh.backend.repository.counsel_offer.CounselOfferRepository;
 import com.dwbh.backend.repository.notification.NotificationRepository;
+import com.dwbh.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -31,6 +32,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,6 +48,7 @@ public class ChatService {
     private final MongoTemplate mongoTemplate;
     private final ChatMessageSuggestRepository chatMessageSuggestRepository;
     private final CounselOfferRepository counselOfferRepository;
+    private final UserService userService;
 
     @Transactional
     public boolean createChat(ChatDTO.Create chatCreateDTO) {
@@ -82,14 +85,13 @@ public class ChatService {
 
     public List<ChatDTO.Response> readChatList() {
         List<ChatDTO.Response> chatResponseList = null;
+        Long userSeq = userService.getUserSeq(AuthUtil.getAuthUser());
 
         try {
-            // TODO 아영 - 유저 검증코드 완성되면 테스트 해보기
-            String user = AuthUtil.getAuthUser();
-
-            List<Chat> chatList = chatRepository.findAll();
-                    /*.stream().filter(chat -> chat.getSendUser().getUserSeq().toString().equals(AuthUtil.getAuthUser()))
-                    .toList();*/
+            List<Chat> chatList = chatRepository.findAll()
+                    .stream().filter(chat -> Objects.equals(chat.getSendUser().getUserSeq(), userSeq)
+                            || Objects.equals(chat.getReceiveUser().getUserSeq(), userSeq))
+                    .toList();
 
             chatResponseList = chatList.stream()
                     .map(chat -> modelMapper.map(chat, ChatDTO.Response.class))
