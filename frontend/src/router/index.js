@@ -16,7 +16,7 @@ const routes = [
         component: () => import("@/views/user/LoginView.vue")
     },
     {
-        path: '/mypage',
+        path: '/user/:userSeq/mypage',
         name: 'Mypage',
         component: () => import("@/views/user/MypageView.vue")
     },

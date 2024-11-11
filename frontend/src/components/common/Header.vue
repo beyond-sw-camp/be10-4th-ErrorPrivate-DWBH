@@ -155,7 +155,7 @@ function goBackToList() {
           </template>
 
           <template v-if="isLoggedIn">
-            <RouterLink to="/mypage" active-class="active" replace>
+            <RouterLink :to="{ name: 'Mypage', params: { userSeq: authStore.userSeq} }" active-class="active" replace>
               My Page
             </RouterLink>
             <button @click="openModal" class="side-menubar-button">

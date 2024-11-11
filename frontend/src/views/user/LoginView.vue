@@ -23,6 +23,8 @@ const handleLoginSubmit = async (email, password) => {
       // 헤더에서 토큰 추출
       authStore.login(response.headers.token);
 
+      alert(`로그인 성공!!`);
+
       router.push('/'); // 로그인 성공 시 홈 화면으로 이동
 
     }
