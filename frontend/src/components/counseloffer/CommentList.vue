@@ -1,150 +1,72 @@
-
 <script setup>
-import {ref, onMounted, watch} from 'vue';
-import axios from 'axios';
-import CommentItem from './CommentItem.vue';
 import {useAuthStore} from "@/stores/auth.js";
+import dayjs from "dayjs";
+import router from "@/router/index.js";
 
 const props = defineProps({
-  hireSeq: {
-    type: Number,
+  comments: {
+    type: Array,
     required: true
   }
 });
-
 const authStore = useAuthStore();
 const userSeq = authStore.userSeq;
 
-const comments = ref([]); // 댓글 데이터 저장
-const currentPage = ref(1); // 현재 페이지 번호
-const pageSize = 10; // 한 페이지에 표시할 댓글 수
-const sortOrder = ref("asc"); // 정렬 순서 (asc: 등록순, desc: 최신순)
-
-// 댓글 데이터를 백엔드 API에서 가져오는 함수
-const fetchComments = async () => {
-  try {
-
-    // 토큰을 확인하여 로그인한 사용자라면 헤더에 추가
-    const token = localStorage.getItem("accessToken");
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-    // API 요청을 보낼 때 현재 페이지, 정렬 순서, 로그인 사용자 ID를 함께 보냄
-    const response = await axios.get(`http://localhost:8089/api/v1/hire-post/${props.hireSeq}/comment`, {
-      params: {
-        // currentUserSeq: localStorage.getItem("userSeq"), // 로그인한 사용자의 ID
-        currentUserSeq: userSeq || null, // 로그인한 사용자의 ID
-        sortOrder: sortOrder.value,
-        page: currentPage.value - 1, // Spring Pageable에서 0부터 시작
-        size: pageSize
-      },
-      // headers: {
-      //   Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-      // }
-      headers: headers // 헤더에 Authorization 추가 또는 빈 헤더 전달
-    });
-
-    // API 응답 데이터가 있을 경우, DTO에 맞게 매핑하여 댓글 데이터 업데이트
-    if (response.data) {
-      comments.value = response.data.content; // Page 내용 부분만 저장
-    } else {
-      console.error("댓글 데이터를 찾을 수 없습니다.");
-    }
-  } catch (error) {
-    console.error("댓글 정보를 불러오는 중 에러가 발생했습니다:", error);
-  }
+const goToMyPage = (userSeq) => {
+  router.push(`/user/${userSeq}/mypage`);
 };
 
-// 초기 페이지 로드
-onMounted(() => {
-  fetchComments();
-});
-
-watch(
-    [() => props.hireSeq, () => localStorage.getItem("userSeq")],
-    ([newHireSeq, newUserSeq]) => {
-      if (newHireSeq && newUserSeq) {
-        fetchComments();
-      }
-    },
-    { immediate: true }
-);
-
-// 이전 페이지 버튼
-const fetchPreviousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-    fetchComments();
-  }
-};
-
-// 다음 페이지 버튼
-const fetchNextPage = () => {
-  currentPage.value++;
-  fetchComments();
-};
-
-const handleCommentDeleted = (deletedOfferSeq) => {
-  // 삭제된 댓글을 comments 배열에서 제거합니다.
-  comments.value = comments.value.filter(comment => comment.key !== deletedOfferSeq);
-};
 </script>
 
 <template>
-  <div class="comment-list-container">
-    <ul class="comment-list" v-if="comments.length > 0">
-<!--    <ul class="comment-list" v-if="comments!=null">-->
-      <CommentItem
-          v-for="comment in comments"
-          :key="comment.offerSeq"
-          :offerSeq="comment.offerSeq"
-          :hireSeq="comment.hireSeq"
-          :userSeq="comment.userSeq"
-          :offerContent="comment.offerContent"
-          :offerPrivateYn="comment.offerPrivateYn"
-          :offerFilePath="comment.offerFilePath"
-          :regDate="comment.regDate"
-          :modDate="comment.modDate"
-          :userNickname="comment.userNickname || '알 수 없는 닉네임'"
-          :userGender="comment.userGender || '알 수 없는 성별'"
-          :userBirthday="comment.userBirthday"
-          :userStatus="comment.userStatus"
-          :userProfilePath="comment.userProfilePath"
-          :postOwnerSeq="comment.postOwnerSeq"
-          @commentDeleted="handleCommentDeleted"
-      />
-    </ul>
-<!--    <p v-else>댓글이 없습니다.</p>-->
-
-    <!-- 페이지네이션 버튼 -->
-    <div class="pagination">
-      <button @click="fetchPreviousPage" :disabled="currentPage.value === 1">이전</button>
-      <button @click="fetchNextPage" :disabled="comments.length < pageSize">다음</button>
+  <!-- 댓글 리스트 -->
+  <div class="comment-list">
+    <div v-for="(comment, index) in comments" :key="index" class="comment-item border-bottom pb-3 mb-3">
+      <div class="d-flex align-items-center">
+        <img class="profile-img rounded-circle me-3" :src="comment.userProfilePath || '/default-profile.png'" alt="프로필"  @click="goToMyPage(comment.userSeq)" />
+<!--        <img class="profile-img rounded-circle me-3" src="@/images/uploads/profile1.png" alt="프로필" />-->
+        <div>
+          <p @click="goToMyPage" class="username mb-1">{{ comment.userNickname }}</p>
+          <p class="text-muted small">{{ dayjs(comment.regDate).format('YYYY-MM-DD HH:mm:ss') }}</p>
+        </div>
+      </div>
+      <p class="comment-content mt-2">{{ comment.offerContent }}</p>
+      <div v-if="comment.offerFilePath" class="comment-image mt-2">
+        <img :src="comment.offerFilePath" alt="첨부 이미지" class="img-fluid rounded" />
+      </div>
+      <div class="comment-actions text-end">
+        <button v-if="comment.userSeq===userSeq" class="btn btn-sm btn-outline-secondary me-2" @click="editComment(comment)">수정</button>
+        <button v-if="comment.userSeq===userSeq" class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.commentSeq)">삭제</button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.comment-list-container {
+.comment-list {
   max-height: 300px;
   overflow-y: auto;
 }
 
-.comment-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.comment-item {
+  padding: 10px 0;
 }
 
-.comment-list-container::-webkit-scrollbar {
-  width: 8px;
+.profile-img {
+  width: 40px;
+  height: 40px;
 }
 
-.comment-list-container::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 4px;
+.username {
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.comment-list-container::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
+.comment-content {
+  font-size: 14px;
+}
+
+.comment-input textarea {
+  resize: none;
 }
 </style>
