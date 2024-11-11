@@ -50,4 +50,9 @@ public class User extends BaseDateEntity {
         this.userBirthday = modify.getUserBirthday();
         this.userMbti = modify.getUserMbti();
     }
+
+    // 비밀번호 수정
+    public void modifyUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
 }

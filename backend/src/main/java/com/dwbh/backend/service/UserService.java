@@ -1,6 +1,7 @@
 package com.dwbh.backend.service;
 
 import com.dwbh.backend.dto.UserDetailResponse;
+import com.dwbh.backend.dto.user.ModifyUserPasswordRequest;
 import com.dwbh.backend.dto.user.ModifyUserRequest;
 import com.dwbh.backend.dto.user.UserModifyResponse;
 import com.dwbh.backend.entity.User;
@@ -107,5 +108,19 @@ public class UserService implements UserDetailsService {
     // 회원 탈퇴
     public void deleteUser(Long userSeq) {
         userRepository.deleteById(userSeq);
+    }
+
+    // 회원 비밀번호 변경
+    @Transactional
+    public void updateUserPassword(ModifyUserPasswordRequest modifyUserPasswordRequest) {
+        Long userSeq = getUserSeq(modifyUserPasswordRequest.getUserEmail());
+
+        User user = userRepository.findById(userSeq)
+                .orElseThrow(() -> new CustomException(ErrorCodeType.USER_NOT_FOUND));
+
+        modifyUserPasswordRequest.setUserPassword(passwordEncoder.encode(modifyUserPasswordRequest.getUserPassword()));
+        user.modifyUserPassword(modifyUserPasswordRequest.getUserPassword());
+
+        userRepository.save(user);
     }
 }

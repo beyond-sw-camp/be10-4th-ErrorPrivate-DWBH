@@ -76,7 +76,7 @@ const readUser = async () => {
 const isLoggedIn = computed(() => !!authStore.accessToken);
 const handleLogout = () => {
   authStore.logout();
-  router.push("/login");
+  router.push("/");
 };
 
 // 사이드 알림바의 토글을 작동시키는 메소드

@@ -67,8 +67,8 @@ const handleLogin = () => {
       </ButtonSmallColor>
 
       <div class="actions">
-        <ButtonSmallColor class="btn" @click="handleLogin">
-          <RouterLink to="/users/passwords/emails">비밀번호 찾기</RouterLink>
+        <ButtonSmallColor class="btn">
+          <RouterLink to="/user/password">비밀번호 찾기</RouterLink>
         </ButtonSmallColor>
         <ButtonSmallColor class="btn" >
           <RouterLink to="/register">회원가입</RouterLink>
