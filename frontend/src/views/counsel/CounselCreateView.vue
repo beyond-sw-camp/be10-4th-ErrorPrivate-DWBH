@@ -13,6 +13,9 @@ const selectedAges = ref([]);
 const hopeGender = ref("");
 const hopeTypeSeq = ref("");
 
+const fetchCounselCreate = async () => {
+  const response = await axios.get()
+}
 // 나이대와 상담 유형 옵션 데이터
 const ageOptions = [
   { label: "10대", value: "10대" },

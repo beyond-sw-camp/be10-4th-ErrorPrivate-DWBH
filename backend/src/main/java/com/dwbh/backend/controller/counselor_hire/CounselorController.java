@@ -42,6 +42,7 @@ public class CounselorController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "게시글 등록 페이지 진입 시 데이터 조회", description = "게시글 등록 페이지 진입 시 데이터 조회합니다.")
     @GetMapping("/create")
     public ResponseEntity<CreateCounselorViewResponse> createCounselorRequest() {
         return ResponseEntity.ok(counselorService.createCounselorRequest());

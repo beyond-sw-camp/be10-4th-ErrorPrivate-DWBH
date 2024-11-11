@@ -158,4 +158,8 @@ public class CounselorService {
                 counselorTypeList
         );
     }
+
+    public void createPost(CreateCounselorRequest request) {
+
+    }
 }
