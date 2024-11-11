@@ -49,8 +49,13 @@ public class OfferService {
     public OfferResponse createOffer(Long hireSeq, CreateOrUpdateOfferRequest request, MultipartFile file) {
         log.info("--------------댓글작성 서비스 진입----------------");
 
+        // 현재 로그인한 사용자 seq 가져오기
+        Long currentUserSeq = userService.getUserSeq(AuthUtil.getAuthUser());
+        request.setUserSeq(currentUserSeq);
+
         // 요청한 사용자가 현재 로그인한 사용자인지 검증
-        checkUserAccess(request.getUserSeq());
+//        checkUserAccess(request.getUserSeq());
+        checkUserAccess(currentUserSeq);
 
         // 1. 필요한 연관 관계 데이터 가져오기
         User user = userRepository.findById(request.getUserSeq())
