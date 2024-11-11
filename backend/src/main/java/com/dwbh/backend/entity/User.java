@@ -50,8 +50,4 @@ public class User extends BaseDateEntity {
         this.userBirthday = modify.getUserBirthday();
         this.userMbti = modify.getUserMbti();
     }
-
-    public void modifyTemperature(BigDecimal sum) {
-        this.userTemperature = this.userTemperature.add(sum);
-    }
 }
