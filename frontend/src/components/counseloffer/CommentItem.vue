@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, computed, defineProps } from 'vue';
 import {useAuthStore} from "@/stores/auth.js";
@@ -78,7 +77,7 @@ const showMenu = ref(false);
 const showDeleteConfirm = ref(false);
 
 const goToMyPage = () => {
-  router.push({ name: 'MyPage', params: { userSeq: props.userSeq } });
+  router.push(`/user/:userSeq/mypage`);
 };
 
 // 본인이 작성한 댓글인지 확인
@@ -131,7 +130,9 @@ const formattedDate = computed(() => {
   return displayDate.toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
   });
 });
 
@@ -174,11 +175,11 @@ const editComment = async () => {
   <li class="comment-item">
     <!-- 작성자 정보 -->
     <div class="comment-header">
-      <img :src="authorImagePath" alt="작성자 프로필" class="profile-image"  @click="goToMyPage" />
-      <span class="author-info"  @click="goToMyPage" v-if="isActiveUser"><strong>{{ displayName }}</strong></span>
+      <img :src="authorImagePath" alt="작성자 프로필" class="profile-image" @click="goToMyPage"/>
+      <span class="author-info" @click="goToMyPage" v-if="isActiveUser"><strong>{{ displayName }}</strong></span>
 
-        <!-- 탈퇴된 회원일 경우 -->
-        <p v-else class="deactivated-user">탈퇴된 회원</p>
+      <!-- 탈퇴된 회원일 경우 -->
+      <p v-else class="deactivated-user">탈퇴된 회원</p>
       <p class="author-info" v-if="isActiveUser">{{ ageGroup }} {{ formattedGender }}
       </p>
       <p class="comment-date">{{ formattedDate }}</p>
@@ -195,11 +196,14 @@ const editComment = async () => {
 
     <!-- 댓글 내용 (비밀 댓글일 경우 표시 제한) -->
     <p v-if="!canViewContent" class="private-comment">비밀 댓글입니다.</p>
-    <p v-else class="comment-content">{{ offerContent }}</p>
+    <p v-else class="comment-content">
+      <span v-if="props.offerPrivateYn === 'Y'">[비밀 댓글] </span>
+      {{ offerContent }}
+    </p>
 
     <!-- 첨부 이미지 (첨부 이미지가 있을 경우에만 표시) -->
     <div v-if="offerFilePath" class="attached-image">
-      <img :src="attachedImagePath" alt="첨부 이미지" />
+      <img :src="attachedImagePath" alt="첨부 이미지"/>
     </div>
 
     <!-- 삭제 확인 모달 -->

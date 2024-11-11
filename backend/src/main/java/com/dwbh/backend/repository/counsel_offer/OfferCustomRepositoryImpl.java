@@ -75,10 +75,11 @@ public class OfferCustomRepositoryImpl implements OfferCustomRepository{
     }
 
     private BooleanExpression filterPrivateComments(QCounselOffer counselOffer, Long currentUserSeq) {
-        return counselOffer.offerPrivateYn.eq(YnType.valueOf("Y"))
-                .and(counselOffer.user.userSeq.eq(currentUserSeq)
-                        .or(counselOffer.hire.user.userSeq.eq(currentUserSeq)))
-                .or(counselOffer.offerPrivateYn.eq(YnType.N));
+        //        return counselOffer.offerPrivateYn.eq(YnType.valueOf("Y"))
+//                .and(counselOffer.user.userSeq.eq(currentUserSeq)
+//                        .or(counselOffer.hire.user.userSeq.eq(currentUserSeq)))
+//                .or(counselOffer.offerPrivateYn.eq(YnType.N));
+        return counselOffer.isNotNull();
     }
 
 

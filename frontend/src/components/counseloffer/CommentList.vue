@@ -1,4 +1,3 @@
-
 <script setup>
 import {ref, onMounted, watch} from 'vue';
 import axios from 'axios';
@@ -37,17 +36,13 @@ const fetchComments = async () => {
         page: currentPage.value - 1, // Spring Pageable에서 0부터 시작
         size: pageSize
       },
-      // headers: {
-      //   Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-      // }
       headers: headers // 헤더에 Authorization 추가 또는 빈 헤더 전달
     });
-
-    console.log("Comments response:", response.data.content);
 
     // API 응답 데이터가 있을 경우, DTO에 맞게 매핑하여 댓글 데이터 업데이트
     if (response.data) {
       comments.value = response.data.content; // Page 내용 부분만 저장
+      console.log(response.data.content)
     } else {
       console.error("댓글 데이터를 찾을 수 없습니다.");
     }
@@ -58,7 +53,6 @@ const fetchComments = async () => {
 
 // 초기 페이지 로드
 onMounted(() => {
-  console.log("Component mounted, fetching comments...");
   fetchComments();
 });
 
@@ -69,7 +63,7 @@ watch(
         fetchComments();
       }
     },
-    { immediate: true }
+    {immediate: true}
 );
 
 // 이전 페이지 버튼
@@ -95,7 +89,6 @@ const handleCommentDeleted = (deletedOfferSeq) => {
 <template>
   <div class="comment-list-container">
     <ul class="comment-list" v-if="comments.length > 0">
-<!--    <ul class="comment-list" v-if="comments!=null">-->
       <CommentItem
           v-for="comment in comments"
           :key="comment.offerSeq"
@@ -116,7 +109,6 @@ const handleCommentDeleted = (deletedOfferSeq) => {
           @commentDeleted="handleCommentDeleted"
       />
     </ul>
-<!--    <p v-else>댓글이 없습니다.</p>-->
 
     <!-- 페이지네이션 버튼 -->
     <div class="pagination">
