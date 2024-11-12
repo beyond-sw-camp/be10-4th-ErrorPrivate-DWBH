@@ -1,20 +1,21 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import {computed, onMounted, ref} from "vue";
 import $ from "jquery";
 import "@/css/style.css";
 import "summernote/dist/summernote-lite.css";
 import "summernote/dist/summernote-lite.js";
 import axios from "axios";
 import router from "@/router";
+import {useAuthStore} from "@/stores/auth.js";
 
 // 폼 데이터 변수 선언
 const hireTitle = ref("");
 const hireContent = ref("");
-const ageRangeId = ref([]); // 선택된 나이대
 const hireGender = ref("");
 const typeId = ref("");
 const counselorAgeList = ref([]);
 const counselorTypeList = ref([]);
+const currentUserSeq = useAuthStore().userSeq;
 
 const fetchCounselCrate = async () => {
   try {
@@ -82,7 +83,7 @@ const uploadImage = async (file) => {
 const resetForm = () => {
   hireTitle.value = "";
   hireContent.value = "";
-  ageRangeId.value = [];
+  ageRangeLabels.value = "";
   hireGender.value = "";
   typeId.value = "";
   $("#summernote").summernote("reset");
@@ -90,20 +91,27 @@ const resetForm = () => {
 
 // 폼 제출 핸들러
 const handleSubmit = async () => {
+  console.log(currentUserSeq);
   const formData = {
     hireTitle: hireTitle.value,
     hireContent: hireContent.value,
-    ageRanges: ageRangeId.value.map(age => age.value), // 서버가 기대하는 데이터 구조로 맞춤
+    ageRanges: selectedAges.value, // 서버가 기대하는 데이터 구조로 맞춤
     hireGender: hireGender.value,
-    types: typeId.value,
+    typeId: typeId.value,
   };
-
+console.log(selectedAges);
   console.log(formData);
-
   try {
     const response = await axios.post(
-        "http://localhost:8089/api/v1/counselor-hire",
-        formData,
+        "http://localhost:8089/api/v1/counselor-hire", {
+          hireTitle: hireTitle.value,
+          hireContent: hireContent.value,
+          hireAges: selectedAges.value, // 서버가 기대하는 데이터 구조로 맞춤
+          hireGender: hireGender.value,
+          hireTypes: typeId.value,
+          userSeq: currentUserSeq
+        },
+
         { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
     );
     console.log("Form submitted successfully:", response.data);
@@ -119,6 +127,17 @@ const handleSubmit = async () => {
 const goToList = () => {
   router.push("/counsel");
 };
+
+// 선택된 나이대 저장
+const selectedAges = ref([]);
+
+// 선택된 나이대에 따라 label을 생성
+const ageRangeLabels = computed(() =>
+    counselorAgeList.value
+        .filter((age) => selectedAges.value.includes(age.counselorAgeRangeSeq))
+        .map((age) => age.counselorAgeRange)
+        .join(", ")
+);
 </script>
 
 <template>
@@ -142,14 +161,14 @@ const goToList = () => {
       <!-- 희망 상담사 나이대 -->
       <div class="form-group d-flex align-items-center">
         <label for="age" class="me-2">희망 상담사 나이대</label>
-        <input type="text" readonly :value="ageRangeId.map(a => a.label).join(', ')" placeholder="나이대를 선택해주세요." class="form-control me-2" style="width: 200px;"/>
+        <input type="text" readonly :value="ageRangeLabels" placeholder="나이대를 선택해주세요." class="form-control me-2" style="width: 200px;"/>
         <div class="dropdown">
           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
             선택
           </button>
           <ul class="dropdown-menu custom-dropdown">
             <li v-for="(counselAge, index) in counselorAgeList" :key="index" class="dropdown-item custom-dropdown-item">
-              <input type="checkbox" :id="counselAge.counselorAgeRangeSeq" :value="counselAge.counselorAgeRangeSeq" v-model="ageRangeId" />
+              <input type="checkbox" :id="counselAge.counselorAgeRangeSeq" :value="counselAge.counselorAgeRangeSeq" v-model="selectedAges" />
               <label :for="counselAge.counselorAgeRangeSeq">{{ counselAge.counselorAgeRange }}</label>
             </li>
           </ul>
