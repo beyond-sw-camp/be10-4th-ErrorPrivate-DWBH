@@ -113,18 +113,15 @@ function connectWebSocket() {
       scrollToBottom();
     });
 
-    //퇴장 메세지 전송
+    // 종료 메시지 수신 처리
     stompClient.value.subscribe(`/sub/chat/exit/${props.chat.chatSeq}`, (message) => {
       const content = JSON.parse(message.body);
-      messages.value.push({
-        chatMessageSeq: content.chatMessageSeq,
-        chatRoomSeq: props.chat.chatSeq,
-        senderNickName: content.senderNickName,
-        sendSeq: content.sendSeq,
-        receiveSeq: content.receiveSeq,
-        text: content.message,
-        type: "EXIT"
-      });
+
+      if (content.type == "END") {
+        alert("상대방이 채팅을 종료했습니다.");
+        disconnect();
+        emit("goBack"); // 뒤로가기 이벤트 실행
+      }
     });
 
     // 방에 입장 메시지 전송
@@ -179,7 +176,9 @@ function sendMessage() {
 
 function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
-    stompClient.value.disconnect();
+    stompClient.value.disconnect(() => {
+      console.log("WebSocket 연결이 종료되었습니다.");
+    });
     isConnected.value = false;
   }
 }
@@ -194,7 +193,7 @@ async function disconnectEvent() {
         sendSeq: currentUserSeq,
         receiveSeq: currentUserSeq==props.chat.sendUserSeq ? props.chat.receiveUserSeq : props.chat.sendUserSeq,
         message: '',
-        type: "EXIT",
+        type: "END",
       };
       stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify(endMessage));
       messages.value.push({
@@ -204,7 +203,7 @@ async function disconnectEvent() {
         sendSeq: endMessage.sendSeq,
         receiveSeq: endMessage.receiveSeq,
         text: endMessage.message,
-        type: "EXIT",
+        type: "END",
       });
 
       disconnect();
@@ -435,17 +434,6 @@ function setInputMessage(message) {
 
 /* 입장 메시지 스타일 (가운데 정렬) */
 .message.ENTER {
-  align-self: center;
-  text-align: center;
-  color: #333333;
-  font-size: 12px;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  background-color: lightgrey;
-  margin-bottom: 20px;
-}
-
-.exit-message {
   align-self: center;
   text-align: center;
   color: #333333;
