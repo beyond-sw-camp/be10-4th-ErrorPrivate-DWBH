@@ -58,6 +58,7 @@ public class ChatDTO {
         private Long receiveUserSeq;
         private String receiveUserNickname;
 
+        private LocalDateTime regDate;
         private LocalDateTime modDate;
         private LocalDateTime endDate;
 
