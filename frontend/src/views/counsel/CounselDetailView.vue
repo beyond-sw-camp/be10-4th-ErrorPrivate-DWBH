@@ -4,6 +4,7 @@ import axios from "axios";
 import "@/css/style.css"
 import {useRoute, useRouter} from "vue-router";
 import CounselDetail from "@/components/counsel/CounselDetail.vue";
+import CounselUpdateView from "@/views/counsel/CounselUpdateView.vue";
 
 const router = useRouter();
 // 라우터로 온 데이터 받기
@@ -35,9 +36,16 @@ onMounted(() => {
 })
 
 const modifyCounselHire = ref(null);
-function modifyForm(counselHire) {
-  isModifyVisible.value = true;
-}
+
+const openModifyForm = (counselHire) => {
+  modifyCounselHire.value = counselHire; // 수정할 데이터 저장
+  isModifyVisible.value = true; // 수정 창 열림 상태로 변경
+};
+
+const closeModifyForm = () => {
+  isModifyVisible.value = false; // 수정 창 닫음
+  modifyCounselHire.value = null; // 데이터 초기화
+};
 </script>
 
 <template>
@@ -47,8 +55,9 @@ function modifyForm(counselHire) {
         :counselHire="counselHire"
         :counselorAgeRanges="counselorAgeRanges"
         :counselorTypes="counselorTypes"
-        :sendUserSeq="sendUserSeq"/>
-
+        :sendUserSeq="sendUserSeq"
+        @openModifyForm="openModifyForm"/>
+    <CounselUpdateView v-else :modifyCounselHire="modifyCounselHire"/>
   </div>
 </template>
 

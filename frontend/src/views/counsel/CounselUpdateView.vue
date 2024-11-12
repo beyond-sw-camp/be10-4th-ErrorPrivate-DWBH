@@ -1,31 +1,38 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import {computed, onMounted, ref} from "vue";
 import $ from "jquery";
 import "@/css/style.css";
 import "summernote/dist/summernote-lite.css";
 import "summernote/dist/summernote-lite.js";
 import axios from "axios";
 import router from "@/router";
+import {useAuthStore} from "@/stores/auth.js";
 
 const props = defineProps({
-
+  modifyCounselHire : {
+    type: Object,
+    require: true
+  }
 })
 
 // 폼 데이터 변수 선언
 const hireTitle = ref("");
 const hireContent = ref("");
-const ageRangeId = ref([]); // 선택된 나이대
 const hireGender = ref("");
 const typeId = ref("");
+const typeSeq = ref(0);
 const counselorAgeList = ref([]);
 const counselorTypeList = ref([]);
+const currentUserSeq = useAuthStore().userSeq;
+// 선택된 나이대 저장
+const selectedAges = ref([]);
 
 const fetchCounselCrate = async () => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/create`,
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}`}
-      }
+        {
+          headers: {Authorization: `Bearer ${localStorage.getItem('accessToken')}`}
+        }
     );
 
     counselorAgeList.value = response.data.counselorAgeList;
@@ -36,11 +43,19 @@ const fetchCounselCrate = async () => {
     console.error(error);
   }
 }
+
 // Summernote 에디터 초기화
 onMounted(() => {
-  fetchCounselCrate();
+  hireTitle.value = props.modifyCounselHire.hireTitle;
+  hireContent.value = props.modifyCounselHire.hireContent;
+  hireGender.value = props.modifyCounselHire.hireGender;
+  selectedAges.value = props.modifyCounselHire.counselorAgeRanges;
+  typeId.value = props.modifyCounselHire.counselorTypeDTOs[0].counselorType;
+  console.log(props.modifyCounselHire.counselorTypeDTOs[0]);
+  typeSeq.value = props.modifyCounselHire.counselorTypeDTOs[0].counselorTypeSeq;
 
-  $("#summernote").summernote({
+  fetchCounselCrate();
+  $("#summernote").summernote('code', hireContent.value, {
     height: 300,
     placeholder: "내용을 입력하세요",
     dialogsInBody: true,
@@ -82,33 +97,30 @@ const uploadImage = async (file) => {
   }
 };
 
-// 폼 초기화 함수
-const resetForm = () => {
-  hireTitle.value = "";
-  hireContent.value = "";
-  ageRangeId.value = [];
-  hireGender.value = "";
-  typeId.value = "";
-  $("#summernote").summernote("reset");
-};
-
 // 폼 제출 핸들러
 const handleSubmit = async () => {
+  console.log(currentUserSeq);
   const formData = {
     hireTitle: hireTitle.value,
     hireContent: hireContent.value,
-    ageRanges: ageRangeId.value.map(age => age.value), // 서버가 기대하는 데이터 구조로 맞춤
+    ageRanges: selectedAges.value, // 서버가 기대하는 데이터 구조로 맞춤
     hireGender: hireGender.value,
-    types: typeId.value,
+    typeId: typeId.value,
   };
-
+  console.log(selectedAges);
   console.log(formData);
-
   try {
-    const response = await axios.post(
-        "http://localhost:8089/api/v1/counselor-hire",
-        formData,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+    const response = await axios.put(
+        `http://localhost:8089/api/v1/counselor-hire/${props.modifyCounselHire.hireSeq}`, {
+          hireTitle: hireTitle.value,
+          hireContent: hireContent.value,
+          hireAges: selectedAges.value, // 서버가 기대하는 데이터 구조로 맞춤
+          hireGender: hireGender.value,
+          hireTypes: typeId.value,
+          userSeq: currentUserSeq
+        },
+
+        {headers: {Authorization: `Bearer ${localStorage.getItem('accessToken')}`}}
     );
     console.log("Form submitted successfully:", response.data);
     alert("글이 성공적으로 저장되었습니다.");
@@ -123,6 +135,14 @@ const handleSubmit = async () => {
 const goToList = () => {
   router.push("/counsel");
 };
+
+// 선택된 나이대에 따라 label을 생성
+const ageRangeLabels = computed(() =>
+    counselorAgeList.value
+        .filter((age) => selectedAges.value.includes(age.counselorAgeRangeSeq))
+        .map((age) => age.counselorAgeRange)
+        .join(", ")
+);
 </script>
 
 <template>
@@ -146,14 +166,16 @@ const goToList = () => {
       <!-- 희망 상담사 나이대 -->
       <div class="form-group d-flex align-items-center">
         <label for="age" class="me-2">희망 상담사 나이대</label>
-        <input type="text" readonly :value="ageRangeId.map(a => a.label).join(', ')" placeholder="나이대를 선택해주세요." class="form-control me-2" style="width: 200px;"/>
+        <input type="text" readonly :value="ageRangeLabels" placeholder="나이대를 선택해주세요." class="form-control me-2"
+               style="width: 200px;"/>
         <div class="dropdown">
           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
             선택
           </button>
           <ul class="dropdown-menu custom-dropdown">
             <li v-for="(counselAge, index) in counselorAgeList" :key="index" class="dropdown-item custom-dropdown-item">
-              <input type="checkbox" :id="counselAge.counselorAgeRangeSeq" :value="counselAge.counselorAgeRangeSeq" v-model="ageRangeId" />
+              <input type="checkbox" :id="counselAge.counselorAgeRangeSeq" :value="counselAge.counselorAgeRangeSeq"
+                     v-model="selectedAges"/>
               <label :for="counselAge.counselorAgeRangeSeq">{{ counselAge.counselorAgeRange }}</label>
             </li>
           </ul>
@@ -172,16 +194,17 @@ const goToList = () => {
       <div class="form-group d-flex align-items-center">
         <label for="type" class="me-2">희망 조언 유형</label>
         <select id="type" v-model="typeId" class="form-select" style="width: 150px;">
-          <option value="" selected>선택</option>
-          <option v-for="(counselorType, index) in counselorTypeList" :key="counselorType.counselorTypeSeq" :value="counselorType.counselorTypeSeq">
+          <option :value="typeSeq" selected>{{typeId}}</option>
+          <option v-for="(counselorType, index) in counselorTypeList" :key="counselorType.counselorTypeSeq"
+                  :value="counselorType.counselorTypeSeq">
             {{ counselorType.counselorType }}
           </option>
         </select>
       </div>
 
       <div class="button-group d-flex justify-content-end mt-4">
-        <button type="reset" class="btn-reset btn btn-light me-2" @click="resetForm">초기화</button>
-        <button type="button" class="btn-submit btn btn-success" @click="handleSubmit">확인</button>
+        <button type="reset" class="btn-reset btn btn-light me-2" @click="resetForm">취소</button>
+        <button type="button" class="btn-submit btn btn-success" @click="handleSubmit">수정</button>
       </div>
     </div>
   </div>
