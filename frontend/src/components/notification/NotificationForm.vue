@@ -11,8 +11,8 @@ const props = defineProps({
 // emit 정의
 const emit = defineEmits(['selectChat']);
 
-const selectChat = () => {
-  emit('selectChat');
+const selectChat = (notificationSeq) => {
+  emit('selectChat', notificationSeq);
 };
 </script>
 
