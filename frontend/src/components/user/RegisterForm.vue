@@ -202,7 +202,7 @@ const handleRegister = () => {
         <InputBoxLong
             class="input-box"
             v-model="formData.userPassword"
-            placeholder="영문=, 특수문자를 모두 포함하여 8자리 이상"
+            placeholder="영문, 특수문자를 모두 포함하여 8자리 이상"
             type="password"
             required
         />
