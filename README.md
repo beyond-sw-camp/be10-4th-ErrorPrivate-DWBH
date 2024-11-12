@@ -24,9 +24,7 @@
 
 # DWBH
 Don't worry be happy
-<div style="text-align: center;">
-  <img src="img_7.png" width="200px" height="200px" alt="Description of image">
-</div>
+
 ## 💻프로젝트 소개
 
 [ DWBH ]는 사용자의 성향에 맞춘 공감 방식을 추천하여 개인화된 상담 경험을 제공하는 서비스입니다. 사용자가 자신의 고민을 자유롭게 나누고, 다른 사용자들로부터 다양한 조언과 위로를 받을 수 있도록 돕는 서비스입니다. 익명으로 고민을 작성하거나 상담을 요청할 수 있으며, 다른 사용자들은 각자의 경험과 관점을 바탕으로 조언을 제공할 수 있습니다. 특히 MBTI와 감정 분석을 통해 사용자가 가장 편안하게 느낄 수 있는 공감 방법을 추천함으로써, 보다 효과적이고 만족스러운 상담을 경험할 수 있습니다.
@@ -185,145 +183,63 @@ Don't worry be happy
 ## 📌 프로젝트 시연
 
 ### 게스트
-<details>
-  <summary> 메인 화면 </summary>
-  <img src="" alt="메인화면" />
-</details>
 
 <details>
   <summary> 회원 가입 </summary>
-  <img src="" alt="회원가입" />
+  <img src="gif/join.gif" alt="회원가입" />
 </details>
 
 ---
+
 ### 회원
 <details>
   <summary> 로그인 </summary>
-  <img src="" alt="로그인" />
+  <img src="gif/login.gif" alt="로그인" />
 </details>
 
 <details>
   <summary> 회원탈퇴 </summary>
-  <img src="" alt="회원탈퇴" />
+  <img src="gif/deleteuser.gif" alt="회원탈퇴" />
 </details>
 <details>
   <summary> 회원 정보 수정 </summary>
-  <img src="" alt="회원 정보 수정" />
+  <img src="gif/updatemypage.gif" alt="회원 정보 수정" />
 </details>
 <details>
   <summary> 마이페이지 </summary>
-  <img src="" alt="마이페이지" />
+  <img src="gif/mypagelist.gif" alt="마이페이지" />
 </details>
 
 ---
+
 ### 상담 게시판 
 <details>
-  <summary> 상담사 구인글 등록 정보 수정 </summary>
-  <img src="" alt="회원 상담사 구인글 등록 수정" />
+  <summary> 상담사 구인글 등록  </summary>
+  <img src="gif/createborad.png" alt="상담사 구인글 등록 " />
 </details>
 <details>
   <summary> 상담사 구인글 목록조회 </summary>
-  <img src="" alt="상담사 구인글 목록조회" />
+  <img src="gif/boardlist.gif" alt="상담사 구인글 목록조회" />
 </details>
 <details>
   <summary> 상담사 구인글 상세조회 </summary>
-  <img src="" alt="상담사 구인글 상세조회" />
-</details>
-<details>
-  <summary> 상담사 구인글 수정 </summary>
-  <img src="" alt="상담사 구인글 수정" />
-</details>
-<details>
-  <summary> 상담사 구인글 삭제 </summary>
-  <img src="" alt="상담사 구인글 삭제" />
+  <img src="gif/Detailboardlist.gif" alt="상담사 구인글 상세조회" />
 </details>
 
 ---
-### 게시글(게시판) 댓글
-<details>
-  <summary> 상담사 구인글 상담 제안 등록 </summary>
-  <img src="" alt="상담사 구인글 상담 제안 등록" />
-</details>
-<details>
-  <summary> 상담사 구인글 상담 제안 조회 </summary>
-  <img src="" alt="상담사 구인글 상담 제안 조회" />
-</details>
-<details>
-  <summary> 상담사 구인글 상담 제안 등록 </summary>
-  <img src="" alt="상담사 구인글 상담 제안 수정" />
-</details>
-<details>
-  <summary> 상담사 구인글 상담 제안 등록 </summary>
-  <img src="" alt="상담사 구인글 상담 제안 삭제" />
-</details>
 
----
-### 채팅방
-<details>
-  <summary> 채팅방 생성 </summary>
-  <img src="" alt="채팅방 생성" />
-</details>
-<details>
-  <summary> 채팅방 목록 조회 </summary>
-  <img src="" alt="채팅방 목록 조회" />
-</details>
-<details>
-  <summary> 채팅방 종료 </summary>
-  <img src="" alt="채팅방 종료" />
-</details>
-<details>
-  <summary> 채팅 참가자 상세 조회 </summary>
-  <img src="" alt="채팅 참가자 상세 조회" />
-</details>
-<details>
-  <summary> 채팅 메세지 작성 </summary>
-  <img src="" alt="채팅 메세지 작성" />
-</details>
-<details>
-  <summary> 채팅 메세지 수정 </summary>
-  <img src="" alt="채팅 메세지 작성" />
-</details>
-<details>
-  <summary> 채팅 메세지 조회 </summary>
-  <img src="" alt="채팅 메세지 작성" />
-</details>
-
----
 ### 채팅 추천
 <details>
   <summary> 채팅 추천 </summary>
-  <img src="" alt="채팅 추천" />
+  <img src="gif/chat.png" alt="채팅 추천" />
 </details>  
-<details>
-  <summary> 추천 채팅 작성 </summary>
-  <img src="" alt="추천 채팅 작성" />
-</details> 
-<details>
-  <summary> 추천 채팅 수정 </summary>
-  <img src="" alt="추천 채팅 수정" />
-</details>
-<details>
-  <summary> 추천 채팅 삭제 </summary>
-  <img src="" alt="추천 채팅 삭제" />
-</details>
-<details>
-  <summary> 평가 완료 후 온도 수정 </summary>
-  <img src="" alt="평가 완료 후 온도 수정" />
-</details>
 
 ---
+
 ### 알림
 <details>
-  <summary> 알림 메세지 발송 </summary>
-  <img src="" alt="알림 메세지 발송" />
-</details>
-<details>
   <summary> 알림 메세지 확인 </summary>
-  <img src="" alt="알림 메세지 확인" />
-</details>
-<details>
-  <summary> 알림 메세지 삭제 </summary>
-  <img src="" alt="알림 메세지 삭제" />
+  <img src="gif/Notification.gif" alt="알림 메세지 확인" />
 </details>
 
 ---
@@ -331,15 +247,14 @@ Don't worry be happy
 
 ## 📄 프로젝트 회고
 
-| 이름  |        회고       |
-|:---:|:-------------:|
-| 박희찬 | 역대급 번갯불에 콩 볶아 먹는 프로젝트였던 것 같습니다. 품질은 놔두더라도 2주 안에 결과물이 나올 수 있다는 것 부터가 신기한 경험이었던 것 같습니다. 개발 중인 프로젝트에 DevOps를 적용하여 진행 결과를 볼 수 있었던 좋은 시간이었던 것 같습니다. 모두 수고하셨습니다. |
-| 박지훈 |         |
-| 이성민 |                                                                                                                                                                                  |
-| 남가람 |                            |
-| 오민성 |         |
-| 전아영 |         |
-
+| 이름  |                                                                                                                                               회고                                                                                                                                               |
+|:---:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 박희찬 |                                                                   역대급 번갯불에 콩 볶아 먹는 프로젝트였던 것 같습니다. 품질은 놔두더라도 2주 안에 결과물이 나올 수 있다는 것 부터가 신기한 경험이었던 것 같습니다. 개발 중인 프로젝트에 DevOps를 적용하여 진행 결과를 볼 수 있었던 좋은 시간이었던 것 같습니다. 모두 수고하셨습니다.                                                                   |
+| 박지훈 |             이번에도 프로젝트를 진행하면서 많은 부분을 느꼈다. 시간은 항상 부족하지만 그것을 관리하는 능력을 더 키울 필요가 있다는 점과 저번 프로젝트들과는 다르게 팀원들과 더욱 연관된 기능들이 많았기에 규칙과 소통이 매우 활발할 필요가 있다는 점을 깨닫고 다음 최종때는 그 부분들을 더욱 보완하여 시간 부족을 해결하고 통일성을 지키도록 해야겠다. 부족한 부분을 많이 적었지만 그만큼 발전도 했고, 팀원들에게 기술적이나 툴 사용도 배웠기 때문에 뜻깊은 프로젝트였다고 생각합니다.              |
+| 이성민 |                     이번 데브옵스 프로젝트는 많은 어려움을 느꼈습니다. 특히 웹 기반으로 프로젝트를 진행하며 생각보다 쉽지 않은 부분들이 많았는데 데이터 전달, 상태 관리, 화면 디자인 등의 요소가 예상보다 시간이 많이 걸리고 복잡하여 힘들었습니다. 또한, 데브옵스 작업을 처음 접하게 되면서 자동 배포와 서버 환경 설정 등 익숙하지 않은 부분이 많아 이해와 적용에 어려움을 느꼈지만, 이를 통해 데브옵스의 중요성과 추가적인 학습의 필요성도 깨닫게 되었습니다.                     |
+| 오민성 |                             이번 프로젝트를 하면서 데브옵스에 대해서는 경험을 하지 못해 회고에 작성할 내용이 별로 없지만 혼자서라도 배포를 무조건 해볼 예정입니다. 프로젝트를 하면서 최종 때 인원들과 어떻게 조율해서 일을 배분할지에 대해 많이 알게된 시간이였고 힘들었지만 QueryDSL 연습을 많이해서 재밌었습니다.                                                   다들 최종 때 화이팅합시다 !                              |
+| 전아영 |                      이번 프로젝트를 시작하면서 2주 안에 설계부터 백엔드, 프론트엔드까지 구현하는게 가능할까 걱정을 많이 했는데 열정적인 팀원들과 함께라 가능했던 것 같습니다. 채팅 쪽 기능은 처음 구현해봤는데 웹소켓 통신 방식에 대해 공부해볼 수 있는 좋은 기회였습니다. 구현해야하는 시간이 부족해 세션 처리에 대해 제대로 하지 못했는데 다음에는 이 부분을 조금 더 신경써서 구현해보고싶습니다. 다들 짧은 시간에 많은 기능을 구현하느라 고생 많으셨습니다!                      |
+|남가람 | 이번 프로젝트에서 짧은 기간 동안 프로젝트 전체를 구현해야했기때문에 모두가 많이 고생했던 것 같습니다.댓글 작성, 수정, 삭제, 조회 기능을 단계적으로 진행하며 특히 파일 첨부와 관련해서 예상치 못한 어려움이 있었지만, 이를 해결하는 과정에서 성장을 할 수 있었던 것 같습니다. 특히 각 기능을 세밀하게 구현하면서 Vue와 백엔드 API 통신의 이해도가 높아졌고, 컴포넌트 간 데이터 전달과 이벤트 처리를 잘 다룰 수 있게 되었습니다.무엇보다 이 과정에서 능력 있는 팀원들과 함께하면서 도움을 많이 받았고 협업의 중요성을 다시 한 번 깨달았습니다. 각자의 강점과 전문성을 바탕으로, 어려운 문제를 빠르게 해결하고 효율적인 코드 작성에 기여해주어 프로젝트의 완성도를 높일 수 있었습니다. 각자의 역할을 하면서도 서로의 부족한 부분을 보완해주며 서로 협력하며 더 나은 결과를 위해 노력한 팀원들 덕분에 성공적으로 마무리할 수 있었고 덕분에 이능 구현과 문제 해결이 원할하게 이루어질 수 있었습니다.짧은 기간이었지만, 하나의 기능을 완성하고, 그에 맞는 UI와 UX를 구현해 나가는 과정이 뜻깊었고, 실질적인 개발 역량과 협업 능력이 모두 향상되는 값진 경험이 되었습니다. 앞으로도 이 경험이 큰 도움이 될 것 같습니다.  |       
 <br />
 
 ---
