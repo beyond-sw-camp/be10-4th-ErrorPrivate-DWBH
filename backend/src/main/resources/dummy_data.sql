@@ -112,17 +112,17 @@ VALUES (1, 1),
        (4, 4);
 
 -- tb_notification 테이블 더미 데이터
-INSERT INTO tb_notification (chat_seq, user_seq, notification_check_yn)
-VALUES (1, 1, 'N'),
-       (2, 2, 'Y'),
-       (3, 3, 'N'),
-       (4, 4, 'Y'),
-       (5, 5, 'N'),
-       (6, 6, 'Y'),
-       (7, 7, 'N'),
-       (8, 8, 'Y'),
-       (9, 9, 'N'),
-       (10, 10, 'Y');
+# INSERT INTO tb_notification (chat_seq, user_seq, notification_check_yn)
+# VALUES (1, 1, 'N'),
+#        (2, 2, 'Y'),
+#        (3, 3, 'N'),
+#        (4, 4, 'Y'),
+#        (5, 5, 'N'),
+#        (6, 6, 'Y'),
+#        (7, 7, 'N'),
+#        (8, 8, 'Y'),
+#        (9, 9, 'N'),
+#        (10, 10, 'Y');
 
 -- tb_counselor_age 테이블 더미 데이터
 INSERT INTO tb_counselor_age (counselor_age_range)
