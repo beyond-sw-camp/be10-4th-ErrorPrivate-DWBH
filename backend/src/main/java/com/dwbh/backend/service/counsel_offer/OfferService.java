@@ -40,8 +40,8 @@ public class OfferService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final CounselorRepository hireRepository;
-    private static final String UPLOAD_DIR = "uploads"; // 파일 저장 디렉토리
-
+    private static final String UPLOAD_DIR = "frontend/src/images/uploads"; // 파일 저장 디렉토리
+    private static final String DB_SAVE_DIR = "/src/images/uploads";
     private final UserService userService;
 
     // 댓글 작성
@@ -93,7 +93,7 @@ public class OfferService {
             String mimeType = FileUploadUtils.getMimeType(file);
 
             // 파일 엔티티 생성 및 설정
-            File fileEntity = new File(savedFileName, mimeType, UPLOAD_DIR + "/" + savedFileName, file.getContentType());
+            File fileEntity = new File(savedFileName, mimeType, DB_SAVE_DIR + "/" + savedFileName, file.getContentType());
             fileEntity = fileRepository.save(fileEntity);
 
             // CounselOfferFile 엔티티 생성 및 설정
@@ -165,7 +165,7 @@ public class OfferService {
             // 새 파일 저장
             String savedFileName = FileUploadUtils.saveFile(UPLOAD_DIR, newFile);
             String mimeType = FileUploadUtils.getMimeType(newFile);
-            File fileEntity = new File(savedFileName, mimeType, UPLOAD_DIR + "/" + savedFileName, newFile.getContentType());
+            File fileEntity = new File(savedFileName, mimeType, DB_SAVE_DIR + "/" + savedFileName, newFile.getContentType());
             fileEntity = fileRepository.save(fileEntity);
 
             // 새 파일을 CounselOfferFile 엔티티에 생성
