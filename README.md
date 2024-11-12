@@ -228,6 +228,26 @@ Don't worry be happy
 
 ---
 
+### 게시판 댓글
+<details>
+  <summary> 댓글 작성 + 조회  </summary>
+  <img src="gif/createComment.gif" alt="댓글 작성 + 조회" />
+</details>  
+<details>
+  <summary> 댓글 작성 제한  </summary>
+  <img src="gif/createNotComment.gif" alt="댓글 작성 제한" />
+</details>  
+<details>
+  <summary> 댓글 수정  </summary>
+  <img src="gif/updateComment.gif" alt="댓글 수정" />
+</details>  
+<details>
+  <summary> 댓글 삭제  </summary>
+  <img src="gif/deleteComment.gif" alt="댓글 삭제" />
+</details>  
+
+---
+
 ### 채팅 추천
 <details>
   <summary> 채팅 추천 </summary>
