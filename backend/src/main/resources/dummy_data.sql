@@ -2,31 +2,31 @@
 INSERT INTO tb_user (user_email, user_password, user_nickname, user_gender, user_birthday, user_mbti, user_status,
                      user_temperature)
 VALUES ('test1@example.com', '$2a$10$kbu8c9b44gvSbXDX3B.ePuzgmCFsm.UHnP6nl0eklFTOdeCUUrQqq', 'test1', 'male',
-        '1990-01-01', 'INTJ', 'activate', 36.5),
+        '1990-01-01', 'INTJ', 'activate', 36.5), -- Password1!
        ('test2@example.com', '$2a$10$Uirmt2t9cE6oD85r5LYXwOIQSjfbjZdVZy3Hgk30ybKJnycHnD1MK', 'test2', 'female',
-        '1992-02-02', 'ENFP', 'activate', 36.5),
+        '1992-02-02', 'ENFP', 'activate', 36.5), -- Password2!
        ('test3@example.com', '$2a$10$TPfSiyZ9uPFwzPGi94EYN.9RMZbUX0yrRzuqnnUmEL/S0mi/jYLkq', 'test3', 'male',
-        '1999-09-09', 'ENTP', 'activate', 36.5),
+        '1999-09-09', 'ENTP', 'activate', 36.5), -- Password3!
        ('user01@example.com', '$2a$10$kbu8c9b44gvSbXDX3B.ePuzgmCFsm.UHnP6nl0eklFTOdeCUUrQqq', 'user1', 'male',
-        '1990-01-01', 'INTJ', 'activate', 36.5),
+        '1990-01-01', 'INTJ', 'activate', 36.5), -- Password1!
        ('user02@example.com', '$2a$10$Uirmt2t9cE6oD85r5LYXwOIQSjfbjZdVZy3Hgk30ybKJnycHnD1MK', 'user2', 'female',
-        '1992-02-02', 'ENFP', 'activate', 36.5),
+        '1992-02-02', 'ENFP', 'activate', 36.5), -- Password2!
        ('user03@example.com', '$2a$10$TPfSiyZ9uPFwzPGi94EYN.9RMZbUX0yrRzuqnnUmEL/S0mi/jYLkq', 'user3', 'male',
-        '1999-09-09', 'ENTP', 'activate', 36.5),
+        '1999-09-09', 'ENTP', 'activate', 36.5), -- Password3!
        ('user04@example.com', '$2a$10$kbu8c9b44gvSbXDX3B.ePuzgmCFsm.UHnP6nl0eklFTOdeCUUrQqq', 'user4', 'female',
-        '1985-03-01', 'ISFJ', 'deactivate', 36.0),
+        '1985-03-01', 'ISFJ', 'activate', 36.0), -- Password1!
        ('user05@example.com', '$2a$10$Uirmt2t9cE6oD85r5LYXwOIQSjfbjZdVZy3Hgk30ybKJnycHnD1MK', 'user5', 'male',
-        '1995-06-15', 'ISTJ', 'activate', 36.7),
+        '1995-06-15', 'ISTJ', 'activate', 36.7), -- Password2!
        ('user06@example.com', '$2a$10$TPfSiyZ9uPFwzPGi94EYN.9RMZbUX0yrRzuqnnUmEL/S0mi/jYLkq', 'user6', 'female',
-        '1990-08-22', 'INFJ', 'activate', 37.0),
+        '1990-08-22', 'INFJ', 'activate', 37.0), -- Password3!
        ('user07@example.com', '$2a$10$kbu8c9b44gvSbXDX3B.ePuzgmCFsm.UHnP6nl0eklFTOdeCUUrQqq', 'user7', 'male',
-        '1993-11-11', 'INTP', 'activate', 36.8),
+        '1993-11-11', 'INTP', 'activate', 36.8), -- Password1!
        ('user08@example.com', '$2a$10$Uirmt2t9cE6oD85r5LYXwOIQSjfbjZdVZy3Hgk30ybKJnycHnD1MK', 'user8', 'female',
-        '1991-01-18', 'ENFJ', 'activate', 36.6),
+        '1991-01-18', 'ENFJ', 'activate', 36.6), -- Password2!
        ('user09@example.com', '$2a$10$TPfSiyZ9uPFwzPGi94EYN.9RMZbUX0yrRzuqnnUmEL/S0mi/jYLkq', 'user9', 'male',
-        '1989-05-25', 'ISFP', 'deactivate', 36.4),
+        '1989-05-25', 'ISFP', 'activate', 36.4), -- Password3!
        ('user10@example.com', '$2a$10$kbu8c9b44gvSbXDX3B.ePuzgmCFsm.UHnP6nl0eklFTOdeCUUrQqq', 'user10', 'female',
-        '1996-07-03', 'ESFP', 'activate', 37.2);
+        '1996-07-03', 'ESFP', 'activate', 37.2); -- Password1!
 
 -- tb_counselor_hire 테이블 더미 데이터
 INSERT INTO tb_counselor_hire (user_seq, counselor_hire_title, counselor_hire_content, counselor_hire_counselor_gender)
