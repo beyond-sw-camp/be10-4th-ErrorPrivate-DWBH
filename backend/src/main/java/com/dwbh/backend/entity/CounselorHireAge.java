@@ -1,14 +1,13 @@
 package com.dwbh.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_counselor_hire_age")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 public class CounselorHireAge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +22,11 @@ public class CounselorHireAge {
     private CounselorHire counselorHire;
 
     public void setCounselorHire(CounselorHire counselorHire) {
+    }
+
+    @Builder
+    public CounselorHireAge(CounselorAge counselorAge, CounselorHire counselorHire) {
+        this.counselorAge = counselorAge;
+        this.counselorHire = counselorHire;
     }
 }
