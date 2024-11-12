@@ -15,10 +15,11 @@ public class CounselorHireFile {
     @Column(name = "counselor_hire_file_seq")
     private Long hireFileSeq;
 
-    @Column(name = "counselor_hire_seq")
-    private Long hireSeq;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "file_seq", nullable = false)
+    private File file;
 
-    @Column(name = "file_seq")
-    private Long fileSeq;
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counselor_hire_seq", nullable = false)
+    private CounselorHire counselorHire;
 }

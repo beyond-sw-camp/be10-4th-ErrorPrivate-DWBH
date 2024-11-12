@@ -1,10 +1,9 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import dayjs from "dayjs";
 import "@/css/style.css"
 import {useRoute, useRouter} from "vue-router";
-import CounselCommentSection from "@/components/counseloffer/CounselCommentSection.vue";
+import CounselDetail from "@/components/counsel/CounselDetail.vue";
 
 const router = useRouter();
 // 라우터로 온 데이터 받기
@@ -16,6 +15,8 @@ const counselHire = ref([]);
 const counselorAgeRanges = ref([]);
 const counselorTypes = ref([]);
 const sendUserSeq = ref(0);
+const isModifyVisible = ref(false);
+
 const fetchCounselHires = async () => {
   try {
     const response = await axios.get(`http://localhost:8089/api/v1/counselor-hire/${hireSeq}`);
@@ -33,72 +34,21 @@ onMounted(() => {
   fetchCounselHires()
 })
 
-// 목록으로 돌아가기
-const goToList = () => {
-  router.push("/counsel");
-};
+const modifyCounselHire = ref(null);
+function modifyForm(counselHire) {
+  isModifyVisible.value = true;
+}
 </script>
 
 <template>
   <div class="container content">
-    <div class="responsive-container mt-4">
-      <div class="title-container d-flex justify-content-between align-items-center">
-        <h2 class="title-text">마음을 이어주는 다리 / 상세조회</h2>
-        <button class="btn btn-dark" @click="goToList">목록으로</button>
-      </div>
-      <!-- 상세 정보 섹션 -->
-      <div class="detail-container mt-4 p-4 border rounded">
-        <!-- 제목 -->
-        <h3 class="detail-title">{{ counselHire.hireTitle }}</h3>
-        <p class="text-muted author-text text-end">작성자 : {{ counselHire.userNickname }}</p>
-        <!-- 내용 -->
-        <p>
-          {{ counselHire.hireContent }}
-        </p>
+    <CounselDetail v-if="!isModifyVisible"
+        :hireSeq="hireSeq"
+        :counselHire="counselHire"
+        :counselorAgeRanges="counselorAgeRanges"
+        :counselorTypes="counselorTypes"
+        :sendUserSeq="sendUserSeq"/>
 
-        <!-- 이미지 -->
-  <!--      <img
-            src="/path/to/your/image.jpg"
-            alt="상담 이미지"
-            class="img-fluid rounded mt-4"
-        />-->
-
-        <!-- 추가 정보 -->
-        <table class="table mt-4">
-          <tbody>
-          <tr>
-            <th scope="row">희망 상담사 나이</th>
-            <td>
-              <template v-if="counselorAgeRanges.length > 0" v-for="(counselorAgeRange, index) in counselorAgeRanges" :key="index">{{counselorAgeRange}}</template>
-              <template v-else>무관</template>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">희망 성별</th>
-            <td>{{ counselHire.hireGender }}</td>
-          </tr>
-          <tr>
-            <th scope="row">희망 조언 타입</th>
-            <td>
-              <template v-if="counselorTypes.length > 0" v-for="(counselorType, index) in counselorTypes" :key="index">{{counselorType}}</template>
-              <template v-else>무관</template>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">작성일</th>
-            <td>{{ dayjs(counselHire.regDate).format("YYYY-MM-DD HH:mm:ss") }}</td>
-          </tr>
-          <tr v-if="counselHire.modDate !== null">
-            <th scope="row">수정일</th>
-            <td>{{ dayjs(counselHire.modDate).format("YYYY-MM-DD HH:mm:ss") }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 댓글 -->
-      <CounselCommentSection :hireSeq="hireSeq" :sendUserSeq="sendUserSeq" />
-    </div>
   </div>
 </template>
 

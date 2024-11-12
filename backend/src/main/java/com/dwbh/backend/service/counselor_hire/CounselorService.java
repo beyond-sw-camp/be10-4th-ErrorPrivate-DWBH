@@ -134,4 +134,32 @@ public class CounselorService {
 
         return new CounselorUserListResponse(counselorList);
     }
+
+    public CreateCounselorViewResponse createCounselorRequest() {
+
+        List<CounselorAge> counselorAges = counselorAgeRepository.findAll();
+        List<CounselorAgeDTO> counselorAgeList = counselorAges.stream().map(
+                counselorAge -> new CounselorAgeDTO(
+                        counselorAge.getCounselorAgeRangeSeq(),
+                        counselorAge.getCounselorAgeRange()
+                )
+        ).toList();
+
+        List<CounselorType> counselorTypes = counselorTypeRepository.findAll();
+        List<CounselorTypeDTO> counselorTypeList = counselorTypes.stream().map(
+                counselorType -> new CounselorTypeDTO(
+                        counselorType.getCounselorTypeSeq(),
+                        counselorType.getCounselorType()
+                )
+        ).toList();
+
+        return new CreateCounselorViewResponse(
+                counselorAgeList,
+                counselorTypeList
+        );
+    }
+
+    public void createPost(CreateCounselorRequest request) {
+
+    }
 }

@@ -3,7 +3,7 @@
 
 <table>
  <tr>
-    <td align="center"><a href="https://github.com/hcbak"><img src="https://avatars.githubusercontent.com/u/115945994"" ></a></td>
+    <td align="center"><a href="https://github.com/hcbak"><img src="https://avatars.githubusercontent.com/u/115945994" ></a></td>
     <td align="center"><a href="https://github.com/beanteacher"><img src="https://avatars.githubusercontent.com/u/99578261"></a></td>
     <td align="center"><a href="https://github.com/dispear"><img src="https://avatars.githubusercontent.com/u/87793524"></a></td>
     <td align="center"><a href="https://github.com/sung-mini"><img src="https://avatars.githubusercontent.com/u/174118592"></a></td>
@@ -110,6 +110,64 @@ Don't worry be happy
 |   화면 설계서    |                 https://www.figma.com/design/7bbjmO0vc6kMm5enMABC3L/에러-해적단?node-id=0-1&node-type=canvas&t=uglb6kVNMCovkcNY-0                 |
 
 <br/>
+
+## DevOps 산출물
+
+### 프로젝트 아키텍처 그림
+<details>
+  <summary> 아키텍처 </summary>
+
+![]()
+
+</details>
+
+### 빌드 및 배포 문서
+
+#### Docker 문서
+<details>
+  <summary> Backend </summary>
+
+![](uploads/DevOps/backend-docker.png)
+
+</details>
+<details>
+  <summary> Frontend </summary>
+
+![](uploads/DevOps/frontend-docker.png)
+
+</details>
+
+#### Kubernetes manifest 문서
+<details>
+  <summary> Ingress </summary>
+
+![](uploads/DevOps/ingress.png)
+
+</details>
+<details>
+  <summary> Boot Deployment </summary>
+
+![](uploads/DevOps/boot.png)
+
+</details>
+<details>
+  <summary> Vue Deployment </summary>
+
+![](uploads/DevOps/vue.png)
+
+</details>
+
+#### Jenkins Pipeline Script 문서
+<details>
+  <summary> Jenkins Pipeline Script </summary>
+
+![](uploads/DevOps/jenkins-pipeline.png)
+
+</details>
+
+### Jenkins CI/CD 테스트 결과 화면(GIF)
+
+![](uploads/DevOps/jenkins.gif)
 
 ## 📌 프로젝트 시연
 
