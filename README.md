@@ -190,6 +190,10 @@ Don't worry be happy
   <summary> 회원 가입 </summary>
   <img src="gif/join.gif" alt="회원가입" />
 </details>
+<details>
+  <summary> 비밀번호 찾기 </summary>
+  <img src="gif/passwordfind.gif" alt="회원가입" />
+</details>
 
 ---
 
@@ -200,16 +204,16 @@ Don't worry be happy
 </details>
 
 <details>
-  <summary> 회원탈퇴 </summary>
-  <img src="gif/deleteuser.gif" alt="회원탈퇴" />
+  <summary> 마이페이지 </summary>
+  <img src="gif/mypagelist.gif" alt="마이페이지" />
 </details>
 <details>
   <summary> 회원 정보 수정 </summary>
   <img src="gif/updatemypage.gif" alt="회원 정보 수정" />
 </details>
 <details>
-  <summary> 마이페이지 </summary>
-  <img src="gif/mypagelist.gif" alt="마이페이지" />
+  <summary> 회원탈퇴 </summary>
+  <img src="gif/deleteuser.gif" alt="회원탈퇴" />
 </details>
 
 ---
@@ -255,6 +259,22 @@ Don't worry be happy
   <summary> 채팅 추천 </summary>
   <img src="gif/chat.png" alt="채팅 추천" />
 </details>  
+
+---
+
+### 평가
+<details>
+  <summary> 평가 작성 </summary>
+  <img src="gif/createEvaluation.gif" alt="알림 메세지 확인" />
+</details>
+<details>
+  <summary> 평가 수정 </summary>
+  <img src="gif/updateEvaluation.gif" alt="알림 메세지 확인" />
+</details>
+<details>
+  <summary> 평가 삭제 </summary>
+  <img src="gif/deleteEvaluation.gif" alt="알림 메세지 확인" />
+</details>
 
 ---
 
