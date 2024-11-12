@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ import java.util.List;
         @AttributeOverride(name = "modDate", column = @Column(name = "counselor_hire_mod_date"))
 })
 @SQLDelete(sql = "UPDATE tb_counselor_hire SET counselor_hire_del_date = NOW() WHERE counselor_hire_seq = ?")
+@ToString
 public class CounselorHire extends BaseDateEntity {
 
     @Id
@@ -31,7 +33,7 @@ public class CounselorHire extends BaseDateEntity {
     private Long hireSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_seq", nullable = false)
+    @JoinColumn(name = "userSeq", nullable = false)
     private User user;
 
     @Column(name = "counselor_hire_title", nullable = false)
@@ -79,4 +81,9 @@ public class CounselorHire extends BaseDateEntity {
     public void setDelDate(LocalDateTime delDate) {
         this.delDate = delDate;
     }
+
+    public void builder(User user) {
+        this.user = user;
+    }
+
 }

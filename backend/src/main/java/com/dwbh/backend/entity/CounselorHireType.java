@@ -2,6 +2,7 @@ package com.dwbh.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,5 +24,11 @@ public class CounselorHireType {
     private CounselorHire counselorHire;
 
     public void setCounselorHire(CounselorHire counselorHire) {
+    }
+
+    @Builder
+    public CounselorHireType(CounselorType counselorType, CounselorHire counselorHire) {
+        this.counselorType = counselorType;
+        this.counselorHire = counselorHire;
     }
 }

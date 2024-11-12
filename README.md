@@ -101,25 +101,26 @@ Don't worry be happy
 
 ## 📄 프로젝트 문서
 
-|     이름      |                                                                    문제 링크                                                                     |
-|:-----------:|:--------------------------------------------------------------------------------------------------------------------------------------------:|
-|  요구사항 명세서   |             https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?gid=841155834#gid=841155834             |
-| DDD 이벤트 스토밍 |                                                   https://miro.com/app/board/uXjVLNZHXbI=/                                                   |
-|   ERD 설계서   |                                                 https://www.erdcloud.com/d/C66RF8nsCa2tZ83FL                                                 |
-|   기능 명세서    |          https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?pli=1&gid=841155834#gid=841155834          |
-|   화면 설계서    |                 https://www.figma.com/design/7bbjmO0vc6kMm5enMABC3L/에러-해적단?node-id=0-1&node-type=canvas&t=uglb6kVNMCovkcNY-0                 |
+[요구사항 명세서](https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?gid=841155834#gid=841155834)
 
-<br/>
+[DDD 이벤트 스토밍](https://miro.com/app/board/uXjVLNZHXbI=/)
+
+[ERD 설계서](https://www.erdcloud.com/d/C66RF8nsCa2tZ83FL)
+
+[기능 명세서](https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?pli=1&gid=841155834#gid=841155834)
+
+[화면 설계서](https://www.figma.com/design/7bbjmO0vc6kMm5enMABC3L/에러-해적단?node-id=0-1&node-type=canvas&t=uglb6kVNMCovkcNY-0)
 
 ## DevOps 산출물
 
+데브옵스는 아래 레포지토리에서 적용하였습니다.
+
+[Source Repository](https://github.com/ErrorPirate/DWBH)  
+[K8s Manifest Repository](https://github.com/ErrorPirate/DWBH-K8s-manifests)
+
 ### 프로젝트 아키텍처 그림
-<details>
-  <summary> 아키텍처 </summary>
 
-![]()
-
-</details>
+![](uploads/DevOps/architecture.png)
 
 ### 빌드 및 배포 문서
 
@@ -167,7 +168,19 @@ Don't worry be happy
 
 ### Jenkins CI/CD 테스트 결과 화면(GIF)
 
+<details>
+  <summary> Jenkins Pipeline Script </summary>
+
 ![](uploads/DevOps/jenkins.gif)
+
+</details>
+<details>
+  <summary> Discord Bot </summary>
+
+![](uploads/DevOps/Animation.webp)
+
+</details>
+
 
 ## 📌 프로젝트 시연
 
@@ -320,7 +333,7 @@ Don't worry be happy
 
 | 이름  |        회고       |
 |:---:|:-------------:|
-| 박희찬 |                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 박희찬 | 역대급 번갯불에 콩 볶아 먹는 프로젝트였던 것 같습니다. 품질은 놔두더라도 2주 안에 결과물이 나올 수 있다는 것 부터가 신기한 경험이었던 것 같습니다. 개발 중인 프로젝트에 DevOps를 적용하여 진행 결과를 볼 수 있었던 좋은 시간이었던 것 같습니다. 모두 수고하셨습니다. |
 | 박지훈 |         |
 | 이성민 |                                                                                                                                                                                  |
 | 남가람 |                            |
