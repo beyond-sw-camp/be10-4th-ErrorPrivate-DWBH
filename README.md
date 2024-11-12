@@ -99,13 +99,15 @@ Don't worry be happy
 
 ## 📄 프로젝트 문서
 
-[요구사항 명세서](https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?gid=841155834#gid=841155834)
+[요구사항 명세서](https://docs.google.com/spreadsheets/d/e/2PACX-1vSYXoVzjoM2yiAmEbilBklO0YxOa35I7_XaXaUQrh3kahiEzFaZm52nmvteWccoglilFJ2zx2fnwWQO/pubhtml?gid=841155834&single=true)
 
 [DDD 이벤트 스토밍](https://miro.com/app/board/uXjVLNZHXbI=/)
 
 [ERD 설계서](https://www.erdcloud.com/d/C66RF8nsCa2tZ83FL)
 
-[기능 명세서](https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?pli=1&gid=841155834#gid=841155834)
+[기능 명세서](https://docs.google.com/spreadsheets/d/e/2PACX-1vSYXoVzjoM2yiAmEbilBklO0YxOa35I7_XaXaUQrh3kahiEzFaZm52nmvteWccoglilFJ2zx2fnwWQO/pubhtml?gid=2106790872&single=true)
+
+[API 명세서](https://chemical-printer-c99.notion.site/API-12d2fdb1414881e9bfaefa670ae869e9?pvs=4)
 
 [화면 설계서](https://www.figma.com/design/7bbjmO0vc6kMm5enMABC3L/에러-해적단?node-id=0-1&node-type=canvas&t=uglb6kVNMCovkcNY-0)
 
