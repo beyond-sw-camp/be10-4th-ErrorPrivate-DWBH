@@ -48,6 +48,8 @@ public class ChatDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Response {
 
         private Long chatSeq;
