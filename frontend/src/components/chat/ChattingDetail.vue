@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import {ref, onMounted, onBeforeUnmount, nextTick, watch} from 'vue';
 import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,7 +28,6 @@ const readUser = async () => {
       },
     });
     userNickname.value = response.data.userNickname;
-    console.log("******* 유저 정보 *******"+userNickname.value);
   } catch (error) {
     console.error("유저 정보 가져오기 실패:", error);
   }
@@ -37,6 +36,7 @@ const readUser = async () => {
 onMounted(async () => {
   await loadChatHistory(props.chat.chatSeq);
   await readUser();
+
   connectWebSocket();
 });
 
@@ -113,18 +113,15 @@ function connectWebSocket() {
       scrollToBottom();
     });
 
-    //퇴장 메세지 전송
+    // 종료 메시지 수신 처리
     stompClient.value.subscribe(`/sub/chat/exit/${props.chat.chatSeq}`, (message) => {
       const content = JSON.parse(message.body);
-      messages.value.push({
-        chatMessageSeq: content.chatMessageSeq,
-        chatRoomSeq: props.chat.chatSeq,
-        senderNickName: content.senderNickName,
-        sendSeq: content.sendSeq,
-        receiveSeq: content.receiveSeq,
-        text: content.message,
-        type: "EXIT"
-      });
+
+      if (content.type == "END") {
+        alert("상대방이 채팅을 종료했습니다.");
+        disconnect();
+        emit("goBack"); // 뒤로가기 이벤트 실행
+      }
     });
 
     // 방에 입장 메시지 전송
@@ -179,7 +176,9 @@ function sendMessage() {
 
 function disconnect() {
   if (stompClient.value && stompClient.value.connected) {
-    stompClient.value.disconnect();
+    stompClient.value.disconnect(() => {
+      console.log("WebSocket 연결이 종료되었습니다.");
+    });
     isConnected.value = false;
   }
 }
@@ -194,7 +193,7 @@ async function disconnectEvent() {
         sendSeq: currentUserSeq,
         receiveSeq: currentUserSeq==props.chat.sendUserSeq ? props.chat.receiveUserSeq : props.chat.sendUserSeq,
         message: '',
-        type: "EXIT",
+        type: "END",
       };
       stompClient.value.send(`/pub/chat/exit/${props.chat.chatSeq}`, {}, JSON.stringify(endMessage));
       messages.value.push({
@@ -204,7 +203,7 @@ async function disconnectEvent() {
         sendSeq: endMessage.sendSeq,
         receiveSeq: endMessage.receiveSeq,
         text: endMessage.message,
-        type: "EXIT",
+        type: "END",
       });
 
       disconnect();
@@ -261,7 +260,7 @@ function setInputMessage(message) {
           :class="['message', message.type]"
       >
 
-          <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
+          <span v-if="message.type == 'ENTER'" class="enter-message">{{ (sendUsername==userNickname ? receiveUsername : sendUsername) + message.text }}</span>
 
           <template v-else>
             <div class="message-content" :class="{ 'sent-message': message.type == 'SENT' }">
@@ -321,6 +320,7 @@ function setInputMessage(message) {
   background-color: #ffffff;
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
+  max-width: 270px;
   overflow-x: auto; /* 버튼이 많을 때 가로 스크롤 가능 */
 }
 
@@ -435,17 +435,6 @@ function setInputMessage(message) {
 
 /* 입장 메시지 스타일 (가운데 정렬) */
 .message.ENTER {
-  align-self: center;
-  text-align: center;
-  color: #333333;
-  font-size: 12px;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  background-color: lightgrey;
-  margin-bottom: 20px;
-}
-
-.exit-message {
   align-self: center;
   text-align: center;
   color: #333333;

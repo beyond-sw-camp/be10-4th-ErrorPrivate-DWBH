@@ -1,6 +1,5 @@
 package com.dwbh.backend.controller.chat;
 
-import com.dwbh.backend.dto.chat.ChatDTO;
 import com.dwbh.backend.dto.chat.ChatMessageDTO;
 import com.dwbh.backend.service.chat.ChatMessageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,7 +9,10 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class ChatMessageController {
     @MessageMapping("/chat/enter/{roomId}")
     @SendTo("/sub/chat/room/{roomId}")
     public void enterUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
-        message.changeMessageRequest(message.getChatMessageSeq(), message.getSenderNickName() + "님과의 채팅이 생성되었습니다.", "ENTER");
+        message.changeMessageRequest(message.getChatMessageSeq(), "님과의 채팅이 생성되었습니다.", "ENTER");
         chatMessageService.saveMessage(message);
     }
 
@@ -50,7 +52,7 @@ public class ChatMessageController {
     @MessageMapping("/chat/exit/{roomId}")
     @SendTo("/sub/chat/exit/{roomId}")
     public ChatMessageDTO.Response exitUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
-        message.changeMessageRequest(message.getChatMessageSeq(), "채팅이 종료되었습니다.", "EXIT");
+        message.changeMessageRequest(message.getChatMessageSeq(), "채팅이 종료되었습니다.", message.getType());
 
         return chatMessageService.saveMessage(message);
     }
