@@ -101,17 +101,22 @@ Don't worry be happy
 
 ## 📄 프로젝트 문서
 
-|     이름      |                                                                    문제 링크                                                                     |
-|:-----------:|:--------------------------------------------------------------------------------------------------------------------------------------------:|
-|  요구사항 명세서   |             https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?gid=841155834#gid=841155834             |
-| DDD 이벤트 스토밍 |                                                   https://miro.com/app/board/uXjVLNZHXbI=/                                                   |
-|   ERD 설계서   |                                                 https://www.erdcloud.com/d/C66RF8nsCa2tZ83FL                                                 |
-|   기능 명세서    |          https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?pli=1&gid=841155834#gid=841155834          |
-|   화면 설계서    |                 https://www.figma.com/design/7bbjmO0vc6kMm5enMABC3L/에러-해적단?node-id=0-1&node-type=canvas&t=uglb6kVNMCovkcNY-0                 |
+[요구사항 명세서](https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?gid=841155834#gid=841155834)
 
-<br/>
+[DDD 이벤트 스토밍](https://miro.com/app/board/uXjVLNZHXbI=/)
+
+[ERD 설계서](https://www.erdcloud.com/d/C66RF8nsCa2tZ83FL)
+
+[기능 명세서](https://docs.google.com/spreadsheets/d/1ALXvulDzo1pou0lTiANi6GzBr-wW_-c4NstQK4-6Z7w/edit?pli=1&gid=841155834#gid=841155834)
+
+[화면 설계서](https://www.figma.com/design/7bbjmO0vc6kMm5enMABC3L/에러-해적단?node-id=0-1&node-type=canvas&t=uglb6kVNMCovkcNY-0)
 
 ## DevOps 산출물
+
+데브옵스는 아래 레포지토리에서 적용하였습니다.
+
+[Source Repository](https://github.com/ErrorPirate/DWBH)  
+[K8s Manifest Repository](https://github.com/ErrorPirate/DWBH-K8s-manifests)
 
 ### 프로젝트 아키텍처 그림
 
