@@ -114,12 +114,8 @@ Don't worry be happy
 ## DevOps 산출물
 
 ### 프로젝트 아키텍처 그림
-<details>
-  <summary> 아키텍처 </summary>
 
-![]()
-
-</details>
+![](uploads/DevOps/architecture.png)
 
 ### 빌드 및 배포 문서
 
@@ -167,7 +163,19 @@ Don't worry be happy
 
 ### Jenkins CI/CD 테스트 결과 화면(GIF)
 
+<details>
+  <summary> Jenkins Pipeline Script </summary>
+
 ![](uploads/DevOps/jenkins.gif)
+
+</details>
+<details>
+  <summary> Discord Bot </summary>
+
+![](uploads/DevOps/Animation.webp)
+
+</details>
+
 
 ## 📌 프로젝트 시연
 
