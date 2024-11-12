@@ -108,6 +108,7 @@ public class ChatService {
 
         ChatMessageDTO.Response messageResponse = mongoTemplate.findOne(query, ChatMessageDTO.Response.class, "request");
         if(!ObjectUtils.isEmpty(messageResponse)) {
+            response.setRegDate(messageResponse.getRegDate());
             response.setLastMessage(messageResponse.getMessage()==null ? "" : messageResponse.getMessage());
             response.setReadYn("N".equals(messageResponse.getReadYn()) ? YnType.N : YnType.Y);
         } else {
