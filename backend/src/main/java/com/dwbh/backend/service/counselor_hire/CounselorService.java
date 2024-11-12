@@ -2,10 +2,7 @@ package com.dwbh.backend.service.counselor_hire;
 
 import com.dwbh.backend.dto.counselor_hire.*;
 import com.dwbh.backend.common.util.AuthUtil;
-import com.dwbh.backend.entity.CounselorAge;
-import com.dwbh.backend.entity.CounselorHire;
-import com.dwbh.backend.entity.CounselorType;
-import com.dwbh.backend.entity.User;
+import com.dwbh.backend.entity.*;
 import com.dwbh.backend.exception.CustomException;
 import com.dwbh.backend.exception.ErrorCodeType;
 import com.dwbh.backend.repository.counselor_hire.*;
@@ -14,10 +11,12 @@ import com.dwbh.backend.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,34 +28,10 @@ public class CounselorService {
     private final UserRepository userRepository;
     private final CounselorAgeRepository counselorAgeRepository;
     private final CounselorTypeRepository counselorTypeRepository;
+    private final CounselorHireAgeRepository counselorHireAgeRepository;
+    private final CounselorHireTypeRepository counselorHireTypeRepository;
     private final UserService userService;
-
-    // 게시글 등록
-    @Transactional
-    public void savePost(CreateCounselorRequest request) {
-        Long loginUserId = 1L;  // 예시로 로그인된 사용자 ID 설정
-
-        User foundUser = userRepository.findById(loginUserId)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
-
-        // `CounselorAge`와 `CounselorType` 엔티티 조회
-//        CounselorAge counselorAge = counselorAgeRepository.findById(savePostReqDTO.getAgeRangeId())
-//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 나이대입니다."));
-//        CounselorType counselorType = counselorTypeRepository.findById(savePostReqDTO.getTypeId())
-//                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 조건 유형입니다."));
-
-        // `CounselorHire` 엔티티 생성
-//        CounselorHire saveCounselor = new CounselorHire(
-//                savePostReqDTO.getHireTitle(),
-//                savePostReqDTO.getHireContent(),
-//                savePostReqDTO.getHireGender(),
-//                foundUser,
-//                counselorAge,
-//                counselorType
-//        );
-//
-//        counselorRepository.save(saveCounselor);
-    }
+    private final ModelMapper modelMapper;
 
     // 모든 게시글 조회
     public CounselorListResponse readCounselorList(ReadCounselorListRequest request, Pageable pageable) {
@@ -159,7 +134,31 @@ public class CounselorService {
         );
     }
 
+    @Transactional
     public void createPost(CreateCounselorRequest request) {
+        CounselorHire counselorHire = modelMapper.map(request, CounselorHire.class);
+        User user = userRepository.findById(request.getUserSeq()).orElseThrow();
+        counselorHire.builder(user);
+        counselorRepository.save(counselorHire);
 
+        List<CounselorHireAge> counselorHireAges = new ArrayList<>();
+
+        for(int i = 0; i < request.getHireAges().size(); i++) {
+            Long counselorAgeRangeSeq = request.getHireAges().get(i);
+            CounselorAge counselorAge = counselorAgeRepository.findById(counselorAgeRangeSeq).orElseThrow();
+            counselorHireAges.add(CounselorHireAge.builder()
+                    .counselorAge(counselorAge)
+                    .counselorHire(counselorHire)
+                    .build());
+        }
+        counselorHireAgeRepository.saveAll(counselorHireAges);
+
+        CounselorType counselorType = counselorTypeRepository.findById(request.getHireTypes()).orElseThrow();
+        CounselorHireType counselorHireType = CounselorHireType.builder().
+                counselorType(counselorType).
+                counselorHire(counselorHire).
+                build();
+
+        counselorHireTypeRepository.save(counselorHireType);
     }
 }
