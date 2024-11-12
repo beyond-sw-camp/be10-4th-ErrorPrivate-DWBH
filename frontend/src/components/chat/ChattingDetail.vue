@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import {ref, onMounted, onBeforeUnmount, nextTick, watch} from 'vue';
 import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,7 +28,6 @@ const readUser = async () => {
       },
     });
     userNickname.value = response.data.userNickname;
-    console.log("******* 유저 정보 *******"+userNickname.value);
   } catch (error) {
     console.error("유저 정보 가져오기 실패:", error);
   }
@@ -37,6 +36,7 @@ const readUser = async () => {
 onMounted(async () => {
   await loadChatHistory(props.chat.chatSeq);
   await readUser();
+
   connectWebSocket();
 });
 
@@ -260,7 +260,7 @@ function setInputMessage(message) {
           :class="['message', message.type]"
       >
 
-          <span v-if="message.type == 'ENTER'" class="enter-message">{{ message.text }}</span>
+          <span v-if="message.type == 'ENTER'" class="enter-message">{{ (sendUsername==userNickname ? receiveUsername : sendUsername) + message.text }}</span>
 
           <template v-else>
             <div class="message-content" :class="{ 'sent-message': message.type == 'SENT' }">
@@ -320,6 +320,7 @@ function setInputMessage(message) {
   background-color: #ffffff;
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
+  max-width: 270px;
   overflow-x: auto; /* 버튼이 많을 때 가로 스크롤 가능 */
 }
 
