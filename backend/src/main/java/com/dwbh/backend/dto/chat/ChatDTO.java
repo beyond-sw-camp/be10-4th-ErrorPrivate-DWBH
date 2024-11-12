@@ -48,6 +48,8 @@ public class ChatDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Response {
 
         private Long chatSeq;
@@ -56,6 +58,7 @@ public class ChatDTO {
         private Long receiveUserSeq;
         private String receiveUserNickname;
 
+        private LocalDateTime regDate;
         private LocalDateTime modDate;
         private LocalDateTime endDate;
 

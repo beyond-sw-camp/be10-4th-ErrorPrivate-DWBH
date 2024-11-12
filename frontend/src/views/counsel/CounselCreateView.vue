@@ -53,7 +53,9 @@ onMounted(() => {
     ],
     callbacks: {
       onChange: function (contents) {
-        hireContent.value = contents;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(contents, "text/html");
+        hireContent.value = doc.body.textContent || "";
       },
       onImageUpload: function (files) {
         uploadImage(files[0]);
@@ -138,6 +140,7 @@ const ageRangeLabels = computed(() =>
         .map((age) => age.counselorAgeRange)
         .join(", ")
 );
+
 </script>
 
 <template>
@@ -155,7 +158,7 @@ const ageRangeLabels = computed(() =>
 
       <div class="form-group">
         <label for="content">내용</label>
-        <div id="summernote"></div>
+        <div class="summernote" id="summernote"></div>
       </div>
 
       <!-- 희망 상담사 나이대 -->

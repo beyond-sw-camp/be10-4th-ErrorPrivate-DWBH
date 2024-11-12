@@ -8,6 +8,9 @@ const userSeq = useAuthStore().userSeq;
 const chats = ref([]);
 const emit = defineEmits(['selectChat']);
 
+const sortOrder = ref('latest');
+const isDropdownOpen = ref(false);
+
 const fetchChats = async () => {
   try {
     const response = await axios.get('http://localhost:8089/api/v1/user/chat',
@@ -17,6 +20,7 @@ const fetchChats = async () => {
           },
         });
     chats.value = response.data;
+    sortChats();
   } catch (error) {
     console.error('채팅 목록을 가져오는 중 오류 발생:', error);
   }
@@ -33,13 +37,54 @@ const truncateMessage = (message) => {
   return message.length > 15 ? message.substring(0, 15) + '...' : message;
 };
 
+// 정렬 함수
+const sortChats = () => {
+  if (sortOrder.value == 'latest') {
+    chats.value.sort((a, b) => new Date(b.regDate) - new Date(a.regDate));
+  } else if (sortOrder.value == 'evaluation') {
+    chats.value.sort((a, b) => {
+      if (a.showEvaluation !== b.showEvaluation) {
+        return b.showEvaluation - a.showEvaluation;
+      }
+      return new Date(b.regDate) - new Date(a.regDate);
+    });
+  } else if (sortOrder.value == 'end') {
+    chats.value.sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
+  }
+};
+
+const changeSortOrder = (order) => {
+  if (sortOrder.value !== order) {
+    sortOrder.value = order;
+    sortChats();
+  }
+  isDropdownOpen.value = false; // 드롭다운 닫기
+};
+
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
+
 onMounted(fetchChats);
 
 </script>
 
 <template>
   <div class="chat-list">
-    <h2>채팅 목록 &#9660;</h2>
+
+    <div class="sort-menu">
+      <h2>채팅 목록
+      <button class="sort-button" @click="toggleDropdown">
+        &#9660;
+      </button>
+      </h2>
+      <ul v-if="isDropdownOpen" class="dropdown">
+        <li @click="changeSortOrder('latest')">최근 메세지순</li>
+        <li @click="changeSortOrder('evaluation')">평가할 채팅방순</li>
+        <li @click="changeSortOrder('end')">종료된 채팅방순</li>
+      </ul>
+    </div>
+
     <ul>
       <li
           v-for="chat in chats"
@@ -144,6 +189,49 @@ onMounted(fetchChats);
   margin-top: 13px;
   max-height: 35px;
   max-width: 48px;
+}
+.sort-button {
+  all: unset; /* 버튼 기본 CSS 제거 */
+  padding: 0.5rem 1rem;
+  background-color: #eee;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.sort-button:hover {
+  background-color: #ccc;
+}
+
+.dropdown {
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  width: 150px;
+}
+
+.dropdown li {
+  all: unset; /* 리스트 기본 CSS 제거 */
+  display: block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+}
+
+.dropdown li:hover {
+  background-color: #f5f5f5;
 }
 
 </style>
