@@ -22,13 +22,13 @@ const userNickname = ref(null);
 
 const readUser = async () => {
   try {
-    const userSeq = authStore.userSeq;
-    const response = await axios.get(`http://localhost:8089/api/v1/user/${userSeq}`, {
+    const response = await axios.get(`http://localhost:8089/api/v1/user/${currentUserSeq}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
       },
     });
     userNickname.value = response.data.userNickname;
+    console.log("******* 유저 정보 *******"+userNickname.value);
   } catch (error) {
     console.error("유저 정보 가져오기 실패:", error);
   }
@@ -36,7 +36,7 @@ const readUser = async () => {
 
 onMounted(async () => {
   await loadChatHistory(props.chat.chatSeq);
-
+  await readUser();
   connectWebSocket();
 });
 
@@ -279,7 +279,7 @@ function setInputMessage(message) {
                     'sender-received': message.type == 'RECEIVED'
                   }"
               >
-              {{ message.type === 'SENT' ? receiveUsername : sendUsername }}
+              {{ message.type == 'SENT' ? userNickname : (sendUsername==userNickname ? receiveUsername : sendUsername) }}
             </span><br />
             <span class="text">{{ message.text }}</span><br />
             <span class="date">{{ formatDate(message.regDate) }}</span><br />
