@@ -50,7 +50,7 @@ public class ChatMessageController {
     @MessageMapping("/chat/exit/{roomId}")
     @SendTo("/sub/chat/exit/{roomId}")
     public ChatMessageDTO.Response exitUser(@DestinationVariable("roomId") String roomId, @Payload ChatMessageDTO.Request message){
-        message.changeMessageRequest(message.getChatMessageSeq(), "채팅이 종료되었습니다.", "EXIT");
+        message.changeMessageRequest(message.getChatMessageSeq(), "채팅이 종료되었습니다.", message.getType());
 
         return chatMessageService.saveMessage(message);
     }

@@ -58,12 +58,12 @@ public class ChatMessageService {
         responseList.addAll(talkResponses);
 
         // 종료 알림 조회
-        Query queryEnd = new Query(Criteria.where("chatRoomSeq").is(roomId).and("type").is("EXIT"))
+        Query queryEnd = new Query(Criteria.where("chatRoomSeq").is(roomId).and("type").is("END"))
                 .with(Sort.by(Sort.Direction.DESC, "regDate"))
                 .limit(1);
-        ChatMessageDTO.Response exitResponse = mongoTemplate.findOne(queryEnd, ChatMessageDTO.Response.class, "request");
-        if (!ObjectUtils.isEmpty(exitResponse)) {
-            responseList.add(exitResponse);
+        ChatMessageDTO.Response endResponse = mongoTemplate.findOne(queryEnd, ChatMessageDTO.Response.class, "request");
+        if (!ObjectUtils.isEmpty(endResponse)) {
+            responseList.add(endResponse);
         }
 
         return responseList;
@@ -76,7 +76,7 @@ public class ChatMessageService {
 
             mongoTemplate.insert(request);
 
-            if("EXIT".equals(request.getType())) {
+            if("END".equals(request.getType())) {
                  ChatDTO.Update update = ChatDTO.Update.builder()
                          .chatSeq(Long.valueOf(request.getChatRoomSeq()))
                          .endDate(LocalDateTime.now())
