@@ -59,6 +59,11 @@ const deleteHire = async () => {
   }
 }
 
+const emit = defineEmits(["openModifyForm"]); // 부모에게 이벤트를 전달
+
+const modifyForm = (counselHire) => {
+  emit("openModifyForm", counselHire); // counselHire 데이터를 부모에게 전달
+};
 </script>
 
 <template>

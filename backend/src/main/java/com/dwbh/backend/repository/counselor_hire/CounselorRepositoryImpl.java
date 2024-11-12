@@ -52,6 +52,15 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
                 .where(counselorHire.hireSeq.eq(hireSeq))
                 .fetch();
 
+        List<CounselorTypeDTO> counselorTypeDTOS = queryFactory
+                .select(Projections.constructor(CounselorTypeDTO.class,
+                        counselorType1.counselorTypeSeq,
+                        counselorType1.counselorType))
+                .from(counselorHireType)
+                .join(counselorType1).on(counselorHireType.counselorType.counselorTypeSeq.eq(counselorType1.counselorTypeSeq))
+                .where(counselorHire.hireSeq.eq(hireSeq))
+                .fetch();
+
         CounselorDetailResponse result = queryFactory
                 .select(Projections.fields(CounselorDetailResponse.class,
                         counselorHire.hireSeq,
@@ -75,6 +84,7 @@ public class CounselorRepositoryImpl implements CounselorCustomRepository {
         if (result != null) {
             result.setCounselorAgeRanges(counselorAgeRanges);
             result.setCounselorTypes(counselorTypes);
+            result.setCounselorTypeDTOs(counselorTypeDTOS);
         }
 
         return result;
